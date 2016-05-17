@@ -1,24 +1,33 @@
 (ns cards.chord
-  (:require [sheet-bucket.components.chord :as chord])
+  (:require [reagent.core :as reagent]
+            [sheet-bucket.components.chord :as chord])
   (:require-macros [devcards.core :as dc :refer [defcard defcard-doc]]))
+
+(defn- chord [props]
+  (reagent/as-element (chord/component props)))
 
 (defcard-doc
   "# Chord 
 ## Example props"
-  {:root "G" :triad :major :seventh :minor :nineth :major})
+  {:root "G" :triad :major :seventh :minor :nineth :major}
+  "## An editable chord"
+  {:focused true :chord-text "abc"})
 
 ;; Triads
-(defcard Major (dc/reagent (chord/component {:root "a"})))
-(defcard Minor (dc/reagent (chord/component {:root "b" :triad :minor})))
+(defcard Major (chord {:root "a"}))
+(defcard Minor (chord {:root "b" :triad :minor}))
 
 ;; Sevenths
-(defcard Seventh (dc/reagent (chord/component {:root "C" :triad :major :seventh :minor})))
-(defcard Minor-Seventh (dc/reagent (chord/component {:root "D" :triad :minor :seventh :minor})))
-(defcard Major-Seventh (dc/reagent (chord/component {:root "E" :triad :major :seventh :major})))
-(defcard Major-Seventh (dc/reagent (chord/component {:root "E" :triad :major :seventh :major})))
-(defcard Minor-Major-Seventh (dc/reagent (chord/component {:root "E" :triad :minor :seventh :major})))
+(defcard Seventh (chord {:root "C" :triad :major :seventh :minor}))
+(defcard Minor-Seventh (chord {:root "D" :triad :minor :seventh :minor}))
+(defcard Major-Seventh (chord {:root "E" :triad :major :seventh :major}))
+(defcard Major-Seventh (chord {:root "E" :triad :major :seventh :major}))
+(defcard Minor-Major-Seventh (chord {:root "E" :triad :minor :seventh :major}))
 
 ;; Nineths
-(defcard Nineth (dc/reagent (chord/component {:root "F" :triad :major :seventh :minor :nineth :minor})))
-(defcard Minor-Nineth (dc/reagent (chord/component {:root "F" :triad :minor :seventh :minor :nineth :minor})))
-(defcard Major-Nineth (dc/reagent (chord/component {:root "G" :triad :major :seventh :minor :nineth :major})))
+(defcard Nineth (chord {:root "F" :triad :major :seventh :minor :nineth :minor}))
+(defcard Minor-Nineth (chord {:root "F" :triad :minor :seventh :minor :nineth :minor}))
+(defcard Major-Nineth (chord {:root "G" :triad :major :seventh :minor :nineth :major}))
+
+;; Editing
+(defcard Focused (chord {:focused true :chord-text "a-maj"}))
