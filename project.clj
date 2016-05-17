@@ -10,6 +10,7 @@
                  [org.clojure/clojurescript "1.8.51"]
                  [org.clojure/core.async "0.2.374"
                   :exclusions [org.clojure/tools.reader]]
+                 [devcards "0.2.1-5"]
                  [reagent "0.5.1"]]
   
   :plugins [[lein-figwheel "0.5.3-1"]
@@ -19,7 +20,15 @@
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
 
-  :cljsbuild {:builds [{:id "dev"
+  :cljsbuild {:builds [{:id "devcards"
+                        :source-paths ["src"]
+                        :figwheel {:devcards true}
+                        :compiler {:main cards.core
+                                   :asset-path "js/compiled/cards_out"
+                                   :output-to "resources/public/js/compiled/cards.js"
+                                   :output-dir "resources/public/js/compiled/cards_out"}}
+
+                       {:id "dev"
                         :source-paths ["src"]
                         :figwheel true
                         :compiler {:main sheet-bucket.core
