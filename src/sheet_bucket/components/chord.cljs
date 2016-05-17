@@ -39,7 +39,6 @@
     :reagent-render
     (fn [props]
       [:input {:type "text"
-               :on-blur #(prn "blur")
                :default-value (:chord-text props)}])}))
 
 (defn component [props]
