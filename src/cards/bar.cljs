@@ -1,21 +1,32 @@
 (ns cards.bar
   (:require [reagent.core :as reagent]
-            [sheet-bucket.components.bar :as bar])
-  (:require-macros [devcards.core :as dc :refer [defcard defcard-doc]]))
+            [sheet-bucket.components.bar :refer [component]])
+  (:require-macros [cards.core :refer [defcard-props]]
+                   [devcards.core :as dc :refer [defcard-doc defcard-rg]]))
 
-(defn- bar [props]
-  (reagent/as-element (bar/component props)))
+(def chords
+  [{:id "chord-1" :root "a"}
+   {:id "chord-2" :root "c" :triad :minor}
+   {:id "chord-3" :root "E"}
+   {:id "chord-4" :root "c" :triad :minor}])
 
 (defcard-doc
   "# Bar"
   "Represents a bar, or a line measure of multiple chords"
-  "## example props"
-  {:chords [{:root "a"} {:root "c" :triad :minor}]})
+  "## Props"
+  chords)
 
-(defcard SingleChord (bar {:chords [{:root "a"}]}))
-(defcard TwoChords (bar {:chords [{:root "a"} {:root "c" :triad :minor}]}))
-(defcard ThreeChords (bar {:chords [{:root "a"} {:root "c" :triad :minor} {:root "c" :triad :minor}]}))
-(defcard FourChords (bar {:chords [{:root "a"}
-                                   {:root "c" :triad :minor}
-                                   {:root "E"}
-                                   {:root "c" :triad :minor}]}))
+(defcard-props SingleChord
+  [component {:chords [{:root "a"}]}])
+
+(defcard-props TwoChords
+  [component {:chords [{:root "a"} {:root "c" :triad :minor}]}])
+
+(defcard-rg ThreeChords
+  [component {:chords (take 3 chords)}])
+
+(defcard-rg FourChords
+  [component {:chords chords}])
+
+(defcard-props With-current-chord
+  [component {:chords chords}])
