@@ -5,14 +5,21 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :min-lein-version "2.6.1"
-  
+
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.8.51"]
+                 [org.clojure/clojurescript "1.9.293"]
                  [org.clojure/core.async "0.2.374"
                   :exclusions [org.clojure/tools.reader]]
-                 [devcards "0.2.1-5"]
-                 [reagent "0.5.1"]]
-  
+                 [reagent "0.6.0" :exclusions [cljsjs/react]]]
+
+  :profiles {:dev {:dependencies [[devcards "0.2.2"]
+                                  [binaryage/devtools "0.8.3"]
+                                  [figwheel-sidecar "0.5.3-1"]
+                                  [com.cemerick/piggieback "0.2.1"]]
+                   :source-paths ["src" "dev"]
+                   :repl-options {:init (set! *print-length* 50)
+                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
+
   :plugins [[lein-figwheel "0.5.3-1"]
             [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
 
@@ -32,8 +39,15 @@
                         :source-paths ["src"]
                         :figwheel true
                         :compiler {:main sheet-bucket.core
+                                   ;; Figwheel injects script tags for
+                                   ;; development. This is the location
+                                   ;; for the compiled resources
                                    :asset-path "js/compiled/out"
+                                   ;; The outputted main bundle
                                    :output-to "resources/public/js/compiled/sheet_bucket.js"
+                                   ;; Where to compile assets needed for
+                                   ;; the development bundle, required by
+                                   ;; :asset-path
                                    :output-dir "resources/public/js/compiled/out"}}
 
                        {:id "min"
@@ -43,10 +57,4 @@
                                    :optimizations :advanced
                                    :pretty-print false}}]}
 
-  :figwheel {:css-dirs ["resources/public/css"]}
-  
-  :profiles {:dev {:dependencies [[figwheel-sidecar "0.5.3-1"]                                   
-                                  [com.cemerick/piggieback "0.2.1"]]
-                   :source-paths ["src" "dev"]
-                   :repl-options {:init (set! *print-length* 50)
-                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}})
+  :figwheel {:css-dirs ["resources/public/css"]})
