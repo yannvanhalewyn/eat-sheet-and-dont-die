@@ -4,6 +4,7 @@
 
 (def style
   {:chord {:font-family "NashvillechordSymbols"
+           :cursor "pointer"
            :font-size "1.4em"}
    :extension {:font-size "0.7em"
                :position "relative"
@@ -26,7 +27,7 @@
 (defn displayed-chord
   "A displayable formatted chord"
   [props]
-  [:span {:style (:chord style)}
+  [:span {:style (:chord style) :on-click (:on-click props)}
    [:span (base props)]
    [:span {:style (:extension style)} (extension props)]])
 

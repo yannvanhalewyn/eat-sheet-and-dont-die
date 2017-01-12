@@ -1,26 +1,38 @@
 (ns cards.chord
-  (:require [reagent.core :as reagent]
+  (:require [cards.util :refer [alert]]
             [sheet-bucket.components.chord :refer [displayed-chord editable-chord]])
   (:require-macros [devcards.core :refer [defcard-doc]]
                    [cards.core :refer [defcard-with-props]]))
 
-(defcard-doc "# Editable Chord")
+(defcard-doc
+  "# Chords"
+  "Chords are one of the main components in Sheet Bucket. Without
+  them, the music would not be heard.")
 
 ;; Editing
-(defcard-with-props Focused
+(defcard-doc
+  "## Editable Chords"
+  "These are the chord input fields that the user can use to edit a
+  chord. It should launch an alert when focus is lost (eg: user
+  stopped editing)")
+
+(defcard-with-props Editable
   "This chord should be focused on page load."
   [editable-chord {:text "a-maj"}])
 
 (defcard-doc
-  "# Display Chord
-## Example props"
-  {:root "G" :triad :major :seventh :minor :nineth :major}
-  "## An editable chord"
-  {:focused true :chord-text "abc"})
+  "## Display Chord"
+  "This is a chord in it's rest state. This is what the user will see
+  when it's not editing the chord.")
+
+(defcard-with-props Major
+  "Clicking the chord should launch an alert"
+  [displayed-chord {:root "A" :on-click (alert "click")}])
 
 ;; Triads
-(defcard-with-props Major [displayed-chord {:root "a"}])
-(defcard-with-props Minor [displayed-chord {:root "b" :triad :minor}])
+(defcard-with-props Minor
+  "Note: root is case-insensitive"
+  [displayed-chord {:root "b" :triad :minor}])
 
 ;; Sevenths
 (defcard-with-props Seventh

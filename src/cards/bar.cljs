@@ -6,7 +6,11 @@
 (defn- bar [props]
   (reagent/as-element (bar/component props)))
 
-(defcard "**ExampleProps**" {:chords [{:root "a"} {:root "c" :triad :minor}]})
+(defcard-doc
+  "# Bar"
+  "Represents a bar, or a line measure of multiple chords"
+  "## example props"
+  {:chords [{:root "a"} {:root "c" :triad :minor}]})
 
 (defcard SingleChord (bar {:chords [{:root "a"}]}))
 (defcard TwoChords (bar {:chords [{:root "a"} {:root "c" :triad :minor}]}))
