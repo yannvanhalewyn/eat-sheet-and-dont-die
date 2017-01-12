@@ -23,26 +23,20 @@
   (str (if (not nineth) (case seventh :minor "7" :major "y" ""))
        (case nineth :minor "9" :major "y9" "")))
 
-(defn- chord-show
+(defn displayed-chord
   "A displayable formatted chord"
   [props]
   [:span {:style (:chord style)}
    [:span (base props)]
    [:span {:style (:extension style)} (extension props)]])
 
-(defn- chord-edit
+(defn editable-chord
   "An input box for editing a chord"
   []
   (reagent/create-class
    {:component-did-mount
-    (fn [this] (.focus (.findDOMNode js/ReactDOM this)))
+    (fn [this] (.focus (reagent/dom-node this)))
     :reagent-render
     (fn [props]
       [:input {:type "text"
-               :default-value (:chord-text props)}])}))
-
-(defn component [props]
-  (if (:focused props)
-    [chord-edit props]
-    [chord-show props]))
-
+               :default-value (:text props)}])}))
