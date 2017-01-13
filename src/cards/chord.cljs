@@ -28,35 +28,35 @@
 
 (defcard-props Major
   "Clicking the chord should launch an alert"
-  [displayed-chord {:root "A" :on-click (alert "click")}])
+  [displayed-chord {:root :a :on-click (alert "click")}])
 
 ;; Triads
 (defcard-props Minor
   "Note: root is case-insensitive"
-  [displayed-chord {:root "b" :triad :minor}])
+  [displayed-chord {:root :b :triad :minor}])
 
 ;; Sevenths
 (defcard-props Seventh
-  [displayed-chord {:root "C" :triad :major :seventh :minor}])
+  [displayed-chord {:root :c :triad :major :seventh :minor}])
 
 (defcard-props Minor-Seventh
-  [displayed-chord {:root "D" :triad :minor :seventh :minor}])
+  [displayed-chord {:root :d :triad :minor :seventh :minor}])
 
 (defcard-props Major-Seventh
-  [displayed-chord {:root "E" :triad :major :seventh :major}])
+  [displayed-chord {:root :e :triad :major :seventh :major}])
 
 (defcard-props Major-Seventh
-  [displayed-chord {:root "E" :triad :major :seventh :major}])
+  [displayed-chord {:root :e :triad :major :seventh :major}])
 
 (defcard-props Minor-Major-Seventh
-  [displayed-chord {:root "E" :triad :minor :seventh :major}])
+  [displayed-chord {:root :e :triad :minor :seventh :major}])
 
 ;; Nineths
 (defcard-props Nineth
-  [displayed-chord {:root "F" :triad :major :seventh :minor :nineth :minor}])
+  [displayed-chord {:root :f :triad :major :seventh :minor :nineth :minor}])
 
 (defcard-props Minor-Nineth
-  [displayed-chord {:root "F" :triad :minor :seventh :minor :nineth :minor}])
+  [displayed-chord {:root :f :triad :minor :seventh :minor :nineth :minor}])
 
 (defcard-props Major-Nineth
-  [displayed-chord {:root "G" :triad :major :seventh :minor :nineth :major}])
+  [displayed-chord {:root :g :triad :major :seventh :minor :nineth :major}])

@@ -14,7 +14,7 @@
   "Returns a string suitable for the chord symbols font for the base
   root and triad"
   [{:keys [root triad]}]
-  (str (str/upper-case root)
+  (str (str/upper-case (name root))
        (when (= :minor triad) "-")))
 
 (defn- extension

@@ -15,6 +15,7 @@
   :profiles {:dev {:dependencies [[devcards "0.2.2"]
                                   [binaryage/devtools "0.8.3"]
                                   [figwheel-sidecar "0.5.3-1"]
+                                  [org.clojure/test.check "0.9.0"] ;; For cljs.spec
                                   [com.cemerick/piggieback "0.2.1"]]
                    :source-paths ["src" "dev"]
                    :repl-options {:init (set! *print-length* 50)
