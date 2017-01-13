@@ -29,5 +29,10 @@
   "It should show an alert on click"
   [component {:chords chords :on-chord-click js/alert}])
 
+(def on-chord-update #(js/alert (str %1 " got updated with " %2)))
 (defcard-props With-selected-chord
-  [component {:chords chords :selected "chord-2"}])
+  "Blurring the edit field should fire an alert with the bar id and
+  the current value"
+  [component {:chords chords
+              :selected "chord-2"
+              :on-chord-update on-chord-update}])

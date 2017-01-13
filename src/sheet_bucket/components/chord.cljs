@@ -38,6 +38,7 @@
    {:component-did-mount
     (fn [this] (.focus (reagent/dom-node this)))
     :reagent-render
-    (fn [props]
+    (fn [{:keys [on-blur] :as props}]
       [:input {:type "text"
+               :on-blur #(on-blur (.. % -target -value))
                :default-value (:text props)}])}))
