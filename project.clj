@@ -34,9 +34,9 @@
                         :source-paths ["src"]
                         :figwheel {:devcards true}
                         :compiler {:main cards.core
-                                   :asset-path "js/compiled/cards_out"
-                                   :output-to "resources/public/js/compiled/cards.js"
-                                   :output-dir "resources/public/js/compiled/cards_out"}}
+                                   :asset-path "js/compiled/cards-out"
+                                   :output-to "resources/public/js/cards.js"
+                                   :output-dir "resources/public/js/compiled/cards-out"}}
 
                        {:id "dev"
                         :source-paths ["src"]
@@ -47,7 +47,7 @@
                                    ;; for the compiled resources
                                    :asset-path "js/compiled/out"
                                    ;; The outputted main bundle
-                                   :output-to "resources/public/js/compiled/sheet_bucket.js"
+                                   :output-to "resources/public/js/sheet-bucket.js"
                                    ;; Where to compile assets needed for
                                    ;; the development bundle, required by
                                    ;; :asset-path
@@ -57,14 +57,14 @@
                         :source-paths ["src" "test" "env/test"]
                         :figwheel true
                         :compiler {:main sheet-bucket.test-runner
-                                   :asset-path "js/compiled/test_out"
+                                   :asset-path "js/compiled/test-out"
                                    :output-to "resources/public/js/test.js"
-                                   :output-dir "resources/public/js/compiled/test_out"
+                                   :output-dir "resources/public/js/compiled/test-out"
                                    :optimizations :none}}
 
                        {:id "min"
                         :source-paths ["src"]
-                        :compiler {:output-to "resources/public/js/compiled/sheet_bucket.js"
+                        :compiler {:output-to "resources/public/js/sheet-bucket.js"
                                    :main sheet-bucket.core
                                    :optimizations :advanced
                                    :pretty-print false}}]}
