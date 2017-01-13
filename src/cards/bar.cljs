@@ -6,7 +6,7 @@
 
 (def chords
   [{:id "chord-1" :root "a"}
-   {:id "chord-2" :root "c" :triad :minor}
+   {:id "chord-2" :root "c" :triad :minor :raw "c"}
    {:id "chord-3" :root "E"}
    {:id "chord-4" :root "c" :triad :minor}])
 
@@ -17,16 +17,17 @@
   chords)
 
 (defcard-props SingleChord
-  [component {:chords [{:root "a"}]}])
+  [component {:chords [{:id 1 :root "a"}]}])
 
 (defcard-props TwoChords
-  [component {:chords [{:root "a"} {:root "c" :triad :minor}]}])
+  [component {:chords [{:id 1 :root "a"} {:id 2 :root "c" :triad :minor}]}])
 
 (defcard-rg ThreeChords
   [component {:chords (take 3 chords)}])
 
 (defcard-rg FourChords
-  [component {:chords chords}])
+  "It should show an alert on click"
+  [component {:chords chords :on-chord-click js/alert}])
 
-(defcard-props With-current-chord
-  [component {:chords chords}])
+(defcard-props With-selected-chord
+  [component {:chords chords :selected "chord-2"}])
