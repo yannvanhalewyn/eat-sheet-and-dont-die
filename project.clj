@@ -28,7 +28,9 @@
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
 
-  :cljsbuild {:builds [{:id "devcards"
+  :aliases {"dev" ["figwheel" "dev" "cards"]}
+
+  :cljsbuild {:builds [{:id "cards"
                         :source-paths ["src"]
                         :figwheel {:devcards true}
                         :compiler {:main cards.core

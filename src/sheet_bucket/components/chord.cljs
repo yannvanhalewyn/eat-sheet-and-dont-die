@@ -28,8 +28,10 @@
   "A displayable formatted chord"
   [props]
   [:span {:style (:chord style) :on-click (:on-click props)}
-   [:span (base props)]
-   [:span {:style (:extension style)} (extension props)]])
+   (if (:root props)
+     [:span
+      [:span (base props)]
+      [:span {:style (:extension style)} (extension props)]])])
 
 (defn editable-chord
   "An input box for editing a chord"

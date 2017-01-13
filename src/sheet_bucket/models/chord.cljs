@@ -17,8 +17,8 @@
 (s/def ::triad min-maj?)
 (s/def ::seventh min-maj?)
 (s/def ::extension #{:nineth :thirteenth})
-(s/def ::chord (s/keys :req-un [::root ::id]
-                       :opt-un [::triad ::seventh ::extension]))
+(s/def ::chord (s/keys :req-un [::id]
+                       :opt-un [::root ::triad ::seventh ::extension]))
 
 (s/def ::bar (s/coll-of ::chord :max-count 4 :min-count 1))
 (s/def ::row (s/coll-of ::bar :max-count 6 :min-count 1))

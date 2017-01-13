@@ -60,3 +60,7 @@
 
 (defcard-props Major-Nineth
   [displayed-chord {:root :g :triad :major :seventh :minor :nineth :major}])
+
+(defcard-props No-root
+  "Should not display anything"
+  [displayed-chord {:root nil :triad :major :seventh :minor :nineth :major}])
