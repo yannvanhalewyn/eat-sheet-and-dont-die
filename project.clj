@@ -28,7 +28,7 @@
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
 
-  :aliases {"dev" ["figwheel" "dev" "cards"]}
+  :aliases {"dev" ["figwheel" "dev" "cards" "test"]}
 
   :cljsbuild {:builds [{:id "cards"
                         :source-paths ["src"]
@@ -52,6 +52,15 @@
                                    ;; the development bundle, required by
                                    ;; :asset-path
                                    :output-dir "resources/public/js/compiled/out"}}
+
+                       {:id "test"
+                        :source-paths ["src" "test" "env/test"]
+                        :figwheel true
+                        :compiler {:main sheet-bucket.test-runner
+                                   :asset-path "js/compiled/test_out"
+                                   :output-to "resources/public/js/test.js"
+                                   :output-dir "resources/public/js/compiled/test_out"
+                                   :optimizations :none}}
 
                        {:id "min"
                         :source-paths ["src"]
