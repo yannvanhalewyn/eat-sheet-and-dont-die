@@ -40,5 +40,6 @@
     :reagent-render
     (fn [{:keys [on-blur] :as props}]
       [:input {:type "text"
+               :style {:width "100%"}
                :on-blur #(on-blur (.. % -target -value))
                :default-value (:text props)}])}))

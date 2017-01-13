@@ -21,7 +21,7 @@
                    :repl-options {:init (set! *print-length* 50)
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
 
-  :plugins [[lein-figwheel "0.5.3-1"]
+  :plugins [[lein-figwheel "0.5.8"]
             [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
 
   :source-paths ["src"]

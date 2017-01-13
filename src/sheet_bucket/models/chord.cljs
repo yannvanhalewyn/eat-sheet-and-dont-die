@@ -3,9 +3,12 @@
             [clojure.test.check.generators]
             [cljs.spec.impl.gen :as gen]))
 
-(def rand-chars (repeatedly #(.toString (rand-int 16) 16)))
-(def rand-str #(clojure.string/join (take % rand-chars)))
+(defn rand-str [n]
+  (clojure.string/join
+   (take n (repeatedly #(.toString (rand-int 16) 16)))))
+
 (def gen-id #(->> (s/gen string?) (gen/fmap (partial rand-str 5))))
+
 (def min-maj? #{:minor :major})
 
 (s/def ::id (s/spec (s/and string? #(= 5 (count %)))
@@ -17,4 +20,9 @@
 (s/def ::chord (s/keys :req-un [::root ::id]
                        :opt-un [::triad ::seventh ::extension]))
 
+(s/def ::bar (s/coll-of ::chord :max-count 4 :min-count 1))
+(s/def ::row (s/coll-of ::bar :max-count 6 :min-count 1))
+
 (def gen #(gen/sample (s/gen ::chord) %))
+
+(def gen-row #(gen/sample (s/gen ::row) %))

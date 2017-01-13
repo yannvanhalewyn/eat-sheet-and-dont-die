@@ -2,6 +2,7 @@
   (:require [reagent.core :as reagent]
             [devtools.core :as devtools]
             [cards.chord]
+            [cards.section]
             [cards.bar]))
 
 (defonce run-once
