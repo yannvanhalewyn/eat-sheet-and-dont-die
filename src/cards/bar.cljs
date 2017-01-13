@@ -28,10 +28,10 @@
   "It should show an alert on click"
   [component {:chords chords-4 :on-chord-click js/alert}])
 
-(def on-chord-update #(js/alert (str %1 " got updated with " %2)))
+(defn on-chord-update [id new-val] (.log js/console (str "Update - id: " id ", value: " new-val)))
 (defcard-props With-selected-chord
-  "Blurring the edit field should fire an alert with the bar id and
-  the current value"
+  "Blurring the edit field should log out the bar id and the current
+  value in the console."
   [component {:chords chords
               :selected (:id (second chords))
               :on-chord-update on-chord-update}])

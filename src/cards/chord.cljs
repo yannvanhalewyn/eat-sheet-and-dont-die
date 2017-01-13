@@ -17,9 +17,9 @@
   stopped editing)")
 
 (defcard-props Editable
-  "This chord should be focused on page load.\n
-   Blurring this field should alert the message with the current input's value"
-  [editable-chord {:text "a-maj" :on-blur js/alert}])
+  "This chord should be focused on page load. Blurring this field
+  should log the message with the current input's value"
+  [editable-chord {:text "a-maj" :on-blur (.-log js/console)}])
 
 (defcard-doc
   "## Display Chord"

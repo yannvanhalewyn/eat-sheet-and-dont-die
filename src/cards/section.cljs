@@ -14,16 +14,17 @@
    :rows (cons (take 1 rows) [["..."]])
    :on-chord-click 'click-fn
    :on-chord-update 'update-fn
-   :selected (-> rows first second first)})
+   :selected (-> rows first second first :id)})
 
 (defcard-props base
   "Should launch an alert with the chord ID on click"
   [subject/component
    {:name "Intro" :rows rows :on-chord-click js/alert}])
 
-(def on-chord-update #(js/alert (str %1 " with " %2)))
+(defn on-chord-update [id new-val] (.log js/console (str "Update - id: " id ", value: " new-val)))
 (defcard-props with-current-chord
-  "Should display the first chord of the second bar as editable (if there)"
+  "Should display the first chord of the second bar as editable (if
+  there). Should log out id and new value in console."
   [subject/component {:name "Intro"
                       :rows rows
                       :selected (-> rows first second first :id)
