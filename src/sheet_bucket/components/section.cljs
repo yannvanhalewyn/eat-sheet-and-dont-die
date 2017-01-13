@@ -4,16 +4,11 @@
 
 (defn row-component [{:keys [bars]}]
   [:div.row {:style {:margin-bottom "10px" :white-space :nowrap}}
-   (doall
-    (map-indexed
-     (fn [i bar] ^{:key i} [bar/component {:chords bar}])
-     bars))])
+   (fori [i bar bars]
+     ^{:key i} [bar/component {:chords bar}])])
 
 (defn component [{:keys [name rows]}]
   [:div.section
    [:h3 name]
-   (doall
-    (map-indexed
-     (fn [i row]
-       ^{:key (gensym)} [row-component {:bars row}])
-     rows))])
+   (fori [i row rows]
+     ^{:key i} [row-component {:bars row}])])
