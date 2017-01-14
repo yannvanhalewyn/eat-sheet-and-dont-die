@@ -5,7 +5,7 @@
 (def style
   {:chord {:font-family "NashvillechordSymbols"
            :cursor "pointer"
-           :font-size "1.4em"}
+           :font-size "1.7em"}
    :extension {:font-size "0.7em"
                :position "relative"
                :bottom "9px" :left "3px"}})
@@ -13,8 +13,9 @@
 (defn- base
   "Returns a string suitable for the chord symbols font for the base
   root and triad"
-  [{:keys [root triad]}]
-  (str (str/upper-case (name root))
+  [{[root accidental] :root triad :triad}]
+  (str (str/upper-case root)
+       (condp = accidental :flat "@" :sharp "#" "")
        (when (= :minor triad) "-")))
 
 (defn- extension
@@ -26,7 +27,7 @@
 
 (defn displayed-chord
   "A displayable formatted chord"
-  [props]
+  [{[root accidental] :root :as props}]
   [:span {:style (:chord style) :on-click (:on-click props)}
    (if (:root props)
      [:span
