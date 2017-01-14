@@ -49,6 +49,7 @@
   (test/inc-report-counter! :fail)
   (let [expected (second (:expected m))
         actual (-> (:actual m) last last)]
+    (if message (info "MESSAGE" message))
     (info "EXPECTED" expected)
     (info "ACTUAL" actual)))
 
