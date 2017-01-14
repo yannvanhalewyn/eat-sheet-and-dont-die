@@ -20,7 +20,7 @@
 (s/def ::root (s/tuple root-val? (s/or :nil nil? :accidental accidental?)))
 (s/def ::triad #{:minor :major :augmented :diminished})
 (s/def ::seventh #{:minor :major})
-(s/def ::extension #{:nineth :thirteenth})
+(s/def ::extension #{:ninth :thirteenth})
 (s/def ::chord (s/keys :req-un [::id]
                        :opt-un [::root ::triad ::seventh ::extension]))
 

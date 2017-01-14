@@ -21,9 +21,9 @@
 (defn- extension
   "Returns a string suitable for our chord symbols font for the
   extension"
-  [{:keys [root triad seventh nineth]}]
-  (str (if (not nineth) (case seventh :minor "7" :major "y" ""))
-       (case nineth :minor "9" :major "y9" "")))
+  [{:keys [root triad seventh ninth]}]
+  (str (if (not ninth) (case seventh :minor "7" :major "y" ""))
+       (case ninth :minor "9" :major "y9" "")))
 
 (defn displayed-chord
   "A displayable formatted chord"

@@ -73,19 +73,19 @@
 (defcard-props Minor-Major-Seventh
   [displayed-chord {:root ["1"] :triad :minor :seventh :major}])
 
-;; Nineths
-(defcard-props Nineth
-  [displayed-chord {:root ["F" :sharp] :triad :major :seventh :minor :nineth :minor}])
+;; Ninths
+(defcard-props Ninth
+  [displayed-chord {:root ["F" :sharp] :triad :major :seventh :minor :ninth :minor}])
 
-(defcard-props Minor-Nineth
-  [displayed-chord {:root ["5"] :triad :minor :seventh :minor :nineth :minor}])
+(defcard-props Minor-Ninth
+  [displayed-chord {:root ["5"] :triad :minor :seventh :minor :ninth :minor}])
 
-(defcard-props Major-Nineth
-  [displayed-chord {:root ["3" :flat] :triad :major :seventh :minor :nineth :major}])
+(defcard-props Major-Ninth
+  [displayed-chord {:root ["3" :flat] :triad :major :seventh :minor :ninth :major}])
 
 (defcard-props No-root
   "Should not display anything"
-  [displayed-chord {:root nil :triad :major :seventh :minor :nineth :major}])
+  [displayed-chord {:root nil :triad :major :seventh :minor :ninth :major}])
 
 (defonce state (r/atom {:editing true :value "Am"}))
 (defcard-rg try-out-box
