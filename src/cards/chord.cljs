@@ -91,7 +91,6 @@
 (defcard-rg try-out-box
   "Enter raw chords here to test out the chord parser"
   (fn []
-    (.log js/console (:value @state))
     (if (:editing @state)
       [editable-chord {:text (:value @state) :on-blur #(reset! state {:editing false :value %})}]
       [displayed-chord (assoc (parse (:value @state))

@@ -7,14 +7,15 @@
             "A" "B" "C" "D" "E" "F" "G"
             "1" "2" "3" "4" "5" "6" "7"])
 
-(defn check [[root triad seventh] raw]
+(defn check [[root triad seventh ninth] raw]
   (let [result (parse raw)
         run #(is (= %1 (%2 result))
                  (format "%s - expected %s from %s, got: %s"
                          (name %2) %1 raw (%2 result)))]
     (run root :root)
     (run triad :triad)
-    (run seventh :seventh)))
+    (run seventh :seventh)
+    (run ninth :ninth)))
 
 (deftest roots-test
   (every? #(check [[%] :major] %) roots)
@@ -42,3 +43,7 @@
   (check [["D" :flat] :minor :major] "Dbminmaj7")
   (check [["F" :flat] :minor :major] "FbminMaj7")
   (check [["C"] :minor :major] "C-maj7"))
+
+(deftest ninths
+  (check [["B"] :major :minor :natural] "B9")
+  (check [["C"] :minor :major :natural] "C-maj9"))
