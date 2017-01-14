@@ -30,9 +30,11 @@
 
 (def gen-row #(gen/sample (s/gen ::row) %))
 
-(def root-regx (str "([#b])?([a-gA-G1-7])([#b])?"))
-(def triad-regx (str "m(?!aj)|-|aug|\\+") ) ;; Negative lookahead for 'm' that is not part of 'maj'
-(def seventh-regx (str "7|maj"))
+;; Negative lookahead for ending accidental that are part of "b5", like Eb5 -> root = E
+(def root-regx (str "([#b])?([a-gA-G1-7])([#b])?(?!5)"))
+;; Negative lookahead for 'm' that is not part of 'maj'
+(def triad-regx (str "min|m(?!aj)|-|aug|\\+|b5"))
+(def seventh-regx (str "7|maj|Maj"))
 (def chord-regex (re-pattern (format "%s(%s)?(%s)?"
                                      root-regx triad-regx seventh-regx)))
 
@@ -48,10 +50,11 @@
              [_ root "#"] [root :sharp]
              :else [root])
      :triad (match triad
-              (:or "m" "-") :minor
+              (:or "m" "min" "-") :minor
               (:or "aug" "+") :augmented
+              "b5" :diminished
               :else :major)
      :seventh (match seventh
                 "7" :minor
-                "maj" :major
+                (:or "maj" "Maj") :major
                 :else nil)}))
