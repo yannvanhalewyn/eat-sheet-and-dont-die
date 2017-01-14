@@ -1,7 +1,8 @@
 (ns cards.chord
   (:require [cards.util :refer [alert]]
-            [sheet-bucket.models.chord :refer [root-val?]]
-            [sheet-bucket.components.chord :refer [displayed-chord editable-chord]])
+            [sheet-bucket.models.chord :refer [parse]]
+            [sheet-bucket.components.chord :refer [displayed-chord editable-chord]]
+            [reagent.core :as r])
   (:require-macros [devcards.core :refer [defcard-doc defcard-rg]]
                    [cards.core :refer [defcard-props]]))
 
@@ -85,3 +86,14 @@
 (defcard-props No-root
   "Should not display anything"
   [displayed-chord {:root nil :triad :major :seventh :minor :nineth :major}])
+
+(defonce state (r/atom {:editing true :value "Am"}))
+(defcard-rg try-out-box
+  "Enter raw chords here to test out the chord parser"
+  (fn []
+    (.log js/console (:value @state))
+    (if (:editing @state)
+      [editable-chord {:text (:value @state) :on-blur #(reset! state {:editing false :value %})}]
+      [displayed-chord (assoc (parse (:value @state))
+                              :on-click #(swap! state assoc :editing true))]))
+  state)
