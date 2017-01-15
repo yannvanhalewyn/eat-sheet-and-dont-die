@@ -1,5 +1,6 @@
 (ns cards.bar
   (:require [reagent.core :as reagent]
+            [cards.util :as util :refer [unparse-chord]]
             [sheet-bucket.components.bar :refer [component]]
             [sheet-bucket.models.chord :as chord]
             [sheet-bucket.util.util :refer [gen]])
@@ -7,16 +8,17 @@
                    [devcards.core :as dc :refer [defcard-doc defcard-rg]]))
 
 (defn gen-with-root [n]
-  (map #(assoc % :root (first (gen ::chord/root 1))) (chord/gen n)))
+  (map #(unparse-chord (assoc % :root (first (gen ::chord/root 1))))
+       (chord/gen n)))
 
 (defcard-doc
   "# Bar"
   "Represents a bar, or a line measure of multiple chords"
   "## Props"
-  (take 2 (chord/gen 4)))
+  (take 2 (gen-with-root 4)))
 
 (defcard-props SingleChord
-  [component {:chords [{:id 1 :root "a"}]}])
+  [component {:chords [{:id 1 :raw "a"}]}])
 
 (defonce chords (gen-with-root 2))
 (defcard-rg TwoChords

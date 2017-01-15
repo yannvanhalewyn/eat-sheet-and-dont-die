@@ -1,17 +1,20 @@
 (ns cards.section
-  (:require [sheet-bucket.components.section :as subject]
+  (:require [cards.util :refer [unparse-chord]]
+            [sheet-bucket.components.section :as subject]
             [sheet-bucket.models.chord :refer [gen-row]])
   (:require-macros [devcards.core :refer [defcard-rg defcard-doc]]
                    [cards.core :refer [defcard-props]]))
 
-(defonce rows (gen-row 6))
+(defonce rows
+  (for [row (gen-row 6)]
+    (for [bar row] (map unparse-chord bar))))
 
 (defcard-doc
   "# Section"
   "Section has rows of bars bla bla"
   "## Sample props"
   {:name "Section Name"
-   :rows (cons (take 1 rows) [["..."]])
+   :rows rows
    :on-chord-click 'click-fn
    :on-chord-update 'update-fn
    :selected (-> rows first second first :id)})
