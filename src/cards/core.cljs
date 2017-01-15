@@ -3,7 +3,8 @@
             [devtools.core :as devtools]
             [cards.chord]
             [cards.section]
-            [cards.bar]))
+            [cards.bar]
+            [cards.sheet]))
 
 (defonce run-once
   (do

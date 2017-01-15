@@ -20,3 +20,6 @@
 (defn unparse-rows [rows]
   (for [row rows]
     (for [bar row] (map unparse-chord bar))))
+
+(defn unparse-sections [sections]
+  (map #(update % :rows unparse-rows) sections))

@@ -33,4 +33,5 @@
 (s/def ::section (s/keys :req-un [::rows ::name]))
 (s/def ::sections (s/coll-of ::section :max-count 6 :min-count 1))
 (s/def ::title (s/spec string? :gen #(s/gen #{"Whole lotta love" "Breathe" "Lean on me"})))
-(s/def ::sheet (s/keys :req-un [::title ::sections]))
+(s/def ::artist (s/spec string? :gen #(s/gen #{"Led Zeppelin" "Pink Floyd" "Bill Withers"})))
+(s/def ::sheet (s/keys :req-un [::title ::artist ::sections]))
