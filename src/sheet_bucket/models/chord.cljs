@@ -45,12 +45,13 @@
   [s]
   (let [result (rest (re-find chord-regex s))
         [_ root _ triad extension seventh ninth] result]
-    {:root (match (vec (take 3 result))
-             ["b" root _] [root :flat]
-             ["#" root _] [root :sharp]
-             [_ root "b"] [root :flat]
-             [_ root "#"] [root :sharp]
-             :else [root])
+    {:root (when root
+             (match (vec (take 3 result))
+               ["b" root _] [root :flat]
+               ["#" root _] [root :sharp]
+               [_ root "b"] [root :flat]
+               [_ root "#"] [root :sharp]
+               :else [root]))
      :triad (match triad
               (:or "m" "min" "-") :minor
               (:or "aug" "+" "#5") :augmented

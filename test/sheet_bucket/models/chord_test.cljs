@@ -13,10 +13,9 @@
                  (format "%s - expected %s from %s, got: %s"
                          (name %2) %1 raw (%2 result)))]
     (run root :root)
-    (run triad :triad)
+    (run (or triad :major) :triad)
     (run seventh :seventh)
     (run ninth :ninth)))
-
 (deftest roots-test
   (every? #(check [[%] :major] %) roots)
   (every? #(check [[% :flat] :major] (str "b" %)) roots)
@@ -50,3 +49,6 @@
   (check [["C"] :minor :major :natural] "C-maj9")
   (check [["D"] :major :minor :sharp] "D7#9")
   (check [["D"] :major :minor :flat] "D7b9"))
+
+(deftest edges
+  (check [nil] ""))
