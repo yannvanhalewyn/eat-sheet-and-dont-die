@@ -35,7 +35,7 @@
 ;; Negative lookahead for ending accidental that are part of "b5", like Eb5 -> root = E
 (def root-regx (str "([#b])?([a-gA-G1-7])([#b])?(?!5)"))
 ;; Negative lookahead for 'm' that is not part of 'maj'
-(def triad-regx (str "min|m(?!aj)|-|aug|\\+|b5"))
+(def triad-regx (str "min|m(?!aj)|-|aug|\\+|#5|b5"))
 (def extension-regx (str "(7|maj|Maj)?9?"))
 (def chord-regex (re-pattern (format "%s(%s)?(%s)?"
                                      root-regx triad-regx extension-regx)))
@@ -53,7 +53,7 @@
              :else [root])
      :triad (match triad
               (:or "m" "min" "-") :minor
-              (:or "aug" "+") :augmented
+              (:or "aug" "+" "#5") :augmented
               "b5" :diminished
               :else :major)
      :seventh (match extension

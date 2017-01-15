@@ -30,6 +30,7 @@
   (check [["c"] :minor] "cmin")
   (check [["d"] :augmented] "daug")
   (check [["e"] :augmented] "e+")
+  (check [["e"] :augmented] "e#5")
   (check [["B" :flat] :diminished] "Bbb5")
   (check [["B"] :diminished] "Bb5"))
 

@@ -22,7 +22,8 @@
   "Returns a string suitable for our chord symbols font for the
   extension"
   [{:keys [root triad seventh ninth]}]
-  (str (when (= seventh :major) "y")
+  (str (when (= triad :augmented) "+")
+       (when (= seventh :major) "y")
        (when (and seventh (not ninth)) "7")
        (case ninth :natural "9" "")))
 
