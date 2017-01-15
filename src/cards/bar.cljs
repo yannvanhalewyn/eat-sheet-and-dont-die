@@ -2,14 +2,14 @@
   (:require [reagent.core :as reagent]
             [cards.util :as util :refer [unparse-chord]]
             [sheet-bucket.components.bar :refer [component]]
-            [sheet-bucket.models.chord :as chord]
+            [sheet-bucket.specs.editor :as specs]
             [sheet-bucket.util.util :refer [gen]])
   (:require-macros [cards.core :refer [defcard-props]]
                    [devcards.core :as dc :refer [defcard-doc defcard-rg]]))
 
 (defn gen-with-root [n]
-  (map #(unparse-chord (assoc % :root (first (gen ::chord/root 1))))
-       (chord/gen n)))
+  (map #(unparse-chord (assoc % :root (first (gen ::specs/root 1))))
+       (gen ::specs/chord n)))
 
 (defcard-doc
   "# Bar"

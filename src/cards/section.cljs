@@ -1,34 +1,35 @@
 (ns cards.section
-  (:require [cards.util :refer [unparse-chord]]
+  (:require [cards.util :refer [unparse-rows]]
             [sheet-bucket.components.section :as subject]
-            [sheet-bucket.models.chord :refer [gen-row]])
+            [sheet-bucket.util.util :refer [gen]]
+            [sheet-bucket.specs.editor :as specs])
   (:require-macros [devcards.core :refer [defcard-rg defcard-doc]]
                    [cards.core :refer [defcard-props]]))
 
-(defonce rows
-  (for [row (gen-row 6)]
-    (for [bar row] (map unparse-chord bar))))
+(defonce section
+  (-> (first (gen ::specs/section 1))
+      (update :rows unparse-rows)))
+
+(def selected (-> section :rows first second first :id))
 
 (defcard-doc
   "# Section"
   "Section has rows of bars bla bla"
   "## Sample props"
-  {:name "Section Name"
-   :rows rows
-   :on-chord-click 'click-fn
-   :on-chord-update 'update-fn
-   :selected (-> rows first second first :id)})
+  (assoc section
+         :on-chord-click 'click-fn
+         :on-chord-update 'update-fn
+         :selected selected))
 
 (defcard-props base
   "Should launch an alert with the chord ID on click"
   [subject/component
-   {:name "Intro" :rows rows :on-chord-click js/alert}])
+   (assoc section :on-chord-click js/alert)])
 
 (defn on-chord-update [id new-val] (.log js/console (str "Update - id: " id ", value: " new-val)))
 (defcard-props with-current-chord
   "Should display the first chord of the second bar as editable (if
   there). Should log out id and new value in console."
-  [subject/component {:name "Intro"
-                      :rows rows
-                      :selected (-> rows first second first :id)
-                      :on-chord-update on-chord-update}])
+  [subject/component (assoc section
+                            :selected selected
+                            :on-chord-update on-chord-update)])

@@ -1,6 +1,8 @@
 (ns cards.chord
   (:require [cards.util :refer [alert]]
-            [sheet-bucket.models.chord :refer [parse gen]]
+            [sheet-bucket.models.chord :refer [parse]]
+            [sheet-bucket.specs.editor :as specs]
+            [sheet-bucket.util.util :refer [gen]]
             [sheet-bucket.components.chord :refer [displayed-chord editable-chord]]
             [devcards.core :refer [markdown->react]]
             [reagent.core :as r])
@@ -30,7 +32,7 @@
   "This is a chord in it's rest state. This is what the user will see
   when it's not editing the chord."
   "### props"
-  (first (gen 1)))
+  (first (gen ::specs/chord 1)))
 
 (def roots ["A" "B" "C" "D" "E" "F" "G" "1" "2" "3" "4" "5" "6" "7"])
 

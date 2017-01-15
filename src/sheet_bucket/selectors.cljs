@@ -4,9 +4,4 @@
 ;; Selector
 (def section-name :name)
 (def selected :current)
-(def rows-raw :rows)
-
-(defn rows [state]
-  (for [row (rows-raw state)]
-    (for [bar row]
-      (map #(merge % (parse (:raw %))) bar))))
+(def rows :rows)

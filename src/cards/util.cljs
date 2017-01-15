@@ -16,3 +16,7 @@
          (case triad :minor "-" :augmented "+" :diminished "b5" "")
          (case seventh :major "Maj7" :minor "7" "")
          (case ninth :natural "9" :flat "b9" :sharp "#9" ""))})
+
+(defn unparse-rows [rows]
+  (for [row rows]
+    (for [bar row] (map unparse-chord bar))))
