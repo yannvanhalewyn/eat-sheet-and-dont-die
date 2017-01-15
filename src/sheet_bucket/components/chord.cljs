@@ -25,7 +25,11 @@
   (str (when (= triad :augmented) "+")
        (when (= seventh :major) "y")
        (when (and seventh (not ninth)) "7")
-       (case ninth :natural "9" "")))
+       (case ninth
+         :natural "9"
+         :sharp "#9"
+         :flat "@9"
+         "")))
 
 (defn displayed-chord
   "A displayable formatted chord"

@@ -80,7 +80,9 @@
   [:div
    [for-all-roots {:seventh :minor :ninth :natural} "Dominant ninths"]
    [for-all-roots {:seventh :major :ninth :natural} "Major ninths"]
-   [for-all-roots {:triad :minor :seventh :minor :ninth :natural} "Minor ninths"]])
+   [for-all-roots {:triad :minor :seventh :minor :ninth :natural} "Minor ninths"]
+   [for-all-roots {:ninth :sharp} "Sharp ninths"]
+   [for-all-roots {:ninth :flat} "Flat ninths"]])
 
 (defcard-props No-root
   "Should not display anything"
