@@ -41,7 +41,7 @@
 
                        {:id "dev"
                         :source-paths ["src"]
-                        :figwheel true
+                        :figwheel {:on-jsload "sheet-bucket.core/render"}
                         :compiler {:main sheet-bucket.core
                                    ;; Figwheel injects script tags for
                                    ;; development. This is the location
