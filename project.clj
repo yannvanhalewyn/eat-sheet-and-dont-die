@@ -48,7 +48,7 @@
                                    ;; for the compiled resources
                                    :asset-path "js/compiled/out"
                                    ;; The outputted main bundle
-                                   :output-to "resources/public/js/sheet-bucket.js"
+                                   :output-to "resources/public/js/app.js"
                                    ;; Where to compile assets needed for
                                    ;; the development bundle, required by
                                    ;; :asset-path
