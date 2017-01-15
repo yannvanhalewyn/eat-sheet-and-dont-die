@@ -2,7 +2,7 @@
   (:require [cljs.spec :as s]
             [cljs.core.match :refer-macros [match]]
             [clojure.test.check.generators]
-            [goog.string :refer [format contains]]
+            [goog.string :refer [format contains caseInsensitiveContains]]
             [goog.string.format]
             [cljs.spec.impl.gen :as gen]))
 
@@ -36,7 +36,7 @@
 (def root-regx (str "([#b])?([a-gA-G1-7])([#b])?(?!5)"))
 ;; Negative lookahead for 'm' that is not part of 'maj'
 (def triad-regx (str "min|m(?!aj)|-|aug|\\+|#5|b5"))
-(def extension-regx (str "(7|maj|Maj)?9?"))
+(def extension-regx (str "(7|maj|Maj)?([#b]?9)?"))
 (def chord-regex (re-pattern (format "%s(%s)?(%s)?"
                                      root-regx triad-regx extension-regx)))
 
@@ -44,7 +44,7 @@
   "Parses a raw chord string to chord data"
   [s]
   (let [result (rest (re-find chord-regex s))
-        [_ root _ triad extension] result]
+        [_ root _ triad extension seventh ninth] result]
     {:root (match (vec (take 3 result))
              ["b" root _] [root :flat]
              ["#" root _] [root :sharp]
@@ -56,8 +56,12 @@
               (:or "aug" "+" "#5") :augmented
               "b5" :diminished
               :else :major)
-     :seventh (match extension
-                (:or "7" "9") :minor
-                (:or "maj" "Maj" "maj9" "Maj9") :major
+     :seventh (cond
+                (caseInsensitiveContains (or extension "") "maj") :major
+                extension :minor
                 :else nil)
-     :ninth (when (contains (or extension "") 9) :natural)}))
+     :ninth (match ninth
+              "9" :natural
+              "b9" :flat
+              "#9" :sharp
+              :else nil)}))

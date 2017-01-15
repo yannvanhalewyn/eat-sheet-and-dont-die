@@ -47,4 +47,6 @@
 
 (deftest ninths
   (check [["B"] :major :minor :natural] "B9")
-  (check [["C"] :minor :major :natural] "C-maj9"))
+  (check [["C"] :minor :major :natural] "C-maj9")
+  (check [["D"] :major :minor :sharp] "D7#9")
+  (check [["D"] :major :minor :flat] "D7b9"))
