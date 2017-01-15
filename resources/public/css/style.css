@@ -1,2 +1,8 @@
-/* some style */
+*, *:before, *:after {
+  box-sizing: border-box
+}
 
+@font-face {
+  font-family: NashvillechordSymbols;
+  src: url(../fonts/NashvilleChordSymbols-regular.ttf)
+}
