@@ -2,10 +2,12 @@
   (:require [sheet-bucket.components.section :as section])
   (:require-macros [sheet-bucket.util.util :refer [fori]]))
 
-(defn component [{:keys [title artist sections] :as props}]
+(defn component [{{:keys [artist title]} :attrs :keys [sections] :as props}]
   [:div.sheet
    [:h1 title]
    [:h2 artist]
-   (fori [i section sections]
+   (fori [i [rows attrs] sections]
      ^{:key i} [section/component
-                (-> props (dissoc :title :artist :sections) (merge section))])])
+                (-> props
+                    (dissoc :attrs :sections)
+                    (assoc :rows rows :attrs attrs))])])

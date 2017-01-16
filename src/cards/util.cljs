@@ -17,9 +17,11 @@
          (case seventh :major "Maj7" :minor "7" "")
          (case ninth :natural "9" :flat "b9" :sharp "#9" ""))})
 
-(defn unparse-rows [rows]
-  (for [row rows]
-    (for [bar row] (map unparse-chord bar))))
+(defn unparse-bar [bar]
+  (update bar 0 #(map unparse-chord %)))
 
-(defn unparse-sections [sections]
-  (map #(update % :rows unparse-rows) sections))
+(defn unparse-row [row]
+  (update row 0 #(map unparse-bar %)))
+
+(defn unparse-section [section]
+  (update section 0 #(map unparse-row %)))

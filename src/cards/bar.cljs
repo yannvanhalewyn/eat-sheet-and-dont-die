@@ -15,7 +15,7 @@
   "# Bar"
   "Represents a bar, or a line measure of multiple chords"
   "## Props"
-  (take 2 (gen-with-root 4)))
+  {:chords (take 2 (gen-with-root 4))})
 
 (defcard-props SingleChord
   [component {:chords [{:id 1 :raw "a"}]}])

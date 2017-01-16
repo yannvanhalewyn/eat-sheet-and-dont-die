@@ -26,12 +26,13 @@
 
 ;; Sheet
 ;; =====
-(s/def ::bar (s/coll-of ::chord :max-count 4 :min-count 1))
-(s/def ::row (s/coll-of ::bar :max-count 6 :min-count 1))
-(s/def ::rows (s/coll-of ::row :max-count 6 :min-count 1))
-(s/def ::name (s/spec string? :gen #(s/gen #{"Intro" "Verse" "Chorus"})))
-(s/def ::section (s/keys :req-un [::rows ::name]))
-(s/def ::sections (s/coll-of ::section :max-count 6 :min-count 1))
-(s/def ::title (s/spec string? :gen #(s/gen #{"Whole lotta love" "Breathe" "Lean on me"})))
-(s/def ::artist (s/spec string? :gen #(s/gen #{"Led Zeppelin" "Pink Floyd" "Bill Withers"})))
-(s/def ::sheet (s/keys :req-un [::title ::artist ::sections]))
+(s/def :section/name (s/spec string? :gen #(s/gen #{"Intro" "Verse" "Chorus"})))
+(s/def :sheet/title (s/spec string? :gen #(s/gen #{"Whole lotta love" "Breathe" "Lean on me"})))
+(s/def :sheet/artist (s/spec string? :gen #(s/gen #{"Led Zeppelin" "Pink Floyd" "Bill Withers"})))
+
+(s/def ::bar (s/tuple (s/coll-of ::chord :min-count 1 :gen-max 4)))
+(s/def ::row (s/tuple (s/coll-of ::bar :min-count 1 :gen-max 4)))
+(s/def ::section (s/tuple (s/coll-of ::row :min-count 1 :gen-max 3)
+                          (s/keys :req-un [:section/name])))
+(s/def ::sheet (s/tuple (s/coll-of ::section :min-count 1 :gen-max 3)
+                        (s/keys :req-un [:sheet/title :sheet/artist])))

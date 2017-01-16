@@ -4,11 +4,15 @@
 
 (defn row-component [{:keys [bars] :as props}]
   [:div.row {:style {:margin-bottom "10px" :white-space :nowrap}}
-   (fori [i bar bars]
-     ^{:key i} [bar/component (-> props (dissoc :bars) (assoc :chords bar))])])
+   (fori [i [chords] bars]
+     ^{:key i} [bar/component (-> props
+                                  (dissoc :bars :attrs)
+                                  (assoc :chords chords))])])
 
-(defn component [{:keys [name rows] :as props}]
+(defn component [{{:keys [name]} :attrs :keys [rows] :as props}]
   [:div.section
    [:h3 name]
-   (fori [i row rows]
-     ^{:key i} [row-component (-> props (dissoc :name :rows) (assoc :bars row))])])
+   (fori [i [bars] rows]
+     ^{:key i} [row-component (-> props
+                                  (dissoc :attrs :rows)
+                                  (assoc :bars bars))])])
