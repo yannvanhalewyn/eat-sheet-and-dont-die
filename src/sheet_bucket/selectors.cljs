@@ -13,7 +13,4 @@
 
 (defselector current-loc
   [editor-zip selected]
-  (loop [loc editor-zip]
-    (if (and (not (zip/end? loc)) (= selected (:id (zip/node loc))))
-      loc
-      (recur (zip/next loc)))))
+  (sheet/navigate-to editor-zip selected))

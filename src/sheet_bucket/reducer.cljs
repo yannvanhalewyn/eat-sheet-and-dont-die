@@ -1,12 +1,5 @@
-(ns sheet-bucket.reducer)
-
-(def new-sheet
-  [[;; Sections
-    [[;; Rows
-      [[;; Bars
-        [[{:id "1" :raw "am"} {:id "2" :raw "edit-me"}]]]]]
-     {:name "Intro"}]]
-   {:title "Song name" :artist "Artist"}])
+(ns sheet-bucket.reducer
+  (:require [sheet-bucket.models.sheet :refer [new-sheet]]))
 
 (defn app [state action]
   (case (:type action)
