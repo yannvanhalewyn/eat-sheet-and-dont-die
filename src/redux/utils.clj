@@ -1,5 +1,4 @@
-(ns redux.utils
-  (:refer-clojure :exclude [defmethod]))
+(ns redux.utils)
 
 (defmacro defselector
   "Enables easier selector composition, but ultimatly only generates a simple
@@ -20,4 +19,4 @@
     ;; => \"trip1\""
   [name selectors & body]
   `(def ~name
-     (create-selector ~selectors (fn ~selectors ~@body))))
+     (redux.utils/create-selector ~selectors (fn ~selectors ~@body))))
