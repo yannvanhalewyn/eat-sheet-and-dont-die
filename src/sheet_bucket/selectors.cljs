@@ -1,16 +1,16 @@
 (ns sheet-bucket.selectors
   (:require [sheet-bucket.models.sheet :as sheet]
-            [clojure.zip :as zip]
             [redux.utils :refer-macros [defselector]]))
 
 ;; Selector
-(def sheet :sheet)
+(def sheet-raw :sheet)
 (def selected :selected)
-(defselector editor-zip [sheet] (sheet/zipper sheet))
 
-(defselector sections [sheet] (first sheet))
-(defselector attributes [sheet] (second sheet))
+(defselector sections [sheet-raw] (first sheet-raw))
+(defselector attributes [sheet-raw] (second sheet-raw))
+
+(defselector sheet [sheet-raw] (sheet/zipper sheet-raw))
 
 (defselector current-loc
-  [editor-zip selected]
-  (sheet/navigate-to editor-zip selected))
+  [sheet selected]
+  (sheet/navigate-to sheet selected))
