@@ -2,6 +2,10 @@
   (:require [sheet-bucket.models.chord :refer [parse]]))
 
 ;; Selector
-(def section-name :name)
-(def selected :current)
-(def rows :rows)
+(def sheet :sheet)
+(def selected :selected)
+
+(def sections #(-> % sheet first))
+(def attrs #(-> % sheet second))
+(def artist #(:name (attrs %)))
+(def title #(:name (attrs %)))
