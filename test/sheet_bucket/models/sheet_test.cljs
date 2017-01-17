@@ -33,50 +33,56 @@
     (is (= 2 (-> new-chord up up up up children count)))
     (is (= "2" (-> new-chord node :id)))))
 
-(defn check-move [sheet moves expected]
-  (let [land (reduce #(sheet/move %1 %2) sheet moves)]
-    (is land (str "Couldn't find element for moves: " moves))
-    (is (= expected (-> land node :id))
-        (format "Failed move test for %s. Expected: %s, got: %s"
-                moves expected (-> land node :id)))))
+
 
 (deftest move
-  ;; [1 2] 3
-  ;; 4 5
-  ;; 6
-  ;; 7 8
-  ;; --
-  ;; 9
   (let [sheet (-> test-loc
                   (append :chord "2") (append :bar "3")
                   (append :row "4") (append :bar "5")
                   (append :row "6")
                   (append :row "7") (append :bar "8")
                   (append :section "9")
-                  (navigate-to "1"))]
+                  (navigate-to "1"))
+        check (fn [moves expected]
+                (let [land (reduce #(sheet/move %1 %2) sheet moves)]
+                  (is land (str "Couldn't find element for moves: " moves))
+                  (is (= expected (-> land node :id))
+                      (format "Failed move test for %s. Expected: %s, got: %s"
+                              moves expected (-> land node :id)))))]
+    ;; Testing the moves in a sheet.
+    ;; |-----+---|
+    ;; | 1 2 | 3 |
+    ;; | 4   | 5 |
+    ;; | 6   |   |
+    ;; | 7   | 8 |
+    ;; |-----+---|
+    ;; | 9   |   |
     ;; Basics
-    (check-move sheet [:chord-right] "2")
-    (check-move sheet [:chord-right :chord-right] "2")
-    (check-move sheet [:chord-right :chord-left] "1")
-    (check-move sheet [:chord-left] "1")
+    (check [:chord-right] "2")
+    (check [:chord-right :chord-left] "1")
+    (check [:chord-left] "1")
 
-    (check-move sheet [:right] "3")
-    (check-move sheet [:down :up] "1")
-    (check-move sheet [:right :down] "5")
+    (check [:right] "3")
+    (check [:down :up] "1")
+    (check [:right :down] "5")
 
     ;; Make a little circle for sanity
-    (check-move sheet [:down] "4")
-    (check-move sheet [:down :right] "5")
-    (check-move sheet [:down :right :up] "3")
-    (check-move sheet [:down :right :up :left] "1")
+    (check [:down] "4")
+    (check [:down :right] "5")
+    (check [:down :right :up] "3")
+    (check [:down :right :up :left] "1")
 
-    ;; Wrap arounds
-    (check-move sheet [:down :left] "3")
-    (check-move sheet [:right :right] "4")
+    ;; ;; Wrap arounds
+    (check [:down :left] "3")
+    (check [:right :right] "4")
+    (check [:chord-right :chord-right] "3")
+    (check [:chord-right :chord-right :chord-right] "4")
+    (check [:right :chord-left] "2")
+    (check [:down :chord-left] "3")
 
-    ;; ;; Out of bounds
-    (check-move sheet [:down :down :down :right :right] "8")
-    (check-move sheet [:up] "1")
-    (check-move sheet [:left] "1")
-    (check-move sheet [:down :right :down] "6")
-    (check-move sheet [:down :down :down :right :up] "6")))
+    ;; Out of bounds
+    (check [:down :down :down :right :right] "8")
+    (check [:up] "1")
+    (check [:left] "1")
+    (check [:down :right :down] "6")
+    (check [:down :down :down :right :up] "6")))

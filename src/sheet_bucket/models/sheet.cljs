@@ -43,9 +43,21 @@
 
 (defn move [loc direction]
   (case direction
-    :chord-right (or (right loc) loc)
+    :chord-right (if-let [next-chord (right loc)]
+                   next-chord
+                   (if-let [next-bar (-> loc up right)]
+                     (-> next-bar down)
+                     (if-let [next-row (-> loc up up right)]
+                       (-> next-row down down)
+                       loc)))
 
-    :chord-left (or (left loc) loc)
+    :chord-left (if-let [prev-chord (left loc)]
+                  prev-chord
+                  (if-let [prev-bar (-> loc up left)]
+                    (-> prev-bar down zip/rightmost)
+                    (if-let [prev-row (-> loc up up left)]
+                      (-> prev-row down zip/rightmost down zip/rightmost)
+                      loc)))
 
     :right (if-let [next-bar (-> loc up right)]
              (down next-bar)
