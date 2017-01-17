@@ -11,6 +11,5 @@
 
 (defselector sheet [sheet-raw] (sheet/zipper sheet-raw))
 
-(defselector current-loc
-  [sheet selected]
+(defselector current-loc [sheet selected]
   (sheet/navigate-to sheet selected))

@@ -43,33 +43,33 @@
 
 (defn move [loc direction]
   (case direction
-    :chord-right (if-let [next-chord (right loc)]
-                   next-chord
-                   (if-let [next-bar (-> loc up right)]
-                     (-> next-bar down)
-                     (if-let [next-row (-> loc up up right)]
-                       (-> next-row down down)
-                       loc)))
+    :right (if-let [next-chord (right loc)]
+             next-chord
+             (if-let [next-bar (-> loc up right)]
+               (-> next-bar down)
+               (if-let [next-row (-> loc up up right)]
+                 (-> next-row down down)
+                 loc)))
 
-    :chord-left (if-let [prev-chord (left loc)]
-                  prev-chord
-                  (if-let [prev-bar (-> loc up left)]
-                    (-> prev-bar down zip/rightmost)
-                    (if-let [prev-row (-> loc up up left)]
-                      (-> prev-row down zip/rightmost down zip/rightmost)
-                      loc)))
+    :left (if-let [prev-chord (left loc)]
+            prev-chord
+            (if-let [prev-bar (-> loc up left)]
+              (-> prev-bar down zip/rightmost)
+              (if-let [prev-row (-> loc up up left)]
+                (-> prev-row down zip/rightmost down zip/rightmost)
+                loc)))
 
-    :right (if-let [next-bar (-> loc up right)]
-             (down next-bar)
-             (if-let [next-row (-> loc up up right)]
-               (-> next-row down down)
-               loc))
+    :bar-right (if-let [next-bar (-> loc up right)]
+                 (down next-bar)
+                 (if-let [next-row (-> loc up up right)]
+                   (-> next-row down down)
+                   loc))
 
-    :left (if-let [prev-bar (-> loc up left)]
-            (down prev-bar)
-            (if-let [prev-row (-> loc up up left)]
-              (-> prev-row down zip/rightmost down)
-              loc))
+    :bar-left (if-let [prev-bar (-> loc up left)]
+                (down prev-bar)
+                (if-let [prev-row (-> loc up up left)]
+                  (-> prev-row down zip/rightmost down)
+                  loc))
 
     :up (let [pos (-> loc up lefts count)]
           (if-let [up-row (-> loc up up left)]

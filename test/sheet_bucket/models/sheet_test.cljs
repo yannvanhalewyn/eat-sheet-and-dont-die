@@ -58,31 +58,31 @@
     ;; |-----+---|
     ;; | 9   |   |
     ;; Basics
-    (check [:chord-right] "2")
-    (check [:chord-right :chord-left] "1")
-    (check [:chord-left] "1")
+    (check [:right] "2")
+    (check [:right :left] "1")
+    (check [:left] "1")
 
-    (check [:right] "3")
+    (check [:bar-right] "3")
     (check [:down :up] "1")
-    (check [:right :down] "5")
+    (check [:bar-right :down] "5")
 
     ;; Make a little circle for sanity
     (check [:down] "4")
-    (check [:down :right] "5")
-    (check [:down :right :up] "3")
-    (check [:down :right :up :left] "1")
+    (check [:down :bar-right] "5")
+    (check [:down :bar-right :up] "3")
+    (check [:down :bar-right :up :bar-left] "1")
 
     ;; ;; Wrap arounds
+    (check [:down :bar-left] "3")
+    (check [:bar-right :bar-right] "4")
+    (check [:right :right] "3")
+    (check [:right :right :right] "4")
+    (check [:bar-right :left] "2")
     (check [:down :left] "3")
-    (check [:right :right] "4")
-    (check [:chord-right :chord-right] "3")
-    (check [:chord-right :chord-right :chord-right] "4")
-    (check [:right :chord-left] "2")
-    (check [:down :chord-left] "3")
 
     ;; Out of bounds
-    (check [:down :down :down :right :right] "8")
+    (check [:down :down :down :bar-right :bar-right] "8")
     (check [:up] "1")
-    (check [:left] "1")
-    (check [:down :right :down] "6")
-    (check [:down :down :down :right :up] "6")))
+    (check [:bar-left] "1")
+    (check [:down :bar-right :down] "6")
+    (check [:down :down :down :bar-right :up] "6")))

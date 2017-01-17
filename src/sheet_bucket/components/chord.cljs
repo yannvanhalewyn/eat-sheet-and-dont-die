@@ -54,14 +54,14 @@
       (case pattern
         [ESC] (run deselect)
 
-        [SPACE] (run #(append :bar))
+        [SPACE] (run #(append :chord))
         [:shift SPACE] (run #(append :chord))
 
         [TAB] (run #(move :right))
         [:shift TAB] (run #(move :left))
 
-        [ENTER] (run #(append :row))
-        [:shift ENTER] (run #(append :section))
+        [ENTER] (run #(append :bar))
+        [:shift ENTER] (run #(append :row))
         [:meta ENTER] (run #(append :section))
 
         [:meta BACKSPACE] (run #(remove :bar))
@@ -69,10 +69,10 @@
         [:alt :shift BACKSPACE] (run #(remove :section))
 
         [LEFT] (run #(move :left))
-        [:shift LEFT] (run #(move :chord-left))
+        [:meta LEFT] (run #(move :bar-left))
 
         [RIGHT] (run #(move :right))
-        [:shift RIGHT] (run #(move :chord-right))
+        [:meta RIGHT] (run #(move :bar-right))
 
         [UP] (run #(move :up))
         [:shift UP] (run #(move :up))
