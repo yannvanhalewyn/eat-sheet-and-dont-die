@@ -33,15 +33,14 @@
     (is (= 2 (-> new-chord up up up up children count)))
     (is (= "2" (-> new-chord node :id)))))
 
-
-
 (deftest move
   (let [sheet (-> test-loc
                   (append :chord "2") (append :bar "3")
                   (append :row "4") (append :bar "5")
                   (append :row "6")
                   (append :row "7") (append :bar "8") (append :bar "9") (append :chord "10")
-                  (append :section "11") (append :bar "12")
+                  (append :section "11")
+                  (append :section "12") (append :bar "13")
                   (navigate-to "1"))
         check (fn [moves expected]
                 (let [land (reduce
@@ -59,7 +58,9 @@
     ;; | 6   |    |      |
     ;; | 7   | 8  | 9 10 |
     ;; |-----+----+------|
-    ;; | 11  | 12 |      |
+    ;; | 11  |    |      |
+    ;; |-----+----+------|
+    ;; | 12  | 13 |      |
 
     ;; Basics
     ;; ======
@@ -86,6 +87,8 @@
     (check ["8" :up] "6")
     (check ["9" :up] "6")
     (check ["3" :right] "4")
+    (check ["7" :down] "11")
+    (check ["11" :up] "7")
 
     ;; Wrap arounds
     ;; ============
@@ -99,14 +102,14 @@
     (check ["10" :right] "11")
     (check ["11" :left] "10")
     (check ["11" :bar-left] "9")
-    (check ["9" :down] "12")
+    (check ["9" :down] "11")
+    (check ["13" :up] "11")
 
     ;; Out of bounds
     ;; =============
     (check [:up] "1")
     (check [:left] "1")
     (check [:bar-left] "1")
-    (check ["12" :right] "12")
-    (check ["12" :bar-right] "12")
-    (check ["11" :down] "11")
+    (check ["13" :right] "13")
+    (check ["13" :bar-right] "13")
     (check ["12" :down] "12")))

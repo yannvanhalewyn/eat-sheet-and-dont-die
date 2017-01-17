@@ -61,8 +61,8 @@
       loc)))
 
 (defn- prev-bar [loc]
-  (if-let [next-bar (-> loc up left)]
-    (-> next-bar down zip/rightmost)
+  (if-let [prev-bar (-> loc up left)]
+    (-> prev-bar down zip/rightmost)
     (prev-row loc)))
 
 (defn echo [a] (.log js/console a) a)
@@ -73,12 +73,16 @@
     :bar-right (next-bar loc)
     :bar-left (-> (prev-bar loc) zip/leftmost)
 
+    ;; Don't worry, this will be refactored soon
     :up (let [pos (-> loc up lefts count)]
           (if-let [up-row (-> loc up up left)]
             (down (or (nth-child up-row pos)
                       (-> up-row down zip/rightmost)))
             (if-let [prev-section (-> loc up up up left)]
-              (-> prev-section down zip/rightmost (nth-child pos) down)
+              (-> prev-section down zip/rightmost
+                  (#(or (nth-child % pos)
+                        (zip/rightmost (zip/down %))))
+                  down)
               loc)))
 
     :down (let [pos (-> loc up lefts count)]
