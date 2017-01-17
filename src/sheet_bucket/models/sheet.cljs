@@ -25,12 +25,6 @@
 (defn add [bar new-chord]
   (update bar 0 conj new-chord))
 
-(defn add-chord
-  "Takes a sheet zipped to the current chord, and adds a chord after the
-  current one. Returns the zipper zipped to the new chord."
-  [chord-loc new-chord-id]
-  (-> chord-loc (insert-right (new-chord new-chord-id)) right))
-
 (defn add-bar
   "Takes a sheet zipped to the current chord, and adds a bar after the
   current one. Returns the zipper zipped to the first chord of the new
@@ -38,16 +32,16 @@
   [chord-loc new-chord-id]
   (-> chord-loc up (insert-right (new-bar new-chord-id)) right down))
 
-(defn add-row
-  "Takes a sheet zipped to the current chord, and adds a row after the
-  current one. Returns the zipper zipped to the first chord of the new
-  row."
-  [chord-loc new-chord-id]
+(defmulti append (fn [_ t _] t))
+
+(defmethod append :chord [chord-loc _ new-chord-id]
+  (-> chord-loc (insert-right (new-chord new-chord-id)) right))
+
+(defmethod append :bar [chord-loc _ new-chord-id]
+  (-> chord-loc up (insert-right (new-bar new-chord-id)) right down))
+
+(defmethod append :row [chord-loc _ new-chord-id]
   (-> chord-loc up up (insert-right (new-row new-chord-id)) right down down))
 
-(defn add-section
-  "Takes a sheet zipped to the current chord, and adds a row after the
-  current one. Returns the zipper zipped to the first chord of the new
-  row."
-  [chord-loc new-chord-id]
+(defmethod append :section [chord-loc _ new-chord-id]
   (-> chord-loc up up up (insert-right (new-section new-chord-id)) right down down down))
