@@ -65,6 +65,7 @@
     (-> next-bar down zip/rightmost)
     (prev-row loc)))
 
+(defn echo [a] (.log js/console a) a)
 (defn move [loc direction]
   (case direction
     :right (or (right loc) (next-bar loc) loc)
@@ -83,5 +84,9 @@
               (down (or (nth-child next-row pos)
                         (-> next-row down zip/rightmost)))
               (if-let [next-section (-> loc up up up right)]
-                (-> next-section down (nth-child pos) down)
+                (-> next-section
+                    down
+                    (#(or (nth-child % pos)
+                          (zip/rightmost (down (zip/rightmost %)))))
+                    down)
                 loc)))))

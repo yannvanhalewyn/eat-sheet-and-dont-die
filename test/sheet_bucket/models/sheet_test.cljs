@@ -83,6 +83,7 @@
     (check ["5" :down] "6")
     (check ["8" :up] "6")
     (check ["9" :up] "6")
+    (check ["9" :down] "12")
 
     ;; Wrap arounds
     ;; ============
