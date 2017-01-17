@@ -24,16 +24,6 @@
       (= id (:id (node loc))) loc
       :else (recur (next loc)))))
 
-(defn add [bar new-chord]
-  (update bar 0 conj new-chord))
-
-(defn add-bar
-  "Takes a sheet zipped to the current chord, and adds a bar after the
-  current one. Returns the zipper zipped to the first chord of the new
-  bar."
-  [chord-loc new-chord-id]
-  (-> chord-loc up (insert-right (new-bar new-chord-id)) right down))
-
 (defmulti append (fn [_ t _] t))
 
 (defmethod append :chord [chord-loc _ new-chord-id]
