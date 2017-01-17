@@ -40,8 +40,8 @@
                   (append :chord "2") (append :bar "3")
                   (append :row "4") (append :bar "5")
                   (append :row "6")
-                  (append :row "7") (append :bar "8")
-                  (append :section "9")
+                  (append :row "7") (append :bar "8") (append :chord "9")
+                  (append :section "10")
                   (navigate-to "1"))
         check (fn [moves expected]
                 (let [land (reduce #(sheet/move %1 %2) sheet moves)]
@@ -50,13 +50,13 @@
                       (format "Failed move test for %s. Expected: %s, got: %s"
                               moves expected (-> land node :id)))))]
     ;; Testing the moves in a sheet.
-    ;; |-----+---|
-    ;; | 1 2 | 3 |
-    ;; | 4   | 5 |
-    ;; | 6   |   |
-    ;; | 7   | 8 |
-    ;; |-----+---|
-    ;; | 9   |   |
+    ;; |-----+-----|
+    ;; | 1 2 | 3   |
+    ;; | 4   | 5   |
+    ;; | 6   |     |
+    ;; | 7   | 8 9 |
+    ;; |-----+-----|
+    ;; | 10  |     |
     ;; Basics
     (check [:right] "2")
     (check [:right :left] "1")
@@ -81,8 +81,13 @@
     (check [:bar-right :left] "2")
     (check [:down :left] "3")
 
+    ;; Section wrap arounds
+    (check [:down :down :down :right :bar-right] "10")
+    (check [:down :down :down :right :right :right] "10")
+    (check [:down :down :down :right :bar-right :left] "9")
+
     ;; Out of bounds
-    (check [:down :down :down :bar-right :bar-right] "8")
+    (check [:down :down :down :bar-right :bar-right :bar-right] "10")
     (check [:up] "1")
     (check [:bar-left] "1")
     (check [:down :bar-right :down] "6")

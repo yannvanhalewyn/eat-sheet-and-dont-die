@@ -44,7 +44,9 @@
 (defn- next-row [loc]
   (if-let [next-row (-> loc up up right)]
     (-> next-row down down)
-    loc))
+    (if-let [next-section (-> loc up up up right)]
+      (-> next-section down down down)
+      loc)))
 
 (defn- next-bar [loc]
   (if-let [next-bar (-> loc up right)]
@@ -54,7 +56,9 @@
 (defn- prev-row [loc]
   (if-let [prev-row (-> loc up up left)]
     (-> prev-row down zip/rightmost down zip/rightmost)
-    loc))
+    (if-let [prev-section (-> loc up up up left)]
+      (-> prev-section down zip/rightmost down zip/rightmost down zip/rightmost)
+      loc)))
 
 (defn- prev-bar [loc]
   (if-let [next-bar (-> loc up left)]
