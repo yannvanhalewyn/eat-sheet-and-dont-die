@@ -1,5 +1,7 @@
 (ns sheet-bucket.models.sheet
-  (:require [clojure.zip :as zip :refer [up down right end? next node insert-right]]))
+  (:require [clojure.zip
+             :as zip
+             :refer [up down right left end? next node insert-right lefts]]))
 
 (defn new-chord [id] {:id id :raw ""})
 (defn new-bar [chord-id] [[(new-chord chord-id)]])
@@ -45,3 +47,19 @@
 
 (defmethod append :section [chord-loc _ new-chord-id]
   (-> chord-loc up up up (insert-right (new-section new-chord-id)) right down down down))
+
+(defn- nth-child [loc n]
+  (nth (iterate right (down loc)) n))
+
+(defn echo [a] (.log js/console a) a)
+(defn move [loc direction]
+  (case direction
+    :right-chord (-> loc right)
+    :right (-> loc up right down)
+    :left (-> loc up left down)
+    :up (-> loc up up left down down)
+    :down
+    (let [pos (-> loc up lefts count)
+          next-row (-> loc up up right)]
+      (down (or (nth-child next-row pos)
+                (-> next-row down zip/rightmost))))))
