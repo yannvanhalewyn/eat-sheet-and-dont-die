@@ -49,11 +49,15 @@
 
     :right (if-let [next-bar (-> loc up right)]
              (down next-bar)
-             loc)
+             (if-let [next-row (-> loc up up right)]
+               (-> next-row down down)
+               loc))
 
     :left (if-let [prev-bar (-> loc up left)]
             (down prev-bar)
-            loc)
+            (if-let [prev-row (-> loc up up left)]
+              (-> prev-row down zip/rightmost down)
+              loc))
 
     :up (let [pos (-> loc up lefts count)]
           (if-let [up-row (-> loc up up left)]

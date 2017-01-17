@@ -54,7 +54,7 @@
                   (append :row "7") (append :bar "8")
                   (append :section "9")
                   (navigate-to "1"))]
-    ;; ;; Basics
+    ;; Basics
     (check-move sheet [:chord-right] "2")
     (check-move sheet [:chord-right :chord-right] "2")
     (check-move sheet [:chord-right :chord-left] "1")
@@ -64,14 +64,18 @@
     (check-move sheet [:down :up] "1")
     (check-move sheet [:right :down] "5")
 
-    ;; ;; Make a little circle for sanity
+    ;; Make a little circle for sanity
     (check-move sheet [:down] "4")
     (check-move sheet [:down :right] "5")
     (check-move sheet [:down :right :up] "3")
     (check-move sheet [:down :right :up :left] "1")
 
+    ;; Wrap arounds
+    (check-move sheet [:down :left] "3")
+    (check-move sheet [:right :right] "4")
+
     ;; ;; Out of bounds
-    (check-move sheet [:right :right] "3")
+    (check-move sheet [:down :down :down :right :right] "8")
     (check-move sheet [:up] "1")
     (check-move sheet [:left] "1")
     (check-move sheet [:down :right :down] "6")
