@@ -44,7 +44,10 @@
                   (append :section "10")
                   (navigate-to "1"))
         check (fn [moves expected]
-                (let [land (reduce #(sheet/move %1 %2) sheet moves)]
+                (let [land (reduce
+                            #(let [move (if (string? %2) sheet/navigate-to sheet/move)]
+                               (move %1 %2))
+                            sheet moves)]
                   (is land (str "Couldn't find element for moves: " moves))
                   (is (= expected (-> land node :id))
                       (format "Failed move test for %s. Expected: %s, got: %s"
@@ -82,9 +85,10 @@
     (check [:down :left] "3")
 
     ;; Section wrap arounds
-    (check [:down :down :down :right :bar-right] "10")
-    (check [:down :down :down :right :right :right] "10")
-    (check [:down :down :down :right :bar-right :left] "9")
+    ;; LEFT RIGHT
+    (check ["8" :bar-right] "10")
+    (check ["9" :right] "10")
+    (check ["10" :left] "9")
 
     ;; Out of bounds
     (check [:down :down :down :bar-right :bar-right :bar-right] "10")
