@@ -22,9 +22,25 @@
       (= id (:id (node loc))) loc
       :else (recur (next loc)))))
 
+(defn add [bar new-chord]
+  (update bar 0 conj new-chord))
+
+(defn add-chord
+  "Takes a sheet zipped to the current chord, and adds a chord after the
+  current one. Returns the zipper zipped to the new chord."
+  [chord-loc new-chord-id]
+  (-> chord-loc (insert-right (new-chord new-chord-id)) right))
+
 (defn add-bar
   "Takes a sheet zipped to the current chord, and adds a bar after the
   current one. Returns the zipper zipped to the first chord of the new
   bar."
   [chord-loc new-chord-id]
   (-> chord-loc up (insert-right (new-bar new-chord-id)) right down))
+
+(defn add-row
+  "Takes a sheet zipped to the current chord, and adds a row after the
+  current one. Returns the zipper zipped to the first chord of the new
+  row."
+  [chord-loc new-chord-id]
+  (-> chord-loc up up (insert-right (new-row new-chord-id)) right down down))
