@@ -9,7 +9,7 @@
   [:div.sheet {:on-click clear-selected}
    [:h1 title]
    [:h2 artist]
-   (for [type [:chord :bar :row]]
+   (for [type [:chord :bar :row :section]]
      ^{:key type}
      [:button {:on-click (stop-propagation add-element type)} (str "Add " (name type))])
    (fori [i [rows attrs] sections]

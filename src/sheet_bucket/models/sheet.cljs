@@ -44,3 +44,10 @@
   row."
   [chord-loc new-chord-id]
   (-> chord-loc up up (insert-right (new-row new-chord-id)) right down down))
+
+(defn add-section
+  "Takes a sheet zipped to the current chord, and adds a row after the
+  current one. Returns the zipper zipped to the first chord of the new
+  row."
+  [chord-loc new-chord-id]
+  (-> chord-loc up up up (insert-right (new-section new-chord-id)) right down down down))

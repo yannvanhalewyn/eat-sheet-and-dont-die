@@ -18,7 +18,8 @@
 (def adders
   {:chord sheet/add-chord
    :bar sheet/add-bar
-   :row sheet/add-row})
+   :row sheet/add-row
+   :section sheet/add-section})
 
 (defn add-element [state type]
   (if-let [adder (type adders)]
