@@ -63,10 +63,16 @@
         [:meta BACKSPACE] (run #(remove :bar))
         [:shift BACKSPACE] (run #(remove :row))
         [:alt :shift BACKSPACE] (run #(remove :section))
+
         [LEFT] (run #(move :left))
         [RIGHT] (run #(move :right))
         [UP] (run #(move :up))
         [DOWN] (run #(move :down))
+        [:shift LEFT] (run #(move :chord-left))
+        [:shift RIGHT] (run #(move :chord-right))
+        [:shift UP] (run #(move :up))
+        [:shift DOWN] (run #(move :down))
+
         nil))))
 
 (defn editable-chord
