@@ -70,6 +70,8 @@
     (check [:down :up] "1")
     (check [:bar-right :down] "5")
     (check [:bar-right :left] "2")
+    (check ["7" :down] "11")
+    (check ["11" :up] "7")
 
     ;; Make a little circle for sanity
     ;; ===============================
@@ -78,19 +80,18 @@
     (check [:down :bar-right :up] "3")
     (check [:down :bar-right :up :bar-left] "1")
 
-    ;; Vertical jumping to latest position
-    ;; ===================================
+    ;; Vertical jumping to latest bar
+    ;; ==============================
     (check ["5" :down] "6")
     (check ["8" :up] "6")
     (check ["9" :up] "6")
-    (check ["9" :down] "12")
+    (check ["3" :right] "4")
 
     ;; Wrap arounds
     ;; ============
     (check ["4" :left] "3")
     (check ["4" :bar-left] "3")
     (check ["3" :bar-right] "4")
-    (check ["3" :right] "4")
 
     ;; Section wrap arounds
     ;; ====================
@@ -98,6 +99,7 @@
     (check ["10" :right] "11")
     (check ["11" :left] "10")
     (check ["11" :bar-left] "9")
+    (check ["9" :down] "12")
 
     ;; Out of bounds
     ;; =============

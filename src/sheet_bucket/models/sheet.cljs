@@ -77,7 +77,9 @@
           (if-let [up-row (-> loc up up left)]
             (down (or (nth-child up-row pos)
                       (-> up-row down zip/rightmost)))
-            loc))
+            (if-let [prev-section (-> loc up up up left)]
+              (-> prev-section down zip/rightmost (nth-child pos) down)
+              loc)))
 
     :down (let [pos (-> loc up lefts count)]
             (if-let [next-row (-> loc up up right)]
