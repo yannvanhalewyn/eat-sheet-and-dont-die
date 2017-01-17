@@ -16,7 +16,7 @@
 (defn navigate-to
   "Moves the zipper to the child with given id"
   [sheet id]
-  (loop [loc sheet]
+  (loop [loc (zipper (zip/root sheet))]
     (cond
       (end? loc) nil
       (= id (:id (node loc))) loc

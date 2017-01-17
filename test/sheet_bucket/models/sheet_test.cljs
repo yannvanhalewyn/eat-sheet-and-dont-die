@@ -7,7 +7,8 @@
 
 (deftest navigateTo
   (is (= "1" (-> new-sheet zipper (navigate-to "1") node :id)))
-  (is (= nil (-> new-sheet zipper (navigate-to "2")))))
+  (is (= nil (-> new-sheet zipper (navigate-to "2"))))
+  (is (= "1" (-> new-sheet zipper (navigate-to "1") (append :chord "2") (navigate-to "1") node :id))))
 
 (deftest addChord
   (let [new-chord (-> test-loc (append :chord "2"))]
