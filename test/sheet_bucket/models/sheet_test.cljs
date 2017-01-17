@@ -61,6 +61,7 @@
     (check [:right] "2")
     (check [:right :left] "1")
     (check [:left] "1")
+    (check [:right :bar-left] "1")
 
     (check [:bar-right] "3")
     (check [:down :up] "1")
