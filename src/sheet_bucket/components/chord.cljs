@@ -1,5 +1,6 @@
 (ns sheet-bucket.components.chord
   (:require [reagent.core :as reagent]
+            [sheet-bucket.util.util :refer [stop-propagation]]
             [clojure.string :as str]))
 
 (def style
@@ -34,7 +35,7 @@
 (defn displayed-chord
   "A displayable formatted chord"
   [{[root accidental] :root :as props}]
-  [:span {:style (:chord style) :on-click (:on-click props)}
+  [:span {:style (:chord style) :on-click (stop-propagation (:on-click props))}
    (if (:root props)
      [:span
       [:span (base props)]

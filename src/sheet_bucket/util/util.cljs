@@ -7,3 +7,13 @@
   "Will generate any amount of data based on a spec"
   [spec count]
   (gen/sample (s/gen spec) count))
+
+(defn stop-propagation
+  "Returns a function to be used as an browser event handler. That
+  function calls .stopPropagation on the event. The return value of the
+  fn is always nil. If f and args is supplied, calls f with args."
+  [f & args]
+  (fn [event]
+    (.stopPropagation event)
+    (apply f args)
+    nil))
