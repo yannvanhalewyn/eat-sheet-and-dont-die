@@ -25,7 +25,12 @@
 (defcard-props Editable
   "This chord should be focused on page load. Blurring this field
   should log the message with the current input's value"
-  [editable-chord {:text "a-maj" :on-blur (.-log js/console)}])
+  [editable-chord {:text "a-maj"
+                   :update-chord (.-log js/console)
+                   :append (partial (.-log js/console) "ADD ")
+                   :remove (partial (.-log js/console) "REMOVE ")
+                   :move (partial (.-log js/console) "MOVE ")
+                   :deselect #(.log js/console "DESELECT")}])
 
 (defcard-doc
   "## Display Chord"
@@ -89,13 +94,3 @@
 (defcard-props No-root
   "Should not display anything"
   [displayed-chord {:root nil :triad :major :seventh :minor :ninth :major}])
-
-(defonce state (r/atom {:editing true :value "Am"}))
-(defcard-rg try-out-box
-  "Enter raw chords here to test out the chord parser"
-  (fn []
-    (if (:editing @state)
-      [editable-chord {:text (:value @state) :on-blur #(reset! state {:editing false :value %})}]
-      [displayed-chord (assoc (parse (:value @state))
-                              :on-click #(swap! state assoc :editing true))]))
-  state)

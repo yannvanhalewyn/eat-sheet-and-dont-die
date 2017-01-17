@@ -7,15 +7,15 @@
 (defn select-chord [state id]
   (transact! state {:type :select-chord :id id}))
 
-(defn clear-selected [state]
+(defn deselect [state]
   (transact! state {:type :sheet/clear-selected}))
 
-(defn update-chord [state _ value]
+(defn update-chord [state value]
   (transact! state {:type :sheet/update-chord
                     :value (zip/root (zip/edit (current-loc @state)
                                                assoc :raw value))}))
 
-(defn add-element [state type]
+(defn append [state type]
   (let [new-sheet (sheet/append (current-loc @state) type (name (gensym)))]
     (transact! state {:type :sheet/update
                       :value (zip/root new-sheet)

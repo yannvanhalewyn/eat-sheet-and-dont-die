@@ -4,14 +4,14 @@
   (:require-macros [sheet-bucket.util.util :refer [fori]]))
 
 (defn component [{{:keys [artist title]} :attrs
-                  :keys [clear-selected sections add-element]
+                  :keys [deselect sections append]
                   :as props}]
-  [:div.sheet {:on-click clear-selected}
+  [:div.sheet {:on-click deselect}
    [:h1 title]
    [:h2 artist]
    (for [type [:chord :bar :row :section]]
      ^{:key type}
-     [:button {:on-click (stop-propagation add-element type)} (str "Add " (name type))])
+     [:button {:on-click (stop-propagation append type)} (str "Add " (name type))])
    (fori [i [rows attrs] sections]
      ^{:key i} [section/component
                 (-> props
