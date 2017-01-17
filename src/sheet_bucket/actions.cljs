@@ -15,8 +15,14 @@
                     :value (zip/root (zip/edit (current-loc @state)
                                                assoc :raw value))}))
 
-(defn add-bar [state]
-  (let [new-sheet (sheet/add-bar (current-loc @state) (name (gensym)))]
-    (transact! state {:type :sheet/add-bar
-                      :value (zip/root new-sheet)
-                      :selected (-> new-sheet zip/node :id)})))
+(def adders
+  {:chord sheet/add-chord
+   :bar sheet/add-bar
+   :row sheet/add-row})
+
+(defn add-element [state type]
+  (if-let [adder (type adders)]
+    (let [new-sheet (adder (current-loc @state) (name (gensym)))]
+      (transact! state {:type :sheet/update
+                        :value (zip/root new-sheet)
+                        :selected (-> new-sheet zip/node :id)}))))
