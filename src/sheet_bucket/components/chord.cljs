@@ -52,27 +52,33 @@
           pattern (filter identity [alt meta shift code])
           run (fn [handler] (.preventDefault e) (update-chord (.. e -target -value)) (handler))]
       (case pattern
-        [SPACE] (run #(append :chord))
-        [TAB] (run #(move :right))
-        [ENTER] (run deselect)
         [ESC] (run deselect)
-        [:shift SPACE] (run #(move :chord-left))
-        [:shift ENTER] (run #(append :row))
+
+        [SPACE] (run #(append :bar))
+        [:shift SPACE] (run #(append :chord))
+
+        [TAB] (run #(move :right))
         [:shift TAB] (run #(move :left))
-        [:alt ENTER] (run #(append :section))
+
+        [ENTER] (run #(append :row))
+        [:shift ENTER] (run #(append :section))
+        [:meta ENTER] (run #(append :section))
+
         [:meta BACKSPACE] (run #(remove :bar))
         [:shift BACKSPACE] (run #(remove :row))
         [:alt :shift BACKSPACE] (run #(remove :section))
 
         [LEFT] (run #(move :left))
-        [RIGHT] (run #(move :right))
-        [UP] (run #(move :up))
-        [DOWN] (run #(move :down))
         [:shift LEFT] (run #(move :chord-left))
-        [:shift RIGHT] (run #(move :chord-right))
-        [:shift UP] (run #(move :up))
-        [:shift DOWN] (run #(move :down))
 
+        [RIGHT] (run #(move :right))
+        [:shift RIGHT] (run #(move :chord-right))
+
+        [UP] (run #(move :up))
+        [:shift UP] (run #(move :up))
+
+        [DOWN] (run #(move :down))
+        [:shift DOWN] (run #(move :down))
         nil))))
 
 (defn editable-chord

@@ -71,8 +71,7 @@
                       (-> up-row down zip/rightmost)))
             loc))
 
-    :down
-    (let [pos (-> loc up lefts count)
-          next-row (-> loc up up right)]
-      (down (or (nth-child next-row pos)
-                (-> next-row down zip/rightmost))))))
+    :down (let [pos (-> loc up lefts count)
+                next-row (-> loc up up right)]
+            (down (or (nth-child next-row pos)
+                      (-> next-row down zip/rightmost))))))
