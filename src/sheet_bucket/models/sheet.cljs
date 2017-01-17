@@ -51,13 +51,26 @@
 (defn- nth-child [loc n]
   (nth (iterate right (down loc)) n))
 
-(defn echo [a] (.log js/console a) a)
 (defn move [loc direction]
   (case direction
-    :right-chord (-> loc right)
-    :right (-> loc up right down)
-    :left (-> loc up left down)
-    :up (-> loc up up left down down)
+    :chord-right (or (right loc) loc)
+
+    :chord-left (or (left loc) loc)
+
+    :right (if-let [next-bar (-> loc up right)]
+             (down next-bar)
+             loc)
+
+    :left (if-let [prev-bar (-> loc up left)]
+            (down prev-bar)
+            loc)
+
+    :up (let [pos (-> loc up lefts count)]
+          (if-let [up-row (-> loc up up left)]
+            (down (or (nth-child up-row pos)
+                      (-> up-row down zip/rightmost)))
+            loc))
+
     :down
     (let [pos (-> loc up lefts count)
           next-row (-> loc up up right)]

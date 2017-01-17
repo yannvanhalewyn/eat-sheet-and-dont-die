@@ -41,23 +41,38 @@
                 moves expected (-> land node :id)))))
 
 (deftest move
+  ;; [1 2] 3
+  ;; 4 5
+  ;; 6
+  ;; 7 8
+  ;; --
+  ;; 9
   (let [sheet (-> test-loc
-                  (append :chord "2")
-                  (append :bar "3")
-                  (append :row "4")
-                  (append :bar "5")
+                  (append :chord "2") (append :bar "3")
+                  (append :row "4") (append :bar "5")
                   (append :row "6")
-                  (append :section "7")
+                  (append :row "7") (append :bar "8")
+                  (append :section "9")
                   (navigate-to "1"))]
-    ;; Basics
-    (check-move sheet "3" ) (is (= "3" (-> sheet [:right] node :id)))
-    (check-move sheet "2" ) (is (= "2" (-> sheet [:right-chord] node :id)))
-    (check-move sheet "1" ) (is (= "1" (-> sheet [:right :left] node :id)))
-    (is (= "4" (-> sheet [:down] node :id)))
-    (is (= "1" (-> sheet [:down :up] node :id)))
-    (is (= "5" (-> sheet [:right :down] node :id)))
-    #_(is (= "6" (-> sheet (sheet/move :down) (sheet/move :down) node :id)))
+    ;; ;; Basics
+    (check-move sheet [:chord-right] "2")
+    (check-move sheet [:chord-right :chord-right] "2")
+    (check-move sheet [:chord-right :chord-left] "1")
+    (check-move sheet [:chord-left] "1")
 
-    ;; Out of bounds
-    (is (= "3" (-> sheet [:right :right] node :id)))
-    (is (= "6" (-> sheet [:down :right :down] node :id)))))
+    (check-move sheet [:right] "3")
+    (check-move sheet [:down :up] "1")
+    (check-move sheet [:right :down] "5")
+
+    ;; ;; Make a little circle for sanity
+    (check-move sheet [:down] "4")
+    (check-move sheet [:down :right] "5")
+    (check-move sheet [:down :right :up] "3")
+    (check-move sheet [:down :right :up :left] "1")
+
+    ;; ;; Out of bounds
+    (check-move sheet [:right :right] "3")
+    (check-move sheet [:up] "1")
+    (check-move sheet [:left] "1")
+    (check-move sheet [:down :right :down] "6")
+    (check-move sheet [:down :down :down :right :up] "6")))
