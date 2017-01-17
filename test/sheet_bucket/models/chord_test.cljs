@@ -51,4 +51,5 @@
   (check [["D"] :major :minor :flat] "D7b9"))
 
 (deftest edges
-  (check [nil] ""))
+  (check [nil] "")
+  (check [["B" :flat] :minor :major :flat] "Bb-maj7b9"))

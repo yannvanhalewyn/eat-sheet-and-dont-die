@@ -7,7 +7,7 @@
 (def root-regx (str "([#b])?([a-gA-G1-7])([#b])?(?!5)"))
 ;; Negative lookahead for 'm' that is not part of 'maj'
 (def triad-regx (str "min|m(?!aj)|-|aug|\\+|#5|b5"))
-(def extension-regx (str "(7|maj|Maj)?([#b]?9)?"))
+(def extension-regx (str "(7|maj|Maj)?7?([#b]?9)?"))
 (def chord-regex (re-pattern (format "%s(%s)?(%s)?"
                                      root-regx triad-regx extension-regx)))
 
