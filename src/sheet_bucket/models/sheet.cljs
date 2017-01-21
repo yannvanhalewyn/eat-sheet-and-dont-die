@@ -41,14 +41,21 @@
 
 (defmulti delete (fn [_ t] t))
 
-(def invalid? #(and (zip/branch? %) (empty? (zip/children %))))
+(def empty-branch? #(and (zip/branch? %) (empty? (zip/children %))))
+
+(defn- nearest-chord
+  "Returns the location if chord, the previous chord if any or the next chord"
+  [loc]
+  (or (if-not (zip/branch? loc) loc)
+      (prev-leaf loc)
+      (next-leaf loc)))
 
 (defmethod delete :chord [z _]
   (loop [loc z]
     (let [prev (zip/remove loc)]
-      (if (invalid? prev)
+      (if (empty-branch? prev)
         (recur prev)
-        (or (if-not (zip/branch? prev) prev) (prev-leaf prev) (next-leaf prev))))))
+        (nearest-chord prev)))))
 
 ;; Movement
 ;; ========
