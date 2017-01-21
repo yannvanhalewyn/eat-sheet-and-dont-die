@@ -29,3 +29,8 @@
     (if (and l (zip/branch? l))
       (recur (zip/prev l))
       l)))
+
+(defn nth-child
+  "Jumps to the nth child of loc. Should take a location of a branch"
+  [loc n]
+  (nth (iterate zip/right (zip/down loc)) n))
