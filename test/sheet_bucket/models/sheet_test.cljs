@@ -1,10 +1,10 @@
 (ns sheet-bucket.models.sheet-test
   (:require [sheet-bucket.models.sheet
-             :refer [new-sheet zipper navigate-to append]
+             :refer [new-sheet zipper navigate-to append delete]
              :as sheet]
             [cljs.test :refer-macros [deftest is]]
             [goog.string :refer [format]]
-            [clojure.zip :refer [node up left down children]]))
+            [clojure.zip :refer [node up left down children rights]]))
 
 (def test-loc (-> new-sheet zipper (navigate-to "1")))
 
@@ -32,6 +32,28 @@
   (let [new-chord (-> test-loc (append :section "2"))]
     (is (= 2 (-> new-chord up up up up children count)))
     (is (= "2" (-> new-chord node :id)))))
+
+(deftest removing
+  (let [sheet (-> test-loc
+                  (append :chord "2")
+                  (append :bar "3")
+                  (append :row "4")
+                  (append :section "5")
+                  (navigate-to "1"))]
+    ;; |-----+---|
+    ;; | 1 2 | 3 |
+    ;; | 4   |   |
+    ;; |-----+---|
+    ;; | 5   |   |
+    (is (= ["2"] (-> sheet (delete :chord) up children (#(map :id %)))))
+    (is (= "2" (-> sheet (delete :chord) node :id)))
+    (is (= "1" (-> sheet (navigate-to "2") (delete :chord) node :id)))
+    (is (= "2" (-> sheet (navigate-to "3") (delete :chord) node :id)))
+    (is (= "3" (-> sheet (navigate-to "4") (delete :chord) node :id)))
+    (is (= "4" (-> sheet (navigate-to "5") (delete :chord) node :id)))
+    (is (= 0 (-> sheet (navigate-to "3") (delete :chord) up rights count)))
+    (is (= 0 (-> sheet (navigate-to "4") (delete :chord) up up rights count)))
+    (is (= 1 (-> sheet (navigate-to "5") (delete :chord) up up up up children count)))))
 
 (deftest move
   (let [sheet (-> test-loc
