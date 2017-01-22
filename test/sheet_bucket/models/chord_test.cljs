@@ -16,6 +16,7 @@
     (run (or triad :major) :triad)
     (run seventh :seventh)
     (run ninth :ninth)))
+
 (deftest roots-test
   (every? #(check [[%] :major] %) roots)
   (every? #(check [[% :flat] :major] (str "b" %)) roots)
@@ -42,13 +43,19 @@
   (check [["A" :flat] :major :major] "Abmaj7")
   (check [["D" :flat] :minor :major] "Dbminmaj7")
   (check [["F" :flat] :minor :major] "FbminMaj7")
-  (check [["C"] :minor :major] "C-maj7"))
+  (check [["C"] :minor :major] "C-maj7")
+  (check [["F" :sharp] :diminished :minor] "F#m7b5")
+  (check [["F" :sharp] :augmented :minor] "F#m7#5"))
 
 (deftest ninths
   (check [["B"] :major :minor :natural] "B9")
   (check [["C"] :minor :major :natural] "C-maj9")
   (check [["D"] :major :minor :sharp] "D7#9")
-  (check [["D"] :major :minor :flat] "D7b9"))
+  (check [["D"] :major :minor :flat] "D7b9")
+  (check [["F" :sharp] :augmented :minor :flat] "F#m7b9#5")
+  (check [["F" :sharp] :diminished :minor :flat] "F#m7b9b5")
+  (check [["F" :sharp] :augmented :minor :sharp] "F#m7#9#5")
+  (check [["F" :sharp] :diminished :minor :sharp] "F#m7#9b5"))
 
 (deftest edges
   (check [nil] "")
