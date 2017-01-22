@@ -59,37 +59,15 @@
 
 ;; Movement
 ;; ========
-(defn- next-row [loc]
-  (if-let [next-row (-> loc up up right)]
-    (-> next-row down down)
-    (if-let [next-section (-> loc up up up right)]
-      (-> next-section down down down)
-      loc)))
+(def chord? (complement branch?))
+(def first-chord-of-bar? #(and (chord? %) (= 0 (count (zip/lefts %)))))
 
-(defn- next-bar [loc]
-  (if-let [next-bar (-> loc up right)]
-    (-> next-bar down)
-    (next-row loc)))
-
-(defn- prev-row [loc]
-  (if-let [prev-row (-> loc up up left)]
-    (-> prev-row down zip/rightmost down zip/rightmost)
-    (if-let [prev-section (-> loc up up up left)]
-      (-> prev-section down zip/rightmost down zip/rightmost down zip/rightmost)
-      loc)))
-
-(defn- prev-bar [loc]
-  (if-let [prev-bar (-> loc up left)]
-    (-> prev-bar down zip/rightmost)
-    (prev-row loc)))
-
-(defn echo [a] (.log js/console a) a)
 (defn move [loc direction]
   (case direction
     :right (next-leaf loc)
     :left (prev-leaf loc)
-    :bar-right (locate loc #(and (not (branch? %)) (not= (up loc) (up %))))
-    :bar-left (locate-left (zip/prev loc) #(and (not (branch? %)) (= 0 (count (zip/lefts %)))))
+    :bar-right (locate (zip/next loc) first-chord-of-bar?)
+    :bar-left (locate-left (zip/prev loc) first-chord-of-bar?)
 
     ;; Don't worry, this will be refactored soon
     :up (let [pos (-> loc up lefts count)]
