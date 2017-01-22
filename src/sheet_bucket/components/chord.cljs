@@ -50,7 +50,8 @@
           alt (if (.-altKey e) :alt)
           meta (if (.-metaKey e) :meta)
           pattern (filter identity [alt meta shift code])
-          run (fn [handler] (.preventDefault e) (update-chord (.. e -target -value)) (handler))]
+          value (.. e -target -value)
+          run (fn [handler] (.preventDefault e) (update-chord value) (handler))]
       (case pattern
         [ESC] (run deselect)
 
@@ -64,6 +65,7 @@
         [:shift ENTER] (run #(append :row))
         [:meta ENTER] (run #(append :section))
 
+        [BACKSPACE] (if (empty? value) (run #(remove :chord)))
         [:meta BACKSPACE] (run #(remove :bar))
         [:shift BACKSPACE] (run #(remove :row))
         [:alt :shift BACKSPACE] (run #(remove :section))

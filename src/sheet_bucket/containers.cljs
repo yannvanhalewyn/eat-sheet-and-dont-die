@@ -1,7 +1,7 @@
 (ns sheet-bucket.containers
   (:require [sheet-bucket.components.sheet :as sheet]
             [sheet-bucket.selectors :refer [sections attributes selected]]
-            [sheet-bucket.actions :refer [select-chord update-chord append deselect move]]
+            [sheet-bucket.actions :refer [select-chord update-chord append delete deselect move]]
             [redux.utils :refer [create-container]]))
 
 (def app
@@ -15,4 +15,4 @@
              :deselect deselect
              :append append
              :move move
-             :remove #(.log js/console "Remove " %2)}))
+             :remove delete}))

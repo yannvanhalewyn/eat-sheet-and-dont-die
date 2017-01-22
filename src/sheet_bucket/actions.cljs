@@ -27,3 +27,9 @@
                       :value (zip/root new-sheet)
                       :selected (-> new-sheet zip/node :id)})
     (if (= direction :right) (append state :bar))))
+
+(defn delete [state element]
+  (let [new-sheet (sheet/delete (current-loc @state) element)]
+    (transact! state {:type :sheet/update
+                      :value (zip/root new-sheet)
+                      :selected (-> new-sheet zip/node :id)})))
