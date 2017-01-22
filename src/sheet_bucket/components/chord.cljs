@@ -19,20 +19,22 @@
   [{[root accidental] :root triad :triad}]
   (str (str/upper-case root)
        (condp = accidental :flat "@" :sharp "#" "")
-       (when (= :minor triad) "-")))
+       (when (or (= :minor triad) (= :diminished triad)) "-")))
 
 (defn- extension
   "Returns a string suitable for our chord symbols font for the
   extension"
   [{:keys [root triad seventh ninth]}]
-  (str (when (= triad :augmented) "+")
-       (when (= seventh :major) "y")
-       (when (and seventh (not ninth)) "7")
-       (case ninth
-         :natural "9"
-         :sharp "#9"
-         :flat "@9"
-         "")))
+  (str
+   (when (= triad :augmented) "+")
+   (when (= seventh :major) "y")
+   (when (and seventh (not ninth)) "7")
+   (case ninth
+     :natural "9"
+     :sharp "#9"
+     :flat "@9"
+     "")
+   (when (= triad :diminished) "b5")))
 
 (defn displayed-chord
   "A displayable formatted chord"

@@ -72,7 +72,8 @@
 (defcard-rg Triads
   [:div
    [for-all-roots {:triad :minor} "Minor triads"]
-   [for-all-roots {:triad :augmented} "Augmented triads"]])
+   [for-all-roots {:triad :augmented} "Augmented triads"]
+   [for-all-roots {:triad :diminished} "Diminished triads"]])
 
 ;; Sevenths
 (defcard-rg Sevenths
@@ -80,7 +81,8 @@
    [for-all-roots {:seventh :minor} "Dominant seventh"]
    [for-all-roots {:seventh :major} "Major seventh"]
    [for-all-roots {:triad :minor :seventh :minor} "Minor sevenths"]
-   [for-all-roots {:triad :minor :seventh :major} "Minor major sevenths"]])
+   [for-all-roots {:triad :minor :seventh :major} "Minor major sevenths"]
+   [for-all-roots {:triad :diminished :seventh :minor} "Half diminished"]])
 
 ;; Ninths
 (defcard-rg Ninths
