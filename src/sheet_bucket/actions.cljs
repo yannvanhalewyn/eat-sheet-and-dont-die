@@ -22,7 +22,8 @@
                       :selected (-> new-sheet zip/node :id)})))
 
 (defn move [state direction]
-  (let [new-sheet (sheet/move (current-loc @state) direction)]
+  (if-let [new-sheet (sheet/move (current-loc @state) direction)]
     (transact! state {:type :sheet/update
                       :value (zip/root new-sheet)
-                      :selected (-> new-sheet zip/node :id)})))
+                      :selected (-> new-sheet zip/node :id)})
+    (if (= direction :right) (append state :bar))))
