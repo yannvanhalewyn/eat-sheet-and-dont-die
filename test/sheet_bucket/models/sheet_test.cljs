@@ -45,6 +45,9 @@
     ;; | 4   |   |
     ;; |-----+---|
     ;; | 5   |   |
+
+    ;; Chords
+    ;; ======
     (is (= ["2"] (-> sheet (delete :chord) up children (#(map :id %)))))
     (is (= "2" (-> sheet (delete :chord) node :id)))
     (is (= "1" (-> sheet (navigate-to "2") (delete :chord) node :id)))
@@ -53,9 +56,31 @@
     (is (= "4" (-> sheet (navigate-to "5") (delete :chord) node :id)))
     (is (= 0 (-> sheet (navigate-to "3") (delete :chord) up rights count)))
     (is (= 0 (-> sheet (navigate-to "4") (delete :chord) up up rights count)))
-    (is (= 1 (-> sheet (navigate-to "5") (delete :chord) up up up up children count)))))
+    (is (= 1 (-> sheet (navigate-to "5") (delete :chord) up up up up children count)))
 
-(defn echo [a] (.log js/console a) a)
+    ;; Bars
+    ;; ====
+    (is (= "3" (-> sheet (delete :bar) node :id)))
+    (is (= "3" (-> sheet (navigate-to "4") (delete :bar) node :id)))
+    (is (= 1 (-> sheet (navigate-to "2") (delete :bar) up up children count)))
+    (is (= 1 (-> sheet (navigate-to "4") (delete :bar) up up up children count)))
+    (is (= 1 (-> sheet (navigate-to "5") (delete :bar) up up up up children count)))
+
+    ;; Rows
+    ;; ====
+    (is (= "4" (-> sheet (delete :row) node :id)))
+    (is (= 1 (-> sheet (navigate-to "4") (delete :row) up up up children count)))
+    (is (= 1 (-> sheet (navigate-to "5") (delete :row) up up up up children count)))
+
+    ;; Sections
+    ;; ========
+    (is (= "5" (-> sheet (delete :section) node :id)))
+    (is (= 1 (-> sheet (delete :section) up up up up children count)))
+    (is (= 1 (-> sheet (navigate-to "5") (delete :section) up up up up children count)))
+
+    (testing "Removing last section"
+      (let [sheet-with-one-section (delete sheet :section)]
+        (is (= sheet-with-one-section (delete sheet-with-one-section :section)))))))
 
 (deftest move
   (let [sheet (-> test-loc

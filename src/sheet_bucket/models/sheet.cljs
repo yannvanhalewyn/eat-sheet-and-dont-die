@@ -1,7 +1,7 @@
 (ns sheet-bucket.models.sheet
   (:require [clojure.zip
              :as zip
-             :refer [up down right left end? next node insert-right lefts branch?]]
+             :refer [up down right left end? next node insert-right lefts branch? children]]
             [sheet-bucket.util.zipper :refer [nth-child next-leaf prev-leaf locate locate-left]]))
 
 (defn new-chord [id] {:id id :raw ""})
@@ -39,8 +39,8 @@
 (defmethod append :section [chord-loc _ new-chord-id]
   (-> chord-loc up up up (insert-right (new-section new-chord-id)) right down down down))
 
-(defmulti delete (fn [_ t] t))
-
+;; Removing
+;; ========
 (def empty-branch? #(and (zip/branch? %) (empty? (zip/children %))))
 
 (defn- nearest-chord
@@ -50,12 +50,30 @@
       (prev-leaf loc)
       (next-leaf loc)))
 
-(defmethod delete :chord [z _]
-  (loop [loc z]
-    (let [prev (zip/remove loc)]
+(defn- remove-and-clear-empty-parents
+  [loc]
+  (loop [l loc]
+    (let [prev (zip/remove l)]
       (if (empty-branch? prev)
         (recur prev)
         (nearest-chord prev)))))
+
+(defmulti delete (fn [_ t] t))
+
+(defmethod delete :chord [loc _]
+  (remove-and-clear-empty-parents loc))
+
+(defmethod delete :bar [loc _]
+  (remove-and-clear-empty-parents (up loc)))
+
+(defmethod delete :row [loc _]
+  (remove-and-clear-empty-parents (-> loc up up)))
+
+(defmethod delete :section [loc _]
+  (let [section (-> loc up up up)]
+    (if (= 1 (-> section up children count))
+      loc
+      (remove-and-clear-empty-parents section))))
 
 ;; Movement
 ;; ========
