@@ -2,7 +2,7 @@
   (:require [sheet-bucket.models.sheet
              :refer [new-sheet zipper navigate-to append delete]
              :as sheet]
-            [cljs.test :refer-macros [deftest is]]
+            [cljs.test :refer-macros [deftest is testing]]
             [goog.string :refer [format]]
             [clojure.zip :refer [node up left down children rights]]))
 
@@ -54,6 +54,8 @@
     (is (= 0 (-> sheet (navigate-to "3") (delete :chord) up rights count)))
     (is (= 0 (-> sheet (navigate-to "4") (delete :chord) up up rights count)))
     (is (= 1 (-> sheet (navigate-to "5") (delete :chord) up up up up children count)))))
+
+(defn echo [a] (.log js/console a) a)
 
 (deftest move
   (let [sheet (-> test-loc
@@ -130,8 +132,10 @@
     ;; Out of bounds
     ;; =============
     (check [:up] "1")
-    (check [:left] "1")
-    (check [:bar-left] "1")
-    (check ["13" :right] "13")
-    (check ["13" :bar-right] "13")
+    (testing "Will return nil when leaving sheet edges"
+      (let [is-nil #(is (= nil (-> sheet (sheet/navigate-to %1) (sheet/move %2))))]
+        (is-nil "13" :right)
+        (is-nil "13" :bar-right)
+        (is-nil "1" :left)
+        (is-nil "1" :bar-left)))
     (check ["12" :down] "12")))

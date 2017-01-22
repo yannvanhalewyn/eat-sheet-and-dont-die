@@ -1,8 +1,8 @@
 (ns sheet-bucket.models.sheet
   (:require [clojure.zip
              :as zip
-             :refer [up down right left end? next node insert-right lefts]]
-            [sheet-bucket.util.zipper :refer [nth-child next-leaf prev-leaf]]))
+             :refer [up down right left end? next node insert-right lefts branch?]]
+            [sheet-bucket.util.zipper :refer [nth-child next-leaf prev-leaf locate locate-left]]))
 
 (defn new-chord [id] {:id id :raw ""})
 (defn new-bar [chord-id] [[(new-chord chord-id)]])
@@ -83,12 +83,13 @@
     (-> prev-bar down zip/rightmost)
     (prev-row loc)))
 
+(defn echo [a] (.log js/console a) a)
 (defn move [loc direction]
   (case direction
-    :right (or (right loc) (next-bar loc) loc)
-    :left (or (left loc) (prev-bar loc) loc)
-    :bar-right (next-bar loc)
-    :bar-left (-> (prev-bar loc) zip/leftmost)
+    :right (next-leaf loc)
+    :left (prev-leaf loc)
+    :bar-right (locate loc #(and (not (branch? %)) (not= (up loc) (up %))))
+    :bar-left (locate-left (zip/prev loc) #(and (not (branch? %)) (= 0 (count (zip/lefts %)))))
 
     ;; Don't worry, this will be refactored soon
     :up (let [pos (-> loc up lefts count)]
