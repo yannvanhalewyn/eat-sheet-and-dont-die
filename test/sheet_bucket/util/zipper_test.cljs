@@ -1,7 +1,8 @@
 (ns sheet-bucket.util.zipper-test
   (:require [sheet-bucket.util.zipper :refer [next-leaf prev-leaf locate nth-child]]
             [clojure.zip :refer [vector-zip node down right rightmost]]
-            [cljs.test :refer-macros [deftest is testing]]))
+            [cljs.test :refer-macros [deftest is testing]]
+            [clojure.zip :as zip]))
 
 ;; SUBJECT
 ;; =======
@@ -22,7 +23,9 @@
 (deftest locate-test
   (is (= 3 (node (locate subject #(= 3 (node %))))))
   (is (= [3 4] (node (locate subject #(and (vector? (node %)) (= 4 (last (node %))))))))
-  (is (= nil (locate subject (fn [_] false)))))
+  (is (= nil (locate subject (fn [_] false))))
+  (testing "You can use zip/branch? in the predicate"
+    (is (= nil (locate (goto subject 8) #(zip/branch? %))))))
 
 (deftest nextLeaf
   (is (= 1 (node (next-leaf subject))))

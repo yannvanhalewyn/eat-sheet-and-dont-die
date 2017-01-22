@@ -7,8 +7,8 @@
   [loc pred]
   (loop [l loc]
     (cond
-      (pred l) l
       (zip/end? l) nil
+      (pred l) l
       :else (recur (zip/next l)))))
 
 (defn next-leaf
