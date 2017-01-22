@@ -131,11 +131,11 @@
 
     ;; Out of bounds
     ;; =============
-    (check [:up] "1")
     (testing "Will return nil when leaving sheet edges"
       (let [is-nil #(is (= nil (-> sheet (sheet/navigate-to %1) (sheet/move %2))))]
         (is-nil "13" :right)
         (is-nil "13" :bar-right)
         (is-nil "1" :left)
-        (is-nil "1" :bar-left)))
-    (check ["12" :down] "12")))
+        (is-nil "1" :bar-left)
+        (is-nil "1" :up)
+        (is-nil "12" :down)))))

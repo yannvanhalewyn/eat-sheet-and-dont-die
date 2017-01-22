@@ -62,33 +62,25 @@
 (def chord? (complement branch?))
 (def first-chord-of-bar? #(and (chord? %) (= 0 (count (zip/lefts %)))))
 
+(defn- different-row?
+  [loc1 loc2]
+  (and (chord? loc1)
+       (chord? loc2)
+       (not= (-> loc1 up up) (-> loc2 up up))))
+
+(defn- move-vertically
+  [loc direction]
+  (let [bar-idx (-> loc up lefts count)
+        locater (case direction :up locate-left :down locate)]
+    (if-let [last-chord-in-target-row (locater loc (partial different-row? loc))]
+      (let [row (-> last-chord-in-target-row up up)]
+        (down (or (nth-child row bar-idx) (-> row down zip/rightmost)))))))
+
 (defn move [loc direction]
   (case direction
     :right (next-leaf loc)
     :left (prev-leaf loc)
     :bar-right (locate (zip/next loc) first-chord-of-bar?)
     :bar-left (locate-left (zip/prev loc) first-chord-of-bar?)
-
-    ;; Don't worry, this will be refactored soon
-    :up (let [pos (-> loc up lefts count)]
-          (if-let [up-row (-> loc up up left)]
-            (down (or (nth-child up-row pos)
-                      (-> up-row down zip/rightmost)))
-            (if-let [prev-section (-> loc up up up left)]
-              (-> prev-section down zip/rightmost
-                  (#(or (nth-child % pos)
-                        (zip/rightmost (zip/down %))))
-                  down)
-              loc)))
-
-    :down (let [pos (-> loc up lefts count)]
-            (if-let [next-row (-> loc up up right)]
-              (down (or (nth-child next-row pos)
-                        (-> next-row down zip/rightmost)))
-              (if-let [next-section (-> loc up up up right)]
-                (-> next-section
-                    down
-                    (#(or (nth-child % pos)
-                          (zip/rightmost (down (zip/rightmost %)))))
-                    down)
-                loc)))))
+    :up (move-vertically loc :up)
+    :down (move-vertically loc :down)))
