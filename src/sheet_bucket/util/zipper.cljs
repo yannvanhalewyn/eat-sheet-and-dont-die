@@ -11,6 +11,15 @@
       (pred l) l
       :else (recur (zip/next l)))))
 
+(defn locate-left
+  "Will depth first search backwards the zipper until a node is found
+  for which pred returns true"
+  [loc pred]
+  (loop [l loc]
+    (if (and l (not (pred l)))
+      (recur (zip/prev l))
+      l)))
+
 (defn next-leaf
   "Will navigate the tree from current loc with 'next until a leaf is
   found. Returns nil when out of bounds."

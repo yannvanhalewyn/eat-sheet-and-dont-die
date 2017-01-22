@@ -1,8 +1,7 @@
 (ns sheet-bucket.util.zipper-test
-  (:require [sheet-bucket.util.zipper :refer [next-leaf prev-leaf locate nth-child]]
-            [clojure.zip :refer [vector-zip node down right rightmost]]
-            [cljs.test :refer-macros [deftest is testing]]
-            [clojure.zip :as zip]))
+  (:require [sheet-bucket.util.zipper :refer [next-leaf prev-leaf locate locate-left nth-child]]
+            [clojure.zip :as zip :refer [vector-zip node up down right rightmost branch?]]
+            [cljs.test :refer-macros [deftest is testing]]))
 
 ;; SUBJECT
 ;; =======
@@ -20,12 +19,20 @@
 
 (defn goto [loc x] (locate loc #(= x (node %))))
 
-(deftest locate-test
+(deftest testLocate
   (is (= 3 (node (locate subject #(= 3 (node %))))))
   (is (= [3 4] (node (locate subject #(and (vector? (node %)) (= 4 (last (node %))))))))
-  (is (= nil (locate subject (fn [_] false))))
+  (is (= nil (locate subject (constantly false))))
   (testing "You can use zip/branch? in the predicate"
     (is (= nil (locate (goto subject 8) #(zip/branch? %))))))
+
+(deftest testLocateLeft
+  (is (= 3 (node (locate-left (goto subject 4) #(= 3 (node %))))))
+  (is (= 5 (node (locate-left (goto subject 7)
+                              #(and (not (branch? %)) (not= (up %) (up (goto subject 7))))))))
+  (is (= nil (locate-left (goto subject 1) (constantly false))))
+  (testing "It can find the same node again"
+    (is (= 3 (node (locate-left (goto subject 3) #(= 0 (count (zip/lefts %)))))))))
 
 (deftest nextLeaf
   (is (= 1 (node (next-leaf subject))))
