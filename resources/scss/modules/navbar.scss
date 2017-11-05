@@ -6,25 +6,33 @@
 }
 
 .navbar__breadcrumbs {
+  margin: auto 10px;
   flex: 1;
   display: flex;
 }
 
+.navbar__search {
+  margin: auto 10px;
+  flex: 1;
+}
+
 .navbar__right {
+  margin: auto 10px;
   display: flex;
+  flex: 1;
+  justify-content: flex-end;
 }
 
 .navbar__home {
+  margin: auto 10px;
   transition: background 150ms;
-
 }
 
-.navbar__item {
-  margin: 10px;
+.navbar__item--icon {
   width: 45px;
+  padding: 8px 0;
   border-radius: 50%;
   text-align: center;
-  padding: 8px 0;
 
   .material-icons {
     color: $white;

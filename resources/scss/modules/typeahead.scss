@@ -1,0 +1,22 @@
+.typeahead {
+  position: relative;
+  width: 100%;
+}
+
+.typeahead__icon {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  color: #8693A8;
+}
+
+.typeahead__input {
+  font: inherit;
+  color: #4A4A4A;
+  border: none;
+  background: #F7F9FC;
+  border-radius: 4px;
+  outline: none;
+  width: 100%;
+  padding: 5px 10px 5px 40px;
+}
