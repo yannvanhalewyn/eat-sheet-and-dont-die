@@ -4,14 +4,6 @@
             [goog.events.KeyCodes :refer [TAB SPACE ENTER ESC BACKSPACE LEFT RIGHT UP DOWN]]
             [clojure.string :as str]))
 
-(def style
-  {:chord {:font-family "NashvillechordSymbols"
-           :cursor "pointer"
-           :font-size "1.7em"}
-   :extension {:font-size "0.7em"
-               :position "relative"
-               :bottom "9px" :left "3px"}})
-
 (defn- base
   "Returns a string suitable for the chord symbols font for the base
   root and triad"
@@ -38,11 +30,10 @@
 (defn displayed-chord
   "A displayable formatted chord"
   [{[root accidental] :root :as props}]
-  [:span {:style (:chord style) :on-click (stop-propagation (:on-click props))}
+  [:div.chord {:on-click (stop-propagation (:on-click props))}
    (if (:root props)
-     [:span
-      [:span (base props)]
-      [:span {:style (:extension style)} (extension props)]])])
+     [:span (base props)
+      [:small.chord__extension (extension props)]])])
 
 (defn key-down-handler [{:keys [append remove move deselect update-chord]}]
   (fn [e]
@@ -88,12 +79,14 @@
   "An input box for editing a chord"
   []
   (reagent/create-class
-   {:component-did-mount
-    (fn [this] (.focus (reagent/dom-node this)))
-    :reagent-render
-    (fn [{:keys [update-chord] :as props}]
-      [:input {:type "text"
-               :style {:width "100%"}
-               :on-blur #(update-chord  (.. % -target -value))
-               :on-key-down (key-down-handler props)
-               :default-value (:text props)}])}))
+    {:component-did-mount
+     (fn [this]
+       (.focus (reagent/dom-node this))
+       (.select (reagent/dom-node this)))
+     :reagent-render
+     (fn [{:keys [update-chord] :as props}]
+       [:input.chord--editing
+        {:type "text"
+         :on-blur #(update-chord  (.. % -target -value))
+         :on-key-down (key-down-handler props)
+         :default-value (:text props)}])}))
