@@ -1,0 +1,39 @@
+.navbar {
+  display: flex;
+  background: $blue1;
+  color: $white;
+  height: 65px;
+}
+
+.navbar__breadcrumbs {
+  flex: 1;
+  display: flex;
+}
+
+.navbar__right {
+  display: flex;
+}
+
+.navbar__home {
+  transition: background 150ms;
+
+}
+
+.navbar__item {
+  margin: 10px;
+  width: 45px;
+  border-radius: 50%;
+  text-align: center;
+  padding: 8px 0;
+
+  .material-icons {
+    color: $white;
+    vertical-align: -7px;
+    font-size: 28px;
+    transition: color 300ms;
+  }
+
+  &:hover {
+    background: darken($blue1, 5);
+  }
+}
