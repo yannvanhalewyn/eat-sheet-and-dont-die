@@ -1,7 +1,6 @@
 (ns sheet-bucket.components.chord
   (:require [reagent.core :as reagent]
             [sheet-bucket.util.util :refer [stop-propagation prevent-default]]
-            [cljs.core.match :refer [match]]
             [goog.events.KeyCodes :refer [TAB SPACE ENTER ESC BACKSPACE LEFT RIGHT UP DOWN]]
             [clojure.string :as str]))
 

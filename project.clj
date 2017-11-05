@@ -6,18 +6,21 @@
 
   :min-lein-version "2.6.1"
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.293"]
+  :dependencies [[org.clojure/clojure "1.9.0-beta2"]
+                 [org.clojure/clojurescript "1.9.946"]
                  [org.clojure/core.match "0.3.0-alpha4"]
                  [org.clojure/core.async "0.2.374"
                   :exclusions [org.clojure/tools.reader]]
-                 [reagent "0.6.0" :exclusions [cljsjs/react]]]
+                 [com.stuartsierra/component "0.3.2"]
+                 ;; CLJS
+                 [reagent "0.7.0"]]
 
-  :profiles {:dev {:dependencies [[devcards "0.2.2"]
+  :profiles {:dev {:dependencies [[devcards "0.2.4" :exclusions [cljsjs/react]]
                                   [binaryage/devtools "0.8.3"]
+                                  [reloaded.repl "0.2.4"]
                                   [figwheel-sidecar "0.5.3-1"]
                                   [org.clojure/test.check "0.9.0"] ;; For cljs.spec
-                                  [com.cemerick/piggieback "0.2.1"]]
+                                  [com.cemerick/piggieback "0.2.2"]]
                    :source-paths ["src" "dev"]
                    :repl-options {:init (set! *print-length* 50)
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
@@ -27,7 +30,7 @@
 
   :source-paths ["src"]
 
-  :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
+  :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
   :aliases {"dev" ["figwheel" "dev" "cards" "test"]}
 

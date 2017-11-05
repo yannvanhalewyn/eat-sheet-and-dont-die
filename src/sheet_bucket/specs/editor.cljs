@@ -1,11 +1,11 @@
 (ns sheet-bucket.specs.editor
-  (:require [cljs.spec :as s]
+  (:require [clojure.spec.alpha :as s]
             [clojure.test.check.generators]
-            [cljs.spec.impl.gen :as gen]))
+            [clojure.spec.gen.alpha :as gen]))
 
 (defn rand-str [n]
   (clojure.string/join
-   (take n (repeatedly #(.toString (rand-int 16) 16)))))
+    (take n (repeatedly #(.toString (rand-int 16) 16)))))
 
 (def gen-id #(->> (s/gen string?) (gen/fmap (partial rand-str 5))))
 

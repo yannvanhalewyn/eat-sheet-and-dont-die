@@ -1,5 +1,5 @@
 (ns sheet-bucket.models.chord
-  (:require [cljs.core.match :refer-macros [match]]
+  (:require [clojure.core.match :refer-macros [match]]
             [goog.string :refer [format contains caseInsensitiveContains]]
             [goog.string.format]))
 

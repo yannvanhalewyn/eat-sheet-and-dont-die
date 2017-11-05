@@ -1,6 +1,6 @@
 (ns sheet-bucket.util.util
-  (:require [cljs.spec :as s]
-            [cljs.spec.impl.gen :as gen]
+  (:require [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
             [clojure.test.check.generators]))
 
 (defn gen
