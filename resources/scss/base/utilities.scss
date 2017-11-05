@@ -1,3 +1,29 @@
+$BASE_MARGIN: 20px;
+
+.u-margin-top {
+  margin-top: $BASE_MARGIN;
+}
+
+.u-margin-top--s {
+  margin-top: $BASE_MARGIN / 2;
+}
+
+.u-margin-top--l {
+  margin-top: $BASE_MARGIN * 2;
+}
+
+.u-margin-right {
+  margin-right: $BASE_MARGIN;
+}
+
+.u-margin-right--s {
+  margin-right: $BASE_MARGIN / 2;
+}
+
+.u-centered {
+  text-align: center;
+}
+
 .u-max-height {
   height: 100%;
 }

@@ -11,7 +11,7 @@
 
 (defn component [{{:keys [name]} :attrs :keys [rows] :as props}]
   [:div.section
-   [:h3 name]
+   [:h4.u-margin-top name]
    (fori [i [bars] rows]
      ^{:key i} [row-component (-> props
                                   (dissoc :attrs :rows)

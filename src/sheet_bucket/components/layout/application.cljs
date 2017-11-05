@@ -12,4 +12,5 @@
     [:div.navbar__right
      [:div.navbar__item
       [:i.material-icons "person"]]]]
-   [sheet/component props]])
+   [:div.l-app.l-content
+    [sheet/component props]]])

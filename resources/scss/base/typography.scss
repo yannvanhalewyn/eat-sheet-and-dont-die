@@ -6,3 +6,21 @@
 body {
   font: 16px / 25px "Montserrat", sans-serif;
 }
+
+h1 {
+  font-weight: bold;
+  font-size: 2em;
+  color: #4A4A4A;
+}
+
+h3 {
+  font-weight: bold;
+  font-size: 1.5em;
+  color: lighten(#4A4A4A, 5);
+}
+
+h4 {
+  font-weight: bold;
+  font-size: 1.25em;
+  color: lighten(#4A4A4A, 5);
+}
