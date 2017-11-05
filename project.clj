@@ -18,14 +18,14 @@
   :profiles {:dev {:dependencies [[devcards "0.2.4" :exclusions [cljsjs/react]]
                                   [binaryage/devtools "0.8.3"]
                                   [reloaded.repl "0.2.4"]
-                                  [figwheel-sidecar "0.5.3-1"]
+                                  [figwheel-sidecar "0.5.14"]
                                   [org.clojure/test.check "0.9.0"] ;; For cljs.spec
                                   [com.cemerick/piggieback "0.2.2"]]
                    :source-paths ["src" "env/dev"]
                    :repl-options {:init (set! *print-length* 50)
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
 
-  :plugins [[lein-figwheel "0.5.8"]
+  :plugins [[lein-figwheel "0.5.14"]
             [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
 
   :source-paths ["src"]

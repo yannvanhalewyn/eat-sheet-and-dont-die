@@ -5,7 +5,7 @@
             [com.stuartsierra.component :as c]))
 
 (def figwheel-config
-  (assoc (ra-sys/fetch-config) :build-ids ["dev" "test" "cards"]))
+  (assoc-in (ra-sys/fetch-config) [:data :build-ids] ["dev" "test" "cards"]))
 
 (defn cljs []
   (ra-sys/cljs-repl (:figwheel-system repl/system)))
