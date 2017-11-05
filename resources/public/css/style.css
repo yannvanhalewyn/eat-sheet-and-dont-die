@@ -6,3 +6,7 @@
   font-family: NashvillechordSymbols;
   src: url(../fonts/NashvilleChordSymbols-regular.ttf)
 }
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
