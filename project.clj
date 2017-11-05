@@ -21,7 +21,7 @@
                                   [figwheel-sidecar "0.5.3-1"]
                                   [org.clojure/test.check "0.9.0"] ;; For cljs.spec
                                   [com.cemerick/piggieback "0.2.2"]]
-                   :source-paths ["src" "dev"]
+                   :source-paths ["src" "env/dev"]
                    :repl-options {:init (set! *print-length* 50)
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
 
@@ -32,8 +32,6 @@
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
-  :aliases {"dev" ["figwheel" "dev" "cards" "test"]}
-
   :cljsbuild {:builds [{:id "cards"
                         :source-paths ["src"]
                         :figwheel {:devcards true}
@@ -43,7 +41,7 @@
                                    :output-dir "resources/public/js/compiled/cards-out"}}
 
                        {:id "dev"
-                        :source-paths ["src"]
+                        :source-paths ["src" "env/dev"]
                         :figwheel {:on-jsload "sheet-bucket.core/render"}
                         :compiler {:main sheet-bucket.core
                                    ;; Figwheel injects script tags for

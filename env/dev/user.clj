@@ -1,5 +1,6 @@
 (ns user
-  (:require [figwheel-sidecar.system :as ra-sys]
+  (:require [dev.scss-watcher :as scss]
+            [figwheel-sidecar.system :as ra-sys]
             [reloaded.repl :as repl :refer [go start stop reset]]
             [com.stuartsierra.component :as c]))
 
@@ -13,6 +14,8 @@
   "Constructs a system map suitable for interactive development."
   []
   (c/system-map
-    :figwheel-system (ra-sys/figwheel-system figwheel-config)))
+    :figwheel-system (ra-sys/figwheel-system figwheel-config)
+    :scss-watcher (scss/watcher)
+    :css-watcher (ra-sys/css-watcher {:watch-paths ["resources/public/css"]})))
 
 (repl/set-init! dev-system)
