@@ -1,14 +1,3 @@
 @import 'base/reset';
-
-*, *:before, *:after {
-  box-sizing: border-box
-}
-
-@font-face {
-  font-family: NashvillechordSymbols;
-  src: url(../fonts/NashvilleChordSymbols-regular.ttf)
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-}
+@import 'base/layout';
+@import 'base/typography';
