@@ -16,7 +16,7 @@
                                                assoc :raw value))}))
 
 (defn append [state type]
-  (let [new-sheet (sheet/append (current-loc @state) type (name (gensym)))]
+  (let [new-sheet (sheet/append (current-loc @state) type (random-uuid))]
     (transact! state {:type :sheet/update
                       :value (zip/root new-sheet)
                       :selected (-> new-sheet zip/node :id)})))
