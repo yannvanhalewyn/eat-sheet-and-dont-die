@@ -11,8 +11,8 @@
 }
 
 .chord {
+  font-family: 'Noto Serif', serif;
   cursor: pointer;
-  font-family: "NashvillechordSymbols";
   font-size: 1.7em;
   width: 100%;
   display: inline-block;
@@ -22,7 +22,6 @@
   font-size: 0.7em;
   position: relative;
   bottom: 9px;
-  left: 3px;
 }
 
 .chord--editing {
@@ -37,4 +36,8 @@
   color: white;
 
   &::selection { background: none; }
+}
+
+.music-notation {
+  font-family: 'Metdemo';
 }

@@ -82,7 +82,8 @@
    [for-all-roots {:seventh :major} "Major seventh"]
    [for-all-roots {:triad :minor :seventh :minor} "Minor sevenths"]
    [for-all-roots {:triad :minor :seventh :major} "Minor major sevenths"]
-   [for-all-roots {:triad :diminished :seventh :minor} "Half diminished"]])
+   [for-all-roots {:triad :diminished :seventh :minor} "Half diminished"]
+   [for-all-roots {:triad :diminished :seventh :diminished} "Diminished"]])
 
 ;; Ninths
 (defcard-rg Ninths
