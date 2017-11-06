@@ -33,7 +33,7 @@
    (match [triad seventh ninth]
      [:diminished :minor _] [half-diminished]
      [_ :major NINTH] [:span [major-seventh] [Ninth NINTH]]
-     [_ :minor NINTH] [:span [:span (if NINTH "9" "7")]]
+     [_ :minor NINTH] [:span [:span (if (= :natural NINTH) "9" [:span "7" [Ninth NINTH]])]]
      [:diminished :diminished NINTH] [:span [diminished] [Ninth NINTH]]
      [:diminished _ _] [:span [flat] "5"]
      [:augmented _ _] "+"

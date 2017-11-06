@@ -94,6 +94,11 @@
    [for-all-roots {:ninth :sharp} "Sharp ninths"]
    [for-all-roots {:ninth :flat} "Flat ninths"]])
 
+(defcard-rg Altered
+  [:div
+   [for-all-roots {:seventh :minor :ninth :flat} "Dominant flat 9"]
+   [for-all-roots {:seventh :minor :ninth :sharp} "Dominant sharp 9"]])
+
 (defcard-props No-root
   "Should not display anything"
   [displayed-chord {:root nil :triad :major :seventh :minor :ninth :major}])
