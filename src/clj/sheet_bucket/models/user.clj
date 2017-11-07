@@ -12,3 +12,8 @@
 (defn find-by-email [db email]
   (<!! (client/pull db {:eid [:user/email email]
                         :selector '[*]})))
+
+(defn sheets-for-user [db user]
+  (:playlist/sheets
+   (<!! (client/pull db {:eid user
+                         :selector '[{:playlist/sheets [*]}]}))))
