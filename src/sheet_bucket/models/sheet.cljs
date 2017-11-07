@@ -4,29 +4,40 @@
              :refer [up down right left end? next node insert-right lefts branch? children]]
             [sheet-bucket.util.zipper :refer [nth-child next-leaf prev-leaf locate locate-left]]))
 
+;; Initializing nodes
+;; ==================
+
 (defn new-chord [id]
   {:chord/id id :chord/value ""})
 
 (defn new-bar [chord-id]
-  {:document/children [(new-chord chord-id)]})
+  {:bar/chords [(new-chord chord-id)]})
 
 (defn new-row [chord-id]
-  {:document/children [(new-bar chord-id)]})
+  {:row/bars [(new-bar chord-id)]})
 
 (defn new-section [chord-id]
   {:section/title "Intro"
-   :document/children [(new-row chord-id)]})
+   :section/rows [(new-row chord-id)]})
 
 (def new-sheet {:sheet/title "Title"
                 :sheet/artist "Artist"
-                :document/children [(new-section "1")]})
+                :sheet/sections [(new-section "1")]})
+
+;; Zipper
+;; ======
+
+(def BRANCHING_KEYS #{:sheet/sections :section/rows :row/bars :bar/chords})
+
+(def get-branching-key #(first (filter % BRANCHING_KEYS)))
+(def get-children  #(some % BRANCHING_KEYS))
 
 (defn zipper
   "Builds the sheet zipper"
   [data]
-  (zip/zipper #(contains? % :document/children)
-              :document/children
-              #(assoc %1 :document/children %2) data))
+  (zip/zipper get-branching-key
+              get-children
+              #(assoc %1 (get-branching-key %1) (vec %2)) data))
 
 (defn navigate-to
   "Moves the zipper to the child with given id"
@@ -36,6 +47,9 @@
       (end? loc) nil
       (= id (:chord/id (node loc))) loc
       :else (recur (next loc)))))
+
+;; Addming
+;; =======
 
 (defmulti append (fn [_ t _] t))
 
@@ -53,6 +67,7 @@
 
 ;; Removing
 ;; ========
+
 (def empty-branch? #(and (zip/branch? %) (empty? (zip/children %))))
 
 (defn- nearest-chord
@@ -89,6 +104,7 @@
 
 ;; Movement
 ;; ========
+
 (def chord? (complement branch?))
 (def first-chord-of-bar? #(and (chord? %) (= 0 (count (zip/lefts %)))))
 
