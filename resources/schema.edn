@@ -1,0 +1,52 @@
+[
+ ;; Users
+ ;; =====
+
+ {:db/ident :user/email
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity
+  :db/doc "Email of the user"}
+
+ {:db/ident :user/password-digest
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The password digest the user"}
+
+ {:db/ident :user/first-name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The firstname of the user"}
+
+ {:db/ident :user/last-name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The lastname of the user"}
+
+ {:db/ident :playlist/sheets
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many
+  :db/doc "The user's sheets"}
+
+ ;; Sheets
+ ;; ======
+
+ {:db/ident :sheet/title
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The title of the sheet"}
+
+ {:db/ident :sheet/artist
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The artist of the sheet"}
+
+ {:db/ident :sheet/key
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The key of the sheet"}
+
+ {:db/ident :sheet/data
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The sheet data"}]

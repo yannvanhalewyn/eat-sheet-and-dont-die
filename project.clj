@@ -12,6 +12,8 @@
                  [org.clojure/core.async "0.2.374"
                   :exclusions [org.clojure/tools.reader]]
                  [com.stuartsierra/component "0.3.2"]
+                 [com.datomic/clj-client "0.8.606"]
+
                  ;; CLJS
                  [reagent "0.7.0"]]
 
