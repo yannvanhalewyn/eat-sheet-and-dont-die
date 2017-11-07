@@ -46,7 +46,33 @@
   :db/cardinality :db.cardinality/one
   :db/doc "The key of the sheet"}
 
- {:db/ident :sheet/data
+ {:db/ident :sheet/sections
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many
+  :db/isComponent true
+  :db/doc "The sheet's song sections"}
+
+ ;; Section
+ ;; =======
+
+ {:db/ident :section/name
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
-  :db/doc "The sheet data"}]
+  :db/doc "The section's title"}
+
+ {:db/ident :section/bars
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many
+  :db/isComponent true
+  :db/doc "The section's bars"}
+
+ {:db/ident :bar/chords
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many
+  :db/isComponent true
+  :db/doc "The bar's chords"}
+
+ {:db/ident :chord/value
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The chord's raw value"}]

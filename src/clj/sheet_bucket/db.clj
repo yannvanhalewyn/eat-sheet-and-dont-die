@@ -41,4 +41,14 @@
 
   (<!! (d/pull (d/db conn)
                {:eid 17592186045446
-                :selector '[:sheet/title {:playlist/_sheets [*]}]})))
+                :selector '[:sheet/title {:playlist/_sheets [*]}]}))
+
+  (transact! conn
+             [{:sheet/sections
+               [{:section/name "Intro"
+                 :section/bars [{:bar/chords [{:chord/value "A-"}
+                                              {:chord/value "C"}]}
+                                {:bar/chords [{:chord/value "D-"}]}]}
+                {:section/name "Verse"
+                 :section/bars [{:bar/chords [{:chord/value "C7"}
+                                              {:chord/value "B-"}]}]}]}]))
