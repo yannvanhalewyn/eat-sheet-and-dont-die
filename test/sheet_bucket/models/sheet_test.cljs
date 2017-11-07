@@ -9,29 +9,30 @@
 (def test-loc (-> new-sheet zipper (navigate-to "1")))
 
 (deftest navigateTo
-  (is (= "1" (-> new-sheet zipper (navigate-to "1") node :id)))
+  (is (= "1" (-> new-sheet zipper (navigate-to "1") node :chord/id)))
   (is (= nil (-> new-sheet zipper (navigate-to "2"))))
-  (is (= "1" (-> new-sheet zipper (navigate-to "1") (append :chord "2") (navigate-to "1") node :id))))
+  (is (= "1" (-> new-sheet zipper (navigate-to "1")
+                 (append :chord "2") (navigate-to "1") node :chord/id))))
 
 (deftest addChord
   (let [new-chord (-> test-loc (append :chord "2"))]
     (is (= 2 (-> new-chord up children count)))
-    (is (= "2" (-> new-chord node :id)))))
+    (is (= "2" (-> new-chord node :chord/id)))))
 
 (deftest addBar
   (let [new-chord (-> test-loc (append :bar "2"))]
     (is (= 2 (-> new-chord up up children count)))
-    (is (= "2" (-> new-chord node :id)))))
+    (is (= "2" (-> new-chord node :chord/id)))))
 
 (deftest addRow
   (let [new-chord (-> test-loc (append :row "2"))]
     (is (= 2 (-> new-chord up up up children count)))
-    (is (= "2" (-> new-chord node :id)))))
+    (is (= "2" (-> new-chord node :chord/id)))))
 
 (deftest addSection
   (let [new-chord (-> test-loc (append :section "2"))]
     (is (= 2 (-> new-chord up up up up children count)))
-    (is (= "2" (-> new-chord node :id)))))
+    (is (= "2" (-> new-chord node :chord/id)))))
 
 (deftest removing
   (let [sheet (-> test-loc
@@ -48,33 +49,33 @@
 
     ;; Chords
     ;; ======
-    (is (= ["2"] (-> sheet (delete :chord) up children (#(map :id %)))))
-    (is (= "2" (-> sheet (delete :chord) node :id)))
-    (is (= "1" (-> sheet (navigate-to "2") (delete :chord) node :id)))
-    (is (= "2" (-> sheet (navigate-to "3") (delete :chord) node :id)))
-    (is (= "3" (-> sheet (navigate-to "4") (delete :chord) node :id)))
-    (is (= "4" (-> sheet (navigate-to "5") (delete :chord) node :id)))
+    (is (= ["2"] (-> sheet (delete :chord) up children (#(map :chord/id %)))))
+    (is (= "2" (-> sheet (delete :chord) node :chord/id)))
+    (is (= "1" (-> sheet (navigate-to "2") (delete :chord) node :chord/id)))
+    (is (= "2" (-> sheet (navigate-to "3") (delete :chord) node :chord/id)))
+    (is (= "3" (-> sheet (navigate-to "4") (delete :chord) node :chord/id)))
+    (is (= "4" (-> sheet (navigate-to "5") (delete :chord) node :chord/id)))
     (is (= 0 (-> sheet (navigate-to "3") (delete :chord) up rights count)))
     (is (= 0 (-> sheet (navigate-to "4") (delete :chord) up up rights count)))
     (is (= 1 (-> sheet (navigate-to "5") (delete :chord) up up up up children count)))
 
-    ;; Bars
-    ;; ====
-    (is (= "3" (-> sheet (delete :bar) node :id)))
-    (is (= "3" (-> sheet (navigate-to "4") (delete :bar) node :id)))
+    ;; ;; Bars
+    ;; ;; ====
+    (is (= "3" (-> sheet (delete :bar) node :chord/id)))
+    (is (= "3" (-> sheet (navigate-to "4") (delete :bar) node :chord/id)))
     (is (= 1 (-> sheet (navigate-to "2") (delete :bar) up up children count)))
     (is (= 1 (-> sheet (navigate-to "4") (delete :bar) up up up children count)))
     (is (= 1 (-> sheet (navigate-to "5") (delete :bar) up up up up children count)))
 
-    ;; Rows
-    ;; ====
-    (is (= "4" (-> sheet (delete :row) node :id)))
+    ;; ;; Rows
+    ;; ;; ====
+    (is (= "4" (-> sheet (delete :row) node :chord/id)))
     (is (= 1 (-> sheet (navigate-to "4") (delete :row) up up up children count)))
     (is (= 1 (-> sheet (navigate-to "5") (delete :row) up up up up children count)))
 
-    ;; Sections
-    ;; ========
-    (is (= "5" (-> sheet (delete :section) node :id)))
+    ;; ;; Sections
+    ;; ;; ========
+    (is (= "5" (-> sheet (delete :section) node :chord/id)))
     (is (= 1 (-> sheet (delete :section) up up up up children count)))
     (is (= 1 (-> sheet (navigate-to "5") (delete :section) up up up up children count)))
 
@@ -93,13 +94,13 @@
                   (navigate-to "1"))
         check (fn [moves expected]
                 (let [land (reduce
-                            #(let [move (if (string? %2) sheet/navigate-to sheet/move)]
-                               (move %1 %2))
-                            sheet moves)]
+                             #(let [move (if (string? %2) sheet/navigate-to sheet/move)]
+                                (move %1 %2))
+                             sheet moves)]
                   (is land (str "Couldn't find element for moves: " moves))
-                  (is (= expected (-> land node :id))
+                  (is (= expected (-> land node :chord/id))
                       (format "Failed move test for %s. Expected: %s, got: %s"
-                              moves expected (-> land node :id)))))]
+                              moves expected (-> land node :chord/id)))))]
     ;; Testing the moves in a sheet.
     ;; |-----+----+------|
     ;; | 1 2 | 3  |      |

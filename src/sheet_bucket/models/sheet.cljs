@@ -4,17 +4,29 @@
              :refer [up down right left end? next node insert-right lefts branch? children]]
             [sheet-bucket.util.zipper :refer [nth-child next-leaf prev-leaf locate locate-left]]))
 
-(defn new-chord [id] {:id id :raw ""})
-(defn new-bar [chord-id] [[(new-chord chord-id)]])
-(defn new-row [chord-id] [[(new-bar chord-id)]])
-(defn new-section [chord-id] [[(new-row chord-id)] {:name "Intro"}])
+(defn new-chord [id]
+  {:chord/id id :chord/value ""})
 
-(def new-sheet [[(new-section "1")] {:artist "Artist" :title "Song name"}])
+(defn new-bar [chord-id]
+  {:document/children [(new-chord chord-id)]})
+
+(defn new-row [chord-id]
+  {:document/children [(new-bar chord-id)]})
+
+(defn new-section [chord-id]
+  {:section/title "Intro"
+   :document/children [(new-row chord-id)]})
+
+(def new-sheet {:sheet/title "Title"
+                :sheet/artist "Artist"
+                :document/children [(new-section "1")]})
 
 (defn zipper
   "Builds the sheet zipper"
   [data]
-  (zip/zipper vector? first #(assoc %1 0 %2) data))
+  (zip/zipper #(contains? % :document/children)
+              :document/children
+              #(assoc %1 :document/children %2) data))
 
 (defn navigate-to
   "Moves the zipper to the child with given id"
@@ -22,7 +34,7 @@
   (loop [loc (zipper (zip/root sheet))]
     (cond
       (end? loc) nil
-      (= id (:id (node loc))) loc
+      (= id (:chord/id (node loc))) loc
       :else (recur (next loc)))))
 
 (defmulti append (fn [_ t _] t))
