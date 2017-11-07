@@ -19,7 +19,7 @@
 (defn- base
   "Returns a string suitable for the chord symbols font for the base
   root and triad"
-  [{[root accidental] :root triad :triad}]
+  [{[root accidental] :chord/root triad :chord/triad}]
   [:span
    (str/upper-case root)
    (condp = accidental :flat [flat] :sharp [sharp] nil)
@@ -28,7 +28,7 @@
 (defn- extension
   "Returns a string suitable for our chord symbols font for the
   extension"
-  [{:keys [root triad seventh ninth]}]
+  [{:keys [:chord/root :chord/triad :chord/seventh :chord/ninth]}]
   [:span
    (match [triad seventh ninth]
      [:diminished :minor _] [half-diminished]
@@ -44,11 +44,11 @@
 
 (defn displayed-chord
   "A displayable formatted chord"
-  [{[root accidental] :root :as props}]
-  [:div.chord {:on-click (stop-propagation (:on-click props))}
-   (if (:root props)
-     [:span [base props]
-      [:small.chord__extension [extension props]]])])
+  [{:keys [chord on-click] :as props}]
+  [:div.chord {:on-click (stop-propagation on-click)}
+   (if (:chord/root chord)
+     [:span [base chord]
+      [:small.chord__extension [extension chord]]])])
 
 (defn key-down-handler [{:keys [append remove move deselect update-chord]}]
   (fn [e]

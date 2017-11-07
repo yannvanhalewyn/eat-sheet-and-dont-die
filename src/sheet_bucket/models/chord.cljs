@@ -16,28 +16,28 @@
   [s]
   (let [result (rest (re-find chord-regex s))
         [_ root _ triad extension seventh ninth fifth] result]
-    {:root (when root
-             (match (vec (take 3 result))
-               ["b" root _] [root :flat]
-               ["#" root _] [root :sharp]
-               [_ root "b"] [root :flat]
-               [_ root "#"] [root :sharp]
-               :else [root]))
-     :triad (or (case fifth
-                  "b5" :diminished
-                  "#5" :augmented
-                  nil)
-                (match triad
-                  (:or "m" "min" "-") :minor
-                  (:or "aug" "+" "#5") :augmented
-                  "b5" :diminished
-                  :else :major))
-     :seventh (cond
-                (caseInsensitiveContains (or extension "") "maj") :major
-                extension :minor
-                :else nil)
-     :ninth (match ninth
-              "9" :natural
-              "b9" :flat
-              "#9" :sharp
-              :else nil)}))
+    {:chord/root (when root
+                   (match (vec (take 3 result))
+                     ["b" root _] [root :flat]
+                     ["#" root _] [root :sharp]
+                     [_ root "b"] [root :flat]
+                     [_ root "#"] [root :sharp]
+                     :else [root]))
+     :chord/triad (or (case fifth
+                        "b5" :diminished
+                        "#5" :augmented
+                        nil)
+                      (match triad
+                        (:or "m" "min" "-") :minor
+                        (:or "aug" "+" "#5") :augmented
+                        "b5" :diminished
+                        :else :major))
+     :chord/seventh (cond
+                      (caseInsensitiveContains (or extension "") "maj") :major
+                      extension :minor
+                      :else nil)
+     :chord/ninth (match ninth
+                    "9" :natural
+                    "b9" :flat
+                    "#9" :sharp
+                    :else nil)}))

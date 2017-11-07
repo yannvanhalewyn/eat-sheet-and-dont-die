@@ -12,10 +12,10 @@
         run #(is (= %1 (%2 result))
                  (format "%s - expected %s from %s, got: %s"
                          (name %2) %1 raw (%2 result)))]
-    (run root :root)
-    (run (or triad :major) :triad)
-    (run seventh :seventh)
-    (run ninth :ninth)))
+    (run root :chord/root)
+    (run (or triad :major) :chord/triad)
+    (run seventh :chord/seventh)
+    (run ninth :chord/ninth)))
 
 (deftest roots-test
   (every? #(check [[%] :major] %) roots)

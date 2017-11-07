@@ -25,7 +25,7 @@
 (defcard-props Editable
   "This chord should be focused on page load. Blurring this field
   should log the message with the current input's value"
-  [editable-chord {:text "a-maj"
+  [editable-chord {:chord {:chord/value "a-maj"}
                    :update-chord (.-log js/console)
                    :append (partial (.-log js/console) "ADD ")
                    :remove (partial (.-log js/console) "REMOVE ")
@@ -43,62 +43,65 @@
 
 (defcard-props Major
   "Clicking the chord should launch an alert"
-  [displayed-chord {:root ["A" :flat] :on-click (alert "click")}])
+  [displayed-chord {:chord {:chord/root ["A" :flat]} :on-click (alert "click")}])
 
 (defn render-multi [chords]
   [:div {:style {:display :flex :justify-content :space-between}}
    (fori [i chord chords]
-     ^{:key i} [displayed-chord chord])])
+     ^{:key i} [displayed-chord {:chord chord}])])
 
 (defn for-all-roots [attrs title]
   [:div
    (if title [:h2 {:style {:color "#333"}} title])
-   [markdown->react (merge {:root ['root]} attrs)]
-   [render-multi (for [root roots] (merge {:root [root]} attrs))]])
+   [markdown->react {:chord (assoc attrs :chord/root ['root])}]
+   [render-multi (for [root roots] (assoc attrs :chord/root [root]))]])
 
 (defcard-rg roots
   "All the natural roots"
-  [render-multi (map (fn [root] {:root [root]}) roots)])
+  [render-multi (map (fn [root] {:chord/root [root]}) roots)])
 
 (defcard-rg flats
   "All the flat roots"
-  [render-multi (map (fn [root] {:root [root :flat]}) roots)])
+  [render-multi (map (fn [root] {:chord/root [root :flat]}) roots)])
 
 (defcard-rg sharps
   "All the sharp roots"
-  [render-multi (map (fn [root] {:root [root :sharp]}) roots)])
+  [render-multi (map (fn [root] {:chord/root [root :sharp]}) roots)])
 
 ;; Triads
 (defcard-rg Triads
   [:div
-   [for-all-roots {:triad :minor} "Minor triads"]
-   [for-all-roots {:triad :augmented} "Augmented triads"]
-   [for-all-roots {:triad :diminished} "Diminished triads"]])
+   [for-all-roots {:chord/triad :minor} "Minor triads"]
+   [for-all-roots {:chord/triad :augmented} "Augmented triads"]
+   [for-all-roots {:chord/triad :diminished} "Diminished triads"]])
 
 ;; Sevenths
 (defcard-rg Sevenths
   [:div
-   [for-all-roots {:seventh :minor} "Dominant seventh"]
-   [for-all-roots {:seventh :major} "Major seventh"]
-   [for-all-roots {:triad :minor :seventh :minor} "Minor sevenths"]
-   [for-all-roots {:triad :minor :seventh :major} "Minor major sevenths"]
-   [for-all-roots {:triad :diminished :seventh :minor} "Half diminished"]
-   [for-all-roots {:triad :diminished :seventh :diminished} "Diminished"]])
+   [for-all-roots {:chord/seventh :minor} "Dominant seventh"]
+   [for-all-roots {:chord/seventh :major} "Major seventh"]
+   [for-all-roots {:chord/triad :minor :chord/seventh :minor} "Minor sevenths"]
+   [for-all-roots {:chord/triad :minor :chord/seventh :major} "Minor major sevenths"]
+   [for-all-roots {:chord/triad :diminished :chord/seventh :minor} "Half diminished"]
+   [for-all-roots {:chord/triad :diminished :chord/seventh :diminished} "Diminished"]])
 
 ;; Ninths
 (defcard-rg Ninths
   [:div
-   [for-all-roots {:seventh :minor :ninth :natural} "Dominant ninths"]
-   [for-all-roots {:seventh :major :ninth :natural} "Major ninths"]
-   [for-all-roots {:triad :minor :seventh :minor :ninth :natural} "Minor ninths"]
-   [for-all-roots {:ninth :sharp} "Sharp ninths"]
-   [for-all-roots {:ninth :flat} "Flat ninths"]])
+   [for-all-roots {:chord/seventh :minor :chord/ninth :natural} "Dominant ninths"]
+   [for-all-roots {:chord/seventh :major :chord/ninth :natural} "Major ninths"]
+   [for-all-roots {:chord/triad :minor :chord/seventh :minor :chord/ninth :natural} "Minor ninths"]
+   [for-all-roots {:chord/ninth :sharp} "Sharp ninths"]
+   [for-all-roots {:chord/ninth :flat} "Flat ninths"]])
 
 (defcard-rg Altered
   [:div
-   [for-all-roots {:seventh :minor :ninth :flat} "Dominant flat 9"]
-   [for-all-roots {:seventh :minor :ninth :sharp} "Dominant sharp 9"]])
+   [for-all-roots {:chord/seventh :minor :chord/ninth :flat} "Dominant flat 9"]
+   [for-all-roots {:chord/seventh :minor :chord/ninth :sharp} "Dominant sharp 9"]])
 
 (defcard-props No-root
   "Should not display anything"
-  [displayed-chord {:root nil :triad :major :seventh :minor :ninth :major}])
+  [displayed-chord {:chord {:chord/root nil
+                            :chord/triad :major
+                            :chord/seventh :minor
+                            :chord/ninth :major}}])

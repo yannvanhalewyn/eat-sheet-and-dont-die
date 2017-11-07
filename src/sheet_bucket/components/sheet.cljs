@@ -2,15 +2,12 @@
   (:require [sheet-bucket.components.section :as section])
   (:require-macros [sheet-bucket.util.util :refer [fori]]))
 
-(defn component [{{:keys [artist title]} :attrs
-                  :keys [deselect sections append]
-                  :as props}]
+(defn component [{:keys [sheet deselect append] :as props}]
   [:div {:on-click deselect}
-   [:h1 title]
-   [:h3.u-margin-top--s artist]
+   [:h1 (:sheet/title sheet)]
+   [:h3.u-margin-top--s (:sheet/artist sheet)]
    [:div.u-margin-top.sections
-    (fori [i [rows attrs] sections]
+    (fori [i section (:sheet/sections sheet)]
       ^{:key i} [section/component
-                 (-> props
-                     (dissoc :attrs :sections)
-                     (assoc :rows rows :attrs attrs))])]])
+                 (-> (dissoc props :sheet)
+                     (assoc :section section))])]])

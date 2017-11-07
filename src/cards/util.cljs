@@ -8,20 +8,23 @@
 (defn unparse-chord
   "In order to use the spec generators to generate sheets, we need to
   return chord data to a string"
-  [{:keys [id root triad seventh ninth]}]
-  {:id id
-   :raw (str
-         (first root)
-         (case (second root) :sharp "#" :flat "b" "")
-         (case triad :minor "-" :augmented "+" :diminished "b5" "")
-         (case seventh :major "Maj7" :minor "7" "")
-         (case ninth :natural "9" :flat "b9" :sharp "#9" ""))})
+  [{:keys [:chord/id :chord/root :chord/triad :chord/seventh :chord/ninth]}]
+  {:chord/id id
+   :chord/value (str
+                  (first root)
+                  (case (second root) :sharp "#" :flat "b" "")
+                  (case triad :minor "-" :augmented "+" :diminished "b5" "")
+                  (case seventh :major "Maj7" :minor "7" "")
+                  (case ninth :natural "9" :flat "b9" :sharp "#9" ""))})
 
 (defn unparse-bar [bar]
-  (update bar 0 #(map unparse-chord %)))
+  (update bar :bar/chords #(map unparse-chord %)))
 
 (defn unparse-row [row]
-  (update row 0 #(map unparse-bar %)))
+  (update row :row/bars #(map unparse-bar %)))
 
 (defn unparse-section [section]
-  (update section 0 #(map unparse-row %)))
+  (update section :section/rows #(map unparse-row %)))
+
+(defn unparse-sheet [sheet]
+  (update sheet :sheet/sections #(map unparse-section %)))
