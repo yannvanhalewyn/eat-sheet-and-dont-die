@@ -19,8 +19,7 @@
                  [ring/ring-devel "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
                  [com.datomic/clj-client "0.8.606" :exclusions [org.eclipse.jetty/jetty-http
-                                                                org.eclipse.jetty/jetty-util
-                                                                org.eclipse.jetty/jetty-client]]
+                                                                org.eclipse.jetty/jetty-util]]
 
                  ;; CLJS
                  [reagent "0.7.0"]
