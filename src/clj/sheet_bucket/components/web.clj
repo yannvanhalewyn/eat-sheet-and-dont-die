@@ -4,6 +4,7 @@
             [sheet-bucket.utils :refer [parse-int]]
             [com.stuartsierra.component :as c]
             [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.json :refer [wrap-json-response wrap-json-params]]
             [ring.middleware.defaults :refer [api-defaults wrap-defaults]]))
 
 (defn- wrap-db [handler db]
@@ -20,7 +21,9 @@
 (defn make-handler [db]
   (-> #'routes/app-routes
       (wrap-db db)
-      (wrap-params)
+      wrap-params
+      wrap-json-response
+      wrap-json-params
       (wrap-defaults app-defaults)))
 
 (defrecord Web [port db]

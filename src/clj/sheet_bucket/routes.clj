@@ -1,6 +1,8 @@
 (ns sheet-bucket.routes
   (:require [clojure.java.io :as io]
-            [compojure.core :refer [defroutes GET POST]]))
+            [compojure.core :refer [defroutes GET POST]]
+            [compojure.route :as route]
+            [ring.util.response :refer [response]]))
 
 (def index-view
   {:status 200
@@ -8,5 +10,10 @@
              "Content-Type" "text/html; charset=UTF-8"}
    :body (slurp (io/resource "public/index.html"))})
 
+(defn sheets [{:keys [db]}]
+  (response {:test :ok}))
+
 (defroutes app-routes
-  (GET "/" [] index-view))
+  (GET "/" [] index-view)
+  (GET "/api/sheets" [] sheets)
+  (route/not-found "<h1>NOT FOUND</h1>"))

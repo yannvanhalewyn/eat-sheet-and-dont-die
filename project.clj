@@ -18,6 +18,7 @@
                  [http-kit "2.2.0"]
                  [ring/ring-devel "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
+                 [ring/ring-json "0.4.0"]
                  [com.datomic/clj-client "0.8.606"]
 
                  ;; CLJS
@@ -35,8 +36,7 @@
                    :repl-options {:init (set! *print-length* 50)
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
 
-  :plugins [[lein-figwheel "0.5.14"]
-            [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
+  :plugins [[lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
 
   :source-paths ["src/clj" "src/cljc"]
 
