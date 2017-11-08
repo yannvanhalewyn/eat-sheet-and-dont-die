@@ -3,8 +3,8 @@
             [redux.utils :refer-macros [defselector]]))
 
 ;; Selector
-(def sheet :sheet)
-(def selected :selected)
+(def sheet :db/sheet)
+(def selected :db/selected)
 
 (defselector sheet-loc [sheet] (sheet/zipper sheet))
 (defselector current-loc [sheet-loc selected]
