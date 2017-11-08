@@ -15,11 +15,10 @@
                  ;; Web
                  [com.stuartsierra/component "0.3.2"]
                  [compojure "1.6.0"]
-                 [ring/ring-jetty-adapter "1.6.3"]
+                 [http-kit "2.2.0"]
                  [ring/ring-devel "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
-                 [com.datomic/clj-client "0.8.606" :exclusions [org.eclipse.jetty/jetty-http
-                                                                org.eclipse.jetty/jetty-util]]
+                 [com.datomic/clj-client "0.8.606"]
 
                  ;; CLJS
                  [reagent "0.7.0"]
