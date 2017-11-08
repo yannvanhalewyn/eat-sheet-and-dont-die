@@ -6,31 +6,39 @@
 
   :min-lein-version "2.6.1"
 
-  :dependencies [[org.clojure/clojure "1.9.0-beta2"]
+  :dependencies [[org.clojure/clojure "1.9.0-RC1"]
                  [org.clojure/clojurescript "1.9.946"]
-                 [org.clojure/core.match "0.3.0-alpha4"]
-                 [org.clojure/core.async "0.2.374"
+                 [org.clojure/core.match "0.3.0-alpha5"]
+                 [org.clojure/core.async "0.3.443"
                   :exclusions [org.clojure/tools.reader]]
+
+                 ;; Web
                  [com.stuartsierra/component "0.3.2"]
-                 [com.datomic/clj-client "0.8.606"]
+                 [compojure "1.6.0"]
+                 [ring/ring-jetty-adapter "1.6.3"]
+                 [ring/ring-devel "1.6.3"]
+                 [ring/ring-defaults "0.3.1"]
+                 ;; [com.datomic/clj-client "0.8.606" :exclusions [org.eclipse.jetty/jetty-io]]
 
                  ;; CLJS
-                 [reagent "0.7.0"]]
+                 [reagent "0.7.0"]
+                 [re-frame "0.10.2"]
+                 [cljs-ajax "0.7.3"]]
 
   :profiles {:dev {:dependencies [[devcards "0.2.4" :exclusions [cljsjs/react]]
-                                  [binaryage/devtools "0.8.3"]
+                                  [binaryage/devtools "0.9.7"]
                                   [reloaded.repl "0.2.4"]
                                   [figwheel-sidecar "0.5.14"]
                                   [org.clojure/test.check "0.9.0"] ;; For cljs.spec
                                   [com.cemerick/piggieback "0.2.2"]]
-                   :source-paths ["src" "env/dev"]
+                   :source-paths ["src/clj" "env/dev"]
                    :repl-options {:init (set! *print-length* 50)
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
 
   :plugins [[lein-figwheel "0.5.14"]
             [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
 
-  :source-paths ["src"]
+  :source-paths ["src/clj"]
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
