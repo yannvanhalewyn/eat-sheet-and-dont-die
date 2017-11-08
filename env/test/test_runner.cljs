@@ -1,9 +1,9 @@
-(ns sheet-bucket.test-runner
+(ns frontend.test-runner
   (:require [cljs.test :as test :include-macros true :refer [report]]
             [devtools.core :as devtools]
             [goog.string :as str]
             [goog.string.format]
-            [sheet-bucket.tests-to-run]))
+            [frontend.tests-to-run]))
 
 (enable-console-print!)
 (devtools/install! [:custom-formatters :sanity-hints])
@@ -55,6 +55,6 @@
 
 (.clear js/console)
 
-(test/run-all-tests #"sheet-bucket.*-test")
+(test/run-all-tests #"frontend.*-test")
 
 (.groupCollapsed js/console "Figwheel Information")

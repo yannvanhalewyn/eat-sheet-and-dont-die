@@ -43,7 +43,7 @@
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
   :cljsbuild {:builds [{:id "cards"
-                        :source-paths ["src"]
+                        :source-paths ["src/cljs"]
                         :figwheel {:devcards true}
                         :compiler {:main cards.core
                                    :asset-path "js/compiled/cards-out"
@@ -51,9 +51,9 @@
                                    :output-dir "resources/public/js/compiled/cards-out"}}
 
                        {:id "dev"
-                        :source-paths ["src" "env/dev"]
-                        :figwheel {:on-jsload "sheet-bucket.core/render"}
-                        :compiler {:main sheet-bucket.core
+                        :source-paths ["src/cljs" "env/dev"]
+                        :figwheel {:on-jsload "frontend.core/render"}
+                        :compiler {:main frontend.core
                                    ;; Figwheel injects script tags for
                                    ;; development. This is the location
                                    ;; for the compiled resources
@@ -66,18 +66,18 @@
                                    :output-dir "resources/public/js/compiled/out"}}
 
                        {:id "test"
-                        :source-paths ["src" "test" "env/test"]
+                        :source-paths ["src/cljs" "test/cljs" "env/test"]
                         :figwheel true
-                        :compiler {:main sheet-bucket.test-runner
+                        :compiler {:main frontend.test-runner
                                    :asset-path "js/compiled/test-out"
                                    :output-to "resources/public/js/test.js"
                                    :output-dir "resources/public/js/compiled/test-out"
                                    :optimizations :none}}
 
                        {:id "min"
-                        :source-paths ["src"]
-                        :compiler {:output-to "resources/public/js/sheet-bucket.js"
-                                   :main sheet-bucket.core
+                        :source-paths ["src/cljs"]
+                        :compiler {:output-to "resources/public/js/app.js"
+                                   :main frontend.core
                                    :optimizations :advanced
                                    :pretty-print false}}]}
 
