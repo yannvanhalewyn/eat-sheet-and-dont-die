@@ -31,19 +31,19 @@
                                   [figwheel-sidecar "0.5.14"]
                                   [org.clojure/test.check "0.9.0"] ;; For cljs.spec
                                   [com.cemerick/piggieback "0.2.2"]]
-                   :source-paths ["src/clj" "env/dev"]
+                   :source-paths ["env/dev"]
                    :repl-options {:init (set! *print-length* 50)
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
 
   :plugins [[lein-figwheel "0.5.14"]
             [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
 
-  :source-paths ["src/clj"]
+  :source-paths ["src/clj" "src/cljc"]
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
   :cljsbuild {:builds [{:id "cards"
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src/cljs" "src/cljc"]
                         :figwheel {:devcards true}
                         :compiler {:main cards.core
                                    :asset-path "js/compiled/cards-out"
@@ -51,7 +51,7 @@
                                    :output-dir "resources/public/js/compiled/cards-out"}}
 
                        {:id "dev"
-                        :source-paths ["src/cljs" "env/dev"]
+                        :source-paths ["src/cljs" "src/cljc" "env/dev"]
                         :figwheel {:on-jsload "frontend.core/render"}
                         :compiler {:main frontend.core
                                    ;; Figwheel injects script tags for
@@ -66,7 +66,7 @@
                                    :output-dir "resources/public/js/compiled/out"}}
 
                        {:id "test"
-                        :source-paths ["src/cljs" "test/cljs" "env/test"]
+                        :source-paths ["src/cljs" "src/cljc" "test/cljs" "env/test"]
                         :figwheel true
                         :compiler {:main frontend.test-runner
                                    :asset-path "js/compiled/test-out"
@@ -75,7 +75,7 @@
                                    :optimizations :none}}
 
                        {:id "min"
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src/cljs" "src/cljc"]
                         :compiler {:output-to "resources/public/js/app.js"
                                    :main frontend.core
                                    :optimizations :advanced

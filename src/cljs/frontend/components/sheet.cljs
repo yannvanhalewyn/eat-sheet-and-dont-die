@@ -1,6 +1,6 @@
 (ns frontend.components.sheet
   (:require [frontend.components.section :as section])
-  (:require-macros [frontend.util.util :refer [fori]]))
+  (:require-macros [shared.utils :refer [fori]]))
 
 (defn component [{:keys [sheet deselect append] :as props}]
   [:div.u-max-height {:on-click deselect}

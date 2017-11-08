@@ -7,7 +7,7 @@
             [devcards.core :refer [markdown->react]]
             [reagent.core :as r])
   (:require-macros [devcards.core :refer [defcard-doc defcard-rg]]
-                   [frontend.util.util :refer [fori]]
+                   [shared.utils :refer [fori]]
                    [cards.core :refer [defcard-props]]))
 
 (defcard-doc

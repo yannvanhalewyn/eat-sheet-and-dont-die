@@ -1,6 +1,6 @@
 (ns frontend.components.section
   (:require [frontend.components.bar :as bar])
-  (:require-macros [frontend.util.util :refer [fori]]))
+  (:require-macros [shared.utils :refer [fori]]))
 
 (defn row-component [{:keys [row] :as props}]
   [:div.row {:style {:margin-bottom "10px" :white-space :nowrap}}

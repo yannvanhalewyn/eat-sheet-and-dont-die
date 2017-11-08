@@ -1,4 +1,4 @@
-(ns frontend.util.util)
+(ns shared.utils)
 
 (defmacro fori
   "clojure.core/for with indexes. Index is bound to the 0th element in binding array.
@@ -8,7 +8,7 @@
      ;; => [[4 1] [5 2] [6 3]] "
   ([[index-sym val-sym coll] & body]
    `(doall
-     (map-indexed
-      (fn [~index-sym ~val-sym]
-        ~@body)
-      ~coll))))
+      (map-indexed
+        (fn [~index-sym ~val-sym]
+          ~@body)
+        ~coll))))
