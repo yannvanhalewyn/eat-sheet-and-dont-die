@@ -8,7 +8,7 @@
             [ring.middleware.defaults :refer [api-defaults wrap-defaults]]))
 
 (defn- wrap-db [handler db]
-  (fn [req] (handler (assoc req :db (:conn db)))))
+  (fn [req] (handler (assoc req :db-conn (:conn db)))))
 
 (def app-defaults
   (assoc api-defaults

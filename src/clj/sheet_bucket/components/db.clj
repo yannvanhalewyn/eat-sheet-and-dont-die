@@ -31,3 +31,9 @@
 
 (defn component [config]
   (Db. (merge config DEFAULT_CONFIG)))
+
+;; Utilities
+;; =========
+
+(defn retract-entity! [conn eid]
+  (transact! conn [[:db.fn/retractEntity eid]]))

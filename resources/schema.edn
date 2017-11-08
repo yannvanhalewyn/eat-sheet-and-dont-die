@@ -60,11 +60,17 @@
   :db/cardinality :db.cardinality/one
   :db/doc "The section's title"}
 
- {:db/ident :section/bars
+ {:db/ident :section/rows
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/many
   :db/isComponent true
-  :db/doc "The section's bars"}
+  :db/doc "The section's rows"}
+
+ {:db/ident :row/bars
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many
+  :db/isComponent true
+  :db/doc "The row's bars"}
 
  {:db/ident :bar/chords
   :db/valueType :db.type/ref

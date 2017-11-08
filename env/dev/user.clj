@@ -1,9 +1,9 @@
 (ns user
-  (:require [sheet-bucket.core :as app]
+  (:require [datomic.client :as client]
             [dev.scss-watcher :as scss]
             [figwheel-sidecar.system :as ra-sys]
             [reloaded.repl :as repl :refer [go start stop reset system]]
-            [com.stuartsierra.component :as c]))
+            [sheet-bucket.core :as app]))
 
 (def figwheel-config
   (assoc-in (ra-sys/fetch-config) [:data :build-ids] ["dev" "test" "cards"]))
@@ -11,7 +11,8 @@
 (defn cljs []
   (ra-sys/cljs-repl (:figwheel-system repl/system)))
 
-(defn db-conn [] (:db system))
+(def db-conn #(get-in system [:db :conn]))
+(def db (comp client/db db-conn))
 
 (defn dev-system
   "Constructs a system map suitable for interactive development."
