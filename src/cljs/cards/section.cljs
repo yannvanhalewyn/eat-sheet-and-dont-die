@@ -7,7 +7,7 @@
                    [cards.core :refer [defcard-props]]))
 
 (defonce section (unparse-section (first (gen ::specs/section 1))))
-(def selected (-> section :section/rows first :row/bars second :bars/chords first :chord/id))
+(def selected (-> section :section/rows first :row/bars second :bars/chords first :db/id))
 
 (defcard-doc
   "# Section"

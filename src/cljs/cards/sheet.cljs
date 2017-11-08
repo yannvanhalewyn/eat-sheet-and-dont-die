@@ -7,7 +7,7 @@
 
 (defonce sheet (unparse-sheet (first (gen ::specs/sheet 1))))
 
-(def selected (-> sheet :sheet/sections first :section/rows first :row/bars first :bar/chords second :chord/id))
+(def selected (-> sheet :sheet/sections first :section/rows first :row/bars first :bar/chords second :db/id))
 
 (def props
   {:sheet sheet

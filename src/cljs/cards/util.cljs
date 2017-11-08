@@ -8,8 +8,8 @@
 (defn unparse-chord
   "In order to use the spec generators to generate sheets, we need to
   return chord data to a string"
-  [{:keys [:chord/id :chord/root :chord/triad :chord/seventh :chord/ninth]}]
-  {:chord/id id
+  [{:keys [:db/id :chord/root :chord/triad :chord/seventh :chord/ninth]}]
+  {:db/id id
    :chord/value (str
                   (first root)
                   (case (second root) :sharp "#" :flat "b" "")

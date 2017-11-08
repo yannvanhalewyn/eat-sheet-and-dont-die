@@ -3,25 +3,18 @@
             [clojure.test.check.generators]
             [clojure.spec.gen.alpha :as gen]))
 
-(defn rand-str [n]
-  (clojure.string/join
-    (take n (repeatedly #(.toString (rand-int 16) 16)))))
-
-(def gen-id #(->> (s/gen string?) (gen/fmap (partial rand-str 5))))
-
 ;; Chord
 ;; =====
 (def root? #{"A" "B" "C" "D" "E" "F" "G" "1" "2" "3" "4" "5" "6" "7"})
 (def accidental? #{:flat :sharp :natural})
 (def extension? #{9 13})
 
-(s/def :chord/id (s/spec (s/and string? #(= 5 (count %)))
-                         :gen gen-id))
+(s/def :db/id (s/spec int?))
 (s/def :chord/root (s/tuple root? accidental?))
 (s/def :chord/triad #{:minor :major :augmented :diminished})
 (s/def :chord/seventh #{:minor :major})
 (s/def :chord/ninth accidental?)
-(s/def ::chord (s/keys :req [:chord/id]
+(s/def ::chord (s/keys :req [:db/id]
                        :opt [:chord/root :chord/triad :chord/seventh :chord/ninth]))
 
 ;; Sheet

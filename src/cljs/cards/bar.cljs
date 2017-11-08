@@ -18,7 +18,7 @@
   {:bar/chords (take 2 (gen-with-root 4))})
 
 (defcard-props SingleChord
-  [component {:bar {:bar/chords [{:chord/id 1 :chord/value "a"}]}}])
+  [component {:bar {:bar/chords [{:db/id 1 :chord/value "a"}]}}])
 
 (defonce chords (gen-with-root 2))
 (defcard-rg TwoChords
@@ -46,5 +46,5 @@
   "Blurring the edit field should log out the bar id and the current
   value in the console."
   [component {:bar {:bar/chords chords-5}
-              :selected (:chord/id (second chords-5))
+              :selected (:db/id (second chords-5))
               :update-chord on-chord-update}])

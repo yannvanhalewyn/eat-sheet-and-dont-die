@@ -8,7 +8,7 @@
 ;; ==================
 
 (defn new-chord [id]
-  {:chord/id id :chord/value ""})
+  {:db/id id :chord/value ""})
 
 (defn new-bar [chord-id]
   {:bar/chords [(new-chord chord-id)]})
@@ -45,7 +45,7 @@
   (loop [loc (zipper (zip/root sheet))]
     (cond
       (end? loc) nil
-      (= id (:chord/id (node loc))) loc
+      (= id (:db/id (node loc))) loc
       :else (recur (next loc)))))
 
 ;; Addming

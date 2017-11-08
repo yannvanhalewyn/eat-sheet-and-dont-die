@@ -10,7 +10,7 @@
 (defn- update-sheet-zip [db new-sheet-loc]
   (assoc db
     :db/sheet (zip/root new-sheet-loc)
-    :db/selected (-> new-sheet-loc zip/node :chord/id)))
+    :db/selected (-> new-sheet-loc zip/node :db/id)))
 
 (reg-event-fx
   :event/init
