@@ -7,6 +7,10 @@
 ;; Initializing nodes
 ;; ==================
 
+(def gen-temp-id
+  (let [count (atom 0)]
+    (fn [] (swap! count dec) @count)))
+
 (defn new-chord [id]
   {:db/id id :chord/value ""})
 
@@ -20,9 +24,10 @@
   {:section/title "Intro"
    :section/rows [(new-row chord-id)]})
 
-(def new-sheet {:sheet/title "Title"
-                :sheet/artist "Artist"
-                :sheet/sections [(new-section "1")]})
+(defn new-sheet [first-chord-id]
+  {:sheet/title "Title"
+   :sheet/artist "Artist"
+   :sheet/sections [(new-section first-chord-id)]})
 
 ;; Zipper
 ;; ======

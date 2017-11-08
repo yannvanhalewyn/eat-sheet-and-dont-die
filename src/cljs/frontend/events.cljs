@@ -15,8 +15,9 @@
 (reg-event-fx
   :event/init
   (fn [_]
-    {:db {:db/sheet sheet/new-sheet :db/selected "1"}
-     :remote {:get-sheet {:path "/api/sheets"}}}))
+    (let [id (sheet/gen-temp-id)]
+      {:db {:db/sheet (sheet/new-sheet id) :db/selected id}
+       :remote {:get-sheet {:path "/api/sheets"}}})))
 
 (reg-event-db
   :sheet/deselect
@@ -37,7 +38,7 @@
 (reg-event-db
   :sheet/append
   (fn [db [_ type]]
-    (let [new-sheet (sheet/append (selectors/current-loc db) type (random-uuid))]
+    (let [new-sheet (sheet/append (selectors/current-loc db) type (sheet/gen-temp-id))]
       (update-sheet-zip db new-sheet))))
 
 (reg-event-db

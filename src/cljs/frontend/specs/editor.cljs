@@ -1,7 +1,11 @@
 (ns frontend.specs.editor
-  (:require [clojure.spec.alpha :as s]
+  (:require [frontend.models.sheet :as sheet]
+            [clojure.spec.alpha :as s]
             [clojure.test.check.generators]
             [clojure.spec.gen.alpha :as gen]))
+
+(defn gen-id []
+  (gen/fmap (fn [_] (sheet/gen-temp-id)) (gen/any)))
 
 ;; Chord
 ;; =====
@@ -9,7 +13,8 @@
 (def accidental? #{:flat :sharp :natural})
 (def extension? #{9 13})
 
-(s/def :db/id (s/spec int?))
+(s/def :db/id (s/spec int?
+                      :gen gen-id))
 (s/def :chord/root (s/tuple root? accidental?))
 (s/def :chord/triad #{:minor :major :augmented :diminished})
 (s/def :chord/seventh #{:minor :major})

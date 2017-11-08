@@ -1,10 +1,12 @@
 (ns frontend.models.sheet-test
   (:require [frontend.models.sheet
-             :refer [new-sheet zipper navigate-to append delete]
+             :refer [zipper navigate-to append delete]
              :as sheet]
             [cljs.test :refer-macros [deftest is testing]]
             [goog.string :refer [format]]
             [clojure.zip :refer [node up left down children rights]]))
+
+(def new-sheet (sheet/new-sheet "1"))
 
 (def test-loc (-> new-sheet zipper (navigate-to "1")))
 
