@@ -1,6 +1,6 @@
 (ns frontend.events
   (:require [frontend.selectors :as selectors]
-            [frontend.fx :refer [reg-event-db]]
+            [frontend.fx :refer [reg-event-db reg-event-fx]]
             [clojure.zip :as zip]
             [frontend.models.sheet :as sheet]))
 
@@ -12,10 +12,11 @@
     :db/sheet (zip/root new-sheet-loc)
     :db/selected (-> new-sheet-loc zip/node :chord/id)))
 
-(reg-event-db
+(reg-event-fx
   :event/init
   (fn [_]
-    {:db/sheet sheet/new-sheet :db/selected "1"}))
+    {:db {:db/sheet sheet/new-sheet :db/selected "1"}
+     :remote {:get-sheet {:path "/api/sheets"}}}))
 
 (reg-event-db
   :sheet/deselect
@@ -51,3 +52,11 @@
   (fn [db [_ element]]
     (let [new-sheet (sheet/delete (selectors/current-loc db) element)]
       (update-sheet-zip db new-sheet))))
+
+(reg-event-db
+  :remote/request
+  (fn [db [_ payload]] db))
+
+(reg-event-db
+  :remote/success
+  (fn [db [_ response]] db))

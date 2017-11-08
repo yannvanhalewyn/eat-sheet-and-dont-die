@@ -1,6 +1,9 @@
 (ns frontend.fx
-  (:require [re-frame.core :as rf]
+  (:require [frontend.http :as http]
+            [re-frame.core :as rf]
             [clojure.data :refer [diff]]))
+
+(rf/reg-fx :remote http/request-fx)
 
 (def debug-logger
   (rf/->interceptor
@@ -11,8 +14,8 @@
             old-db (:db coeffects)
             event (:event coeffects)
             group-name (str "Dispatch: " (first event)
-                            (if (= :request-status (first event))
-                              (str " (" (:type (second event)) ")")))]
+                            (if (= "remote" (namespace (first event)))
+                              (str " (" (second event) ")")))]
         (.groupCollapsed js/console group-name)
         (.info js/console "%c Event" "color: #03A9F4; font-weight: bold" event)
         (if new-db
@@ -25,8 +28,11 @@
         (.groupEnd js/console group-name "color: grey"))
       context)))
 
+(def EVENT_MIDDLEWARE
+  [(when ^boolen goog.DEBUG debug-logger)])
+
+(defn reg-event-fx [id & args]
+  (apply rf/reg-event-fx id EVENT_MIDDLEWARE args))
+
 (defn reg-event-db [id handler]
-  (rf/reg-event-db
-    id
-    (when ^boolean goog.DEBUG debug-logger)
-    handler))
+  (rf/reg-event-db id EVENT_MIDDLEWARE handler))
