@@ -6,7 +6,7 @@
             [clojure.java.io :as io]))
 
 (def DEFAULT_CONFIG {:db-name "sheet-bucket"
-                     :account-id d/PRO_ACCOUNT
+                     :account-id client/PRO_ACCOUNT
                      :endpoint "localhost:8998"
                      :secret "secret"
                      :access-key "key"
@@ -17,7 +17,7 @@
   (->> (io/file "resources/schema.edn") slurp edn/read-string))
 
 (defn transact! [conn tx-data]
-  (<!! (d/transact conn {:tx-data tx-data})))
+  (<!! (client/transact conn {:tx-data tx-data})))
 
 (defn load-schema! [conn]
   (transact! conn (read-schema!)))
