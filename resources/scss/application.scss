@@ -1,9 +1,4 @@
 @import 'base/variables';
 @import 'base/reset';
-@import 'base/layout';
-@import 'base/typography';
-@import 'base/utilities';
-@import 'modules/navbar';
-@import 'modules/sheet';
-@import 'modules/typeahead';
-@import 'modules/chord';
+@import 'base/**/*.scss';
+@import 'modules/**/*.scss';

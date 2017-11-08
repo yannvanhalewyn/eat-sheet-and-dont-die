@@ -15,7 +15,7 @@
         (println "Starting SCSS watch process...")
         (assoc component :process
                (.exec (Runtime/getRuntime)
-                      (str executable-path " --watch " input-file ":" output-file))))
+                      (str executable-path " -r sass-globbing --watch " input-file ":" output-file))))
       component))
   (stop [component]
     (when-let [process (:process component)]
