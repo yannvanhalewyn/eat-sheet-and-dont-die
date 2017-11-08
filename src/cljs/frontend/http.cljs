@@ -11,7 +11,7 @@
      :method (or method :get)
      :handler handler
      :format (ajax/json-request-format)
-     :response-format (ajax/json-response-format)}))
+     :response-format (ajax/json-response-format {:keywords? true})}))
 
 (defn request-fx [requests]
   (doall

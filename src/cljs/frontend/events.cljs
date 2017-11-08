@@ -55,8 +55,11 @@
 
 (reg-event-db
   :remote/request
-  (fn [db [_ payload]] db))
+  (fn [db event] db))
 
 (reg-event-db
   :remote/success
-  (fn [db [_ response]] db))
+  (fn [db [_ key response]]
+    (case key
+      :get-sheet
+      (assoc db :db/sheet response))))
