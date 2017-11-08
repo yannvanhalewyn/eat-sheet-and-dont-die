@@ -55,7 +55,7 @@
  ;; Section
  ;; =======
 
- {:db/ident :section/name
+ {:db/ident :section/title
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/doc "The section's title"}
