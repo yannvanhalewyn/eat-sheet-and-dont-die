@@ -3,7 +3,7 @@
   (:require-macros [sheet-bucket.util.util :refer [fori]]))
 
 (defn component [{:keys [sheet deselect append] :as props}]
-  [:div {:on-click deselect}
+  [:div.u-max-height {:on-click deselect}
    [:h1 (:sheet/title sheet)]
    [:h3.u-margin-top--s (:sheet/artist sheet)]
    [:div.u-margin-top.sections

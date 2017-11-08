@@ -99,9 +99,10 @@
        (.focus (reagent/dom-node this))
        (.select (reagent/dom-node this)))
      :reagent-render
-     (fn [{:keys [update-chord] :as props}]
+     (fn [{:keys [update-chord chord] :as props}]
        [:input.chord--editing
         {:type "text"
+         :on-click #(.stopPropagation %)
          :on-blur #(update-chord  (.. % -target -value))
          :on-key-down (key-down-handler props)
-         :default-value (:text props)}])}))
+         :default-value (:chord/value chord)}])}))
