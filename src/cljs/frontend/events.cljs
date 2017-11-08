@@ -1,7 +1,7 @@
 (ns frontend.events
   (:require [frontend.reducer :as reducer]
             [frontend.selectors :as selectors]
-            [re-frame.core :refer [reg-event-db]]
+            [frontend.fx :refer [reg-event-db]]
             [clojure.zip :as zip]
             [frontend.models.sheet :as sheet]))
 
