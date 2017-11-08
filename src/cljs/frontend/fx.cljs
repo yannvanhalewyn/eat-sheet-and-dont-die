@@ -25,7 +25,8 @@
         (.groupEnd js/console group-name "color: grey"))
       context)))
 
-(defn reg-event-db [id & args]
-  (apply rf/reg-event-db id
-         (when ^boolean goog.DEBUG debug-logger)
-         args))
+(defn reg-event-db [id handler]
+  (rf/reg-event-db
+    id
+    (when ^boolean goog.DEBUG debug-logger)
+    handler))

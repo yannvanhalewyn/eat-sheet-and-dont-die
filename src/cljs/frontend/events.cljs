@@ -1,57 +1,53 @@
 (ns frontend.events
-  (:require [frontend.reducer :as reducer]
-            [frontend.selectors :as selectors]
+  (:require [frontend.selectors :as selectors]
             [frontend.fx :refer [reg-event-db]]
             [clojure.zip :as zip]
             [frontend.models.sheet :as sheet]))
 
+(defn- update-sheet [db new-sheet]
+  (assoc db :sheet new-sheet))
+
+(defn- update-sheet-zip [db new-sheet-loc]
+  (assoc db
+    :sheet (zip/root new-sheet-loc)
+    :selected (-> new-sheet-loc zip/node :chord/id)))
+
 (reg-event-db
   :event/init
-  (fn [db]
-    (reducer/app {} {:type :init})))
+  (fn [_]
+    {:sheet sheet/new-sheet :selected "1"}))
 
 (reg-event-db
   :sheet/deselect
-  (fn [db]
-    (reducer/app db
-                 {:type :sheet/clear-selected})))
+  (fn [db] (assoc db :selected nil)))
 
 (reg-event-db
   :sheet/select-chord
   (fn [db [_ id]]
-    (reducer/app db
-                 {:type :select-chord :id id})))
+    (assoc db :selected id)))
 
 (reg-event-db
   :sheet/update-chord
   (fn [db [_ value]]
-    (reducer/app db
-                 {:type :sheet/update-chord
-                  :value (zip/root (zip/edit (selectors/current-loc db)
-                                             assoc :chord/value value))})))
+    (let [new-sheet (zip/root (zip/edit (selectors/current-loc db)
+                                        assoc :chord/value value))]
+      (update-sheet db new-sheet))))
 
 (reg-event-db
   :sheet/append
   (fn [db [_ type]]
     (let [new-sheet (sheet/append (selectors/current-loc db) type (random-uuid))]
-      (reducer/app db
-                   {:type :sheet/update
-                    :value (zip/root new-sheet)
-                    :selected (-> new-sheet zip/node :chord/id)}))))
+      (update-sheet-zip db new-sheet))))
 
 (reg-event-db
   :sheet/move
   (fn [db [_ dir]]
     (if-let [new-sheet (sheet/move (selectors/current-loc db) dir)]
-      (reducer/app db {:type :sheet/update
-                       :value (zip/root new-sheet)
-                       :selected (-> new-sheet zip/node :chord/id)})
+      (update-sheet-zip db new-sheet)
       db)))
 
 (reg-event-db
   :sheet/remove
   (fn [db [_ element]]
     (let [new-sheet (sheet/delete (selectors/current-loc db) element)]
-      (reducer/app db {:type :sheet/update
-                       :value (zip/root new-sheet)
-                       :selected (-> new-sheet zip/node :chord/id)}))))
+      (update-sheet-zip db new-sheet))))
