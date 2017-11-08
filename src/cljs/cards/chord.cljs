@@ -3,7 +3,7 @@
             [frontend.models.chord :refer [parse]]
             [frontend.specs.editor :as specs]
             [frontend.util.util :refer [gen]]
-            [frontend.components.chord :refer [displayed-chord editable-chord]]
+            [frontend.views.chord :refer [displayed-chord editable-chord]]
             [devcards.core :refer [markdown->react]]
             [reagent.core :as r])
   (:require-macros [devcards.core :refer [defcard-doc defcard-rg]]

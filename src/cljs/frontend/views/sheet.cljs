@@ -1,5 +1,5 @@
-(ns frontend.components.sheet
-  (:require [frontend.components.section :as section]
+(ns frontend.views.sheet
+  (:require [frontend.views.section :as section]
             [re-frame.core :refer [subscribe dispatch]])
   (:require-macros [shared.utils :refer [fori]]))
 

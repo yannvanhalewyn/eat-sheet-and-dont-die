@@ -1,5 +1,5 @@
-(ns frontend.components.section
-  (:require [frontend.components.bar :as bar])
+(ns frontend.views.section
+  (:require [frontend.views.bar :as bar])
   (:require-macros [shared.utils :refer [fori]]))
 
 (defn row-component [{:keys [row] :as props}]

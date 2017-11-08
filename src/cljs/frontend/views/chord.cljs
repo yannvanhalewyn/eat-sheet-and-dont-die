@@ -1,4 +1,4 @@
-(ns frontend.components.chord
+(ns frontend.views.chord
   (:require [reagent.core :as reagent]
             [frontend.util.util :refer [stop-propagation prevent-default]]
             [goog.events.KeyCodes :refer [TAB SPACE ENTER ESC BACKSPACE LEFT RIGHT UP DOWN]]

@@ -1,5 +1,5 @@
-(ns frontend.components.layout.application
-  (:require [frontend.components.sheet :as sheet]))
+(ns frontend.views.layout.application
+  (:require [frontend.views.sheet :as sheet]))
 
 (defn component [props]
   [:div.u-max-height

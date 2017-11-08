@@ -1,6 +1,6 @@
-(ns frontend.components.bar
+(ns frontend.views.bar
   (:require [frontend.models.chord :refer [parse]]
-            [frontend.components.chord :refer [editable-chord displayed-chord]]))
+            [frontend.views.chord :refer [editable-chord displayed-chord]]))
 
 (defn component [{:keys [bar selected on-chord-click] :as props}]
   [:div.bar

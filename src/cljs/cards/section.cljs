@@ -1,6 +1,6 @@
 (ns cards.section
   (:require [cards.util :refer [unparse-section]]
-            [frontend.components.section :as subject]
+            [frontend.views.section :as subject]
             [frontend.util.util :refer [gen]]
             [frontend.specs.editor :as specs])
   (:require-macros [devcards.core :refer [defcard-rg defcard-doc]]

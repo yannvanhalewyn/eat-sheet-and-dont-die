@@ -1,6 +1,6 @@
 (ns cards.sheet
   (:require [cards.util :refer [unparse-sheet]]
-            [frontend.components.sheet :as subject]
+            [frontend.views.sheet :as subject]
             [frontend.util.util :refer [gen]]
             [frontend.specs.editor :as specs])
   (:require-macros [devcards.core :refer [defcard-rg defcard-doc]]))
