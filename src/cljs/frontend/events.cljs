@@ -5,26 +5,26 @@
             [frontend.models.sheet :as sheet]))
 
 (defn- update-sheet [db new-sheet]
-  (assoc db :sheet new-sheet))
+  (assoc db :db/sheet new-sheet))
 
 (defn- update-sheet-zip [db new-sheet-loc]
   (assoc db
-    :sheet (zip/root new-sheet-loc)
-    :selected (-> new-sheet-loc zip/node :chord/id)))
+    :db/sheet (zip/root new-sheet-loc)
+    :db/selected (-> new-sheet-loc zip/node :chord/id)))
 
 (reg-event-db
   :event/init
   (fn [_]
-    {:sheet sheet/new-sheet :selected "1"}))
+    {:db/sheet sheet/new-sheet :db/selected "1"}))
 
 (reg-event-db
   :sheet/deselect
-  (fn [db] (assoc db :selected nil)))
+  (fn [db] (assoc db :db/selected nil)))
 
 (reg-event-db
   :sheet/select-chord
   (fn [db [_ id]]
-    (assoc db :selected id)))
+    (assoc db :db/selected id)))
 
 (reg-event-db
   :sheet/update-chord

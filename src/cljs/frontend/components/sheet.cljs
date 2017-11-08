@@ -4,8 +4,8 @@
   (:require-macros [shared.utils :refer [fori]]))
 
 (defn component [{:keys [sheet deselect append] :as props}]
-  (let [sheet @(subscribe [:sheet])
-        selected @(subscribe [:selected])]
+  (let [sheet @(subscribe [:sub/sheet])
+        selected @(subscribe [:sub/selected])]
     [:div.u-max-height {:on-click #(dispatch [:sheet/deselect])}
      [:h1 (:sheet/title sheet)]
      [:h3.u-margin-top--s (:sheet/artist sheet)]
