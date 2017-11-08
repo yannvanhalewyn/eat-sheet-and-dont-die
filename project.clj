@@ -32,7 +32,7 @@
                                   [figwheel-sidecar "0.5.14"]
                                   [org.clojure/test.check "0.9.0"] ;; For cljs.spec
                                   [com.cemerick/piggieback "0.2.2"]]
-                   :source-paths ["env/dev"]
+                   :source-paths ["env/dev/clj"]
                    :repl-options {:init (set! *print-length* 50)
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
 
@@ -43,7 +43,7 @@
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
   :cljsbuild {:builds [{:id "cards"
-                        :source-paths ["src/cljs" "src/cljc"]
+                        :source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
                         :figwheel {:devcards true}
                         :compiler {:main cards.core
                                    :asset-path "js/compiled/cards-out"
@@ -51,9 +51,9 @@
                                    :output-dir "resources/public/js/compiled/cards-out"}}
 
                        {:id "dev"
-                        :source-paths ["src/cljs" "src/cljc" "env/dev"]
-                        :figwheel {:on-jsload "frontend.core/render"}
-                        :compiler {:main frontend.core
+                        :source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+                        :figwheel {:on-jsload "dev.user/on-js-load"}
+                        :compiler {:main dev.user
                                    ;; Figwheel injects script tags for
                                    ;; development. This is the location
                                    ;; for the compiled resources

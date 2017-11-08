@@ -4,17 +4,11 @@
             [goog.dom :as gdom]
             [frontend.containers :as containers]
             [frontend.events]
-            [frontend.subs]
-            [devtools.core :as devtools]))
+            [frontend.subs]))
 
-(devtools/install! [:custom-formatters :sanity-hints])
+(defn render! []
+  (reagent/render containers/app (gdom/getElement "app")))
 
-(defn start
-  "Bootstraps the app and returns a render fn"
-  []
-  (let [render #(reagent/render containers/app (gdom/getElement "app"))]
-    (rf/dispatch-sync [:event/init])
-    (render)
-    render))
-
-(defonce render (start))
+(defn init! []
+  (rf/dispatch-sync [:event/init])
+  (render!))
