@@ -1,10 +1,10 @@
 (ns frontend.core
   (:require [reagent.core :as reagent]
-            [redux.core :as redux]
+            [re-frame.core :as rf]
             [goog.dom :as gdom]
-            [redux.middleware :as middleware]
-            [frontend.reducer :as reducer]
             [frontend.containers :as containers]
+            [frontend.events]
+            [frontend.subs]
             [devtools.core :as devtools]))
 
 (devtools/install! [:custom-formatters :sanity-hints])
@@ -12,9 +12,8 @@
 (defn start
   "Bootstraps the app and returns a render fn"
   []
-  (let [state (reagent/atom {})
-        render #(reagent/render [containers/app state] (gdom/getElement "app"))]
-    (redux/start state reducer/app [middleware/wrap-logger])
+  (let [render #(reagent/render containers/app (gdom/getElement "app"))]
+    (rf/dispatch-sync [:event/init])
     (render)
     render))
 
