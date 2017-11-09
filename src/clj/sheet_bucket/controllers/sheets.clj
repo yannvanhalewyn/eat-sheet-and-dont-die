@@ -2,13 +2,11 @@
   (:require [datomic.api :as d]
             [ring.util.response :refer [response]]))
 
-(defn- find-one [conn]
-  (ffirst (d/q conn
-            '[:find ?sheet :where [?sheet :sheet/title]]
-            (d/db conn))))
-
 (defn index [{:keys [db-conn]}]
-  (response (d/pull (d/db db-conn) '[*] (find-one db-conn))))
+  (response
+    (ffirst (d/q
+              '[:find (pull ?sheet [*]) :where [?sheet :sheet/title]]
+              (d/db db-conn)))))
 
 (defn ->tx [tx sheet-id]
   (if-let [retract (:removed tx)]
