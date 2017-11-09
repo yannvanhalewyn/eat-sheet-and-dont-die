@@ -1,28 +1,19 @@
 (ns dev.scss-watcher
-  (:require [com.stuartsierra.component :as component])
-  (:import java.lang.Runtime))
+  (:require [dev.background-process :as bp]
+            [com.stuartsierra.component :as component]))
 
 (def DEFAULTS
   {:executable-path "scss"
    :input-file "resources/scss/application.scss"
    :output-file "resources/public/css/application.css"})
 
-(defrecord ScssWatcher [executable-path input-file output-file]
-  component/Lifecycle
-  (start [component]
-    (if-not (:process component)
-      (do
-        (println "Starting SCSS watch process...")
-        (assoc component :process
-               (.exec (Runtime/getRuntime)
-                      (str executable-path " -r sass-globbing --watch " input-file ":" output-file))))
-      component))
-  (stop [component]
-    (when-let [process (:process component)]
-      (println "Stopping SCSS watch process...")
-      (.destroy process))
-    component))
-
 (defn watcher
-  ([] (map->ScssWatcher DEFAULTS))
-  ([config] (map->ScssWatcher (merge config DEFAULTS))))
+  ([] (watcher DEFAULTS))
+  ([{cmd :executable-path in :input-file out :output-file}]
+   (bp/->BackgroundProcess "SCSS watcher"
+     [cmd "-r sass-globbing --watch" (str in ":" out)])))
+
+#_(def w (atom (watcher)))
+
+#_(def args (:args @w))
+#_(def p (dev.util/exec ))
