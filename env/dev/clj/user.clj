@@ -1,6 +1,7 @@
 (ns user
   (:require [datomic.client :as client]
             [dev.scss-watcher :as scss]
+            [dev.datomic-server :as datomic-server]
             [figwheel-sidecar.system :as ra-sys]
             [reloaded.repl :as repl :refer [go start stop reset system]]
             [sheet-bucket.core :as app]))
@@ -20,6 +21,7 @@
   (assoc (app/new-system {:port 8080})
     :figwheel-system (ra-sys/figwheel-system figwheel-config)
     :scss-watcher (scss/watcher)
-    :css-watcher (ra-sys/css-watcher {:watch-paths ["resources/public/css"]})))
+    :css-watcher (ra-sys/css-watcher {:watch-paths ["resources/public/css"]})
+    :dataomic-dev-server datomic-server/component))
 
 (repl/set-init! dev-system)

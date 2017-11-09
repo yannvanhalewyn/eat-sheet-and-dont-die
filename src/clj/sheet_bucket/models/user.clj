@@ -1,5 +1,5 @@
 (ns sheet-bucket.models.user
-  (:require [sheet-bucket.db :as db]
+  (:require [sheet-bucket.components.db :as db]
             [datomic.client :as client]
             [clojure.core.async :refer [<!!]]))
 
