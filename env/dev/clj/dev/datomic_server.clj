@@ -12,15 +12,6 @@
   (bp/->BackgroundProcess "Datomic transactor"
     [(datomic-bin "transactor") transactor-props]))
 
-(defn peer-server []
-  (bp/->BackgroundProcess "Datomic peer server"
-    [(datomic-bin "run")
-     "-m" "datomic.peer-server"
-     "-h" "localhost"
-     "-p" "8998"
-     "-a" "key,secret"
-     "-d" "sheet-bucket" "datomic:dev://localhost:4334/sheet-bucket"]))
-
 (defn console []
   (bp/->BackgroundProcess "Datomic console"
     [(datomic-bin "console")
@@ -30,5 +21,4 @@
 (defn component []
   (c/system-map
     :transactor (transactor)
-    :peer-server (peer-server)
     :console (console)))
