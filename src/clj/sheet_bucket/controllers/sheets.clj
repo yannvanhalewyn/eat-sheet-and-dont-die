@@ -15,16 +15,18 @@
                                :selector '[*]}))))
 
 (defn ->tx [tx sheet-id]
-  (if-let [new-entity (or (:added tx) (:new-value tx))]
-    (reduce
-      (fn [children [id ref-key]]
-        {:db/id id
-         ref-key children})
-      new-entity
-      (reverse (partition-all 2
-                 (cons sheet-id (:path tx)))))))
+  (if-let [retract (:removed tx)]
+    [:db.fn/retractEntity (:db/id retract)]
+    (if-let [new-entity (or (:added tx) (:new-value tx))]
+      (reduce
+        (fn [children [id ref-key]]
+          {:db/id id
+           ref-key children})
+        new-entity
+        (reverse (partition-all 2
+                   (cons sheet-id (:path tx))))))))
 
 (defn update [{:keys [db-conn params] :as req}]
   (let [result (<!! (client/transact db-conn
                       {:tx-data (map #(->tx % (Long. (:eid params))) (:tx params))}))]
-    (response {:res (:tempds result)})))
+    (response {:temp-ids (:tempds result)})))
