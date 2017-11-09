@@ -1,27 +1,24 @@
 (ns user
-  (:require [datomic.client :as client]
-            [dev.scss-watcher :as scss]
-            [dev.datomic-server :as datomic-server]
-            [figwheel-sidecar.system :as ra-sys]
-            [reloaded.repl :as repl :refer [go start stop reset system]]
-            [sheet-bucket.core :as app]))
+  (:require [reloaded.repl :as repl]
+            [clojure.tools.namespace.repl :refer [refresh]]))
 
-(def figwheel-config
-  (assoc-in (ra-sys/fetch-config) [:data :build-ids] ["dev" "test" "cards"]))
+(defn- switch-to-dev []
+  (in-ns 'dev)
+  :ok)
 
-(defn cljs []
-  (ra-sys/cljs-repl (:figwheel-system repl/system)))
+(defn dev []
+  (let [ret (refresh :after `switch-to-dev)]
+    (if (instance? Throwable ret)
+      (throw ret)
+      ret)))
 
-(def db-conn #(get-in system [:db :conn]))
-(def db (comp client/db db-conn))
-
-(defn dev-system
-  "Constructs a system map suitable for interactive development."
+(defn go
+  "Loads all source files, starts the application running in
+  development mode, and switches to the 'dev' namespace."
   []
-  (assoc (app/new-system {:port 8080})
-    :figwheel-system (ra-sys/figwheel-system figwheel-config)
-    :scss-watcher (scss/watcher)
-    :css-watcher (ra-sys/css-watcher {:watch-paths ["resources/public/css"]})
-    :dataomic-dev-server datomic-server/component))
-
-(repl/set-init! dev-system)
+  (let [ret (repl/reset)]
+    (if (instance? Throwable ret)
+      (throw ret)
+      (do
+        (switch-to-dev)
+        ret))))
