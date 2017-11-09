@@ -8,7 +8,6 @@
   (assoc db :db/sheet new-sheet))
 
 (defn- update-sheet-zip [db new-sheet-loc]
-  (.log js/console (-> new-sheet-loc zip/node :db/id))
   (assoc db
     :db/sheet (zip/root new-sheet-loc)
     :db/selected (-> new-sheet-loc zip/node :db/id)))
@@ -16,9 +15,8 @@
 (reg-event-fx
   :event/init
   (fn [_]
-    (let [id (sheet/gen-temp-id)]
-      {:db {:db/sheet (sheet/new-sheet id) :db/selected id}
-       :remote {:get-sheet {:path "/api/sheets"}}})))
+    {:db {:db/sheet {} :db/selected nil}
+     :remote {:get-sheet {:path "/api/sheets"}}}))
 
 (reg-event-db
   :sheet/deselect
@@ -33,14 +31,14 @@
   :sheet/update-chord
   (fn [db [_ value]]
     (let [new-sheet (zip/root (zip/edit (selectors/current-loc db)
-                                        assoc :chord/value value))]
+                                assoc :chord/value value))]
       (update-sheet db new-sheet))))
 
 (reg-event-db
   :sheet/append
   (fn [db [_ type]]
-    (let [new-sheet (sheet/append (selectors/current-loc db) type (sheet/gen-temp-id))]
-      (update-sheet-zip db new-sheet))))
+    (update-sheet-zip db
+      (sheet/append (selectors/current-loc db) type (repeatedly sheet/gen-temp-id)))))
 
 (reg-event-db
   :sheet/move

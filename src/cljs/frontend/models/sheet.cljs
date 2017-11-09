@@ -14,20 +14,24 @@
 (defn new-chord [id]
   {:db/id id :chord/value ""})
 
-(defn new-bar [chord-id]
-  {:bar/chords [(new-chord chord-id)]})
+(defn new-bar [[id chord-id]]
+  {:db/id id
+   :bar/chords [(new-chord chord-id)]})
 
-(defn new-row [chord-id]
-  {:row/bars [(new-bar chord-id)]})
+(defn new-row [[id & ids]]
+  {:db/id id
+   :row/bars [(new-bar ids)]})
 
-(defn new-section [chord-id]
-  {:section/title "Intro"
-   :section/rows [(new-row chord-id)]})
+(defn new-section [[id & ids]]
+  {:db/id id
+   :section/title "Intro"
+   :section/rows [(new-row ids)]})
 
-(defn new-sheet [first-chord-id]
-  {:sheet/title "Title"
+(defn new-sheet [[id & ids]]
+  {:db/id id
+   :sheet/title "Title"
    :sheet/artist "Artist"
-   :sheet/sections [(new-section first-chord-id)]})
+   :sheet/sections [(new-section ids)]})
 
 ;; Zipper
 ;; ======
@@ -66,17 +70,17 @@
 
 (defmulti append (fn [_ t _] t))
 
-(defmethod append :chord [chord-loc _ new-chord-id]
-  (-> chord-loc (insert-right (new-chord new-chord-id)) right))
+(defmethod append :chord [chord-loc _ [id]]
+  (-> chord-loc (insert-right (new-chord id)) right))
 
-(defmethod append :bar [chord-loc _ new-chord-id]
-  (-> chord-loc up (insert-right (new-bar new-chord-id)) right down))
+(defmethod append :bar [chord-loc _ ids]
+  (-> chord-loc up (insert-right (new-bar ids)) right down))
 
-(defmethod append :row [chord-loc _ new-chord-id]
-  (-> chord-loc up up (insert-right (new-row new-chord-id)) right down down))
+(defmethod append :row [chord-loc _ ids]
+  (-> chord-loc up up (insert-right (new-row ids)) right down down))
 
-(defmethod append :section [chord-loc _ new-chord-id]
-  (-> chord-loc up up up (insert-right (new-section new-chord-id)) right down down down))
+(defmethod append :section [chord-loc _ ids]
+  (-> chord-loc up up up (insert-right (new-section ids)) right down down down))
 
 ;; Removing
 ;; ========
