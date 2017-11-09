@@ -8,6 +8,7 @@
   (assoc db :db/sheet new-sheet))
 
 (defn- update-sheet-zip [db new-sheet-loc]
+  (.log js/console (-> new-sheet-loc zip/node :db/id))
   (assoc db
     :db/sheet (zip/root new-sheet-loc)
     :db/selected (-> new-sheet-loc zip/node :db/id)))
@@ -64,7 +65,11 @@
     (case key
       :get-sheet
       (assoc db :db/sheet response)
-      :sync-sheet db)))
+      :sync-sheet
+      (let [tmp-ids (:temp-ids response)]
+        (-> (update db :db/sheet sheet/replace-temp-ids tmp-ids)
+          (update :db/selected #(if-let [new-id (get tmp-ids %)]
+                                  new-id %)))))))
 
 (reg-event-db
   :remote/failure

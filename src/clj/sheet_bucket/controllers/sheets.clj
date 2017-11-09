@@ -29,4 +29,4 @@
 (defn update [{:keys [db-conn params] :as req}]
   (let [result (<!! (client/transact db-conn
                       {:tx-data (map #(->tx % (Long. (:eid params))) (:tx params))}))]
-    (response {:temp-ids (:tempds result)})))
+    (response {:temp-ids (:tempids result)})))
