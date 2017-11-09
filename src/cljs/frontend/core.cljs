@@ -2,6 +2,7 @@
   (:require [reagent.core :as reagent]
             [re-frame.core :as rf]
             [goog.dom :as gdom]
+            [goog.string.format]
             [frontend.containers :as containers]
             [frontend.events]
             [frontend.subs]))

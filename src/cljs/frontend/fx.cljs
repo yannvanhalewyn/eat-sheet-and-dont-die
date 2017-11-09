@@ -1,7 +1,10 @@
 (ns frontend.fx
   (:require [frontend.http :as http]
+            [frontend.selectors :as sel]
+            [frontend.util.diffp :refer [diffp]]
             [re-frame.core :as rf]
-            [clojure.data :refer [diff]]))
+            [clojure.data :refer [diff]]
+            [goog.string :refer [format]]))
 
 (rf/reg-fx :remote http/request-fx)
 
@@ -28,8 +31,25 @@
         (.groupEnd js/console group-name "color: grey"))
       context)))
 
+(def sheet-tx-sync
+  (rf/->interceptor
+    :id :sheet-tx-sync
+    :after
+    (fn [{:keys [effects coeffects] :as context}]
+      (let [event (get-in coeffects [:event 0])]
+        (if-not (= "sheet" (namespace event))
+          context
+          (let [new-sheet (sel/sheet (:db effects))
+                old-sheet (sel/sheet (:db coeffects))]
+            (if (= new-sheet old-sheet)
+              context
+              (assoc-in context [:effects :remote :sync-sheet]
+                {:path (format "/api/sheets/%s" (:db/id new-sheet))
+                 :method :patch
+                 :params {:tx (diffp old-sheet new-sheet :db/id)}}))))))))
+
 (def EVENT_MIDDLEWARE
-  [(when ^boolen goog.DEBUG debug-logger)])
+  [sheet-tx-sync (when ^boolen goog.DEBUG debug-logger)])
 
 (defn reg-event-fx [id & args]
   (apply rf/reg-event-fx id EVENT_MIDDLEWARE args))

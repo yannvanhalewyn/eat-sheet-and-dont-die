@@ -63,4 +63,11 @@
   (fn [db [_ key response]]
     (case key
       :get-sheet
-      (assoc db :db/sheet response))))
+      (assoc db :db/sheet response)
+      :sync-sheet db)))
+
+(reg-event-db
+  :remote/failure
+  (fn [db event]
+    (.log js/console "FAILED" event)
+    db))

@@ -9,7 +9,7 @@
 
 (def gen-temp-id
   (let [count (atom 0)]
-    (fn [] (swap! count dec) @count)))
+    (fn [] (swap! count dec) (str @count))))
 
 (defn new-chord [id]
   {:db/id id :chord/value ""})
