@@ -1,18 +1,14 @@
 (ns sheet-bucket.controllers.sheets
-  (:require  [clojure.core.async :refer [<!!]]
-             [datomic.client :as client]
-             [ring.util.response :refer [response]]))
+  (:require [datomic.api :as d]
+            [ring.util.response :refer [response]]))
 
 (defn- find-one [conn]
-  (ffirst (<!! (client/q conn
-                         {:query '[:find ?sheet
-                                   :where [?sheet :sheet/title]]
-                          :args [(client/db conn)]}))))
+  (ffirst (d/q conn
+            '[:find ?sheet :where [?sheet :sheet/title]]
+            (d/db conn))))
 
 (defn index [{:keys [db-conn]}]
-  (response (<!! (client/pull (client/db db-conn)
-                              {:eid (find-one db-conn)
-                               :selector '[*]}))))
+  (response (d/pull (d/db db-conn) '[*] (find-one db-conn))))
 
 (defn ->tx [tx sheet-id]
   (if-let [retract (:removed tx)]
@@ -27,6 +23,6 @@
                    (cons sheet-id (:path tx))))))))
 
 (defn update [{:keys [db-conn params] :as req}]
-  (let [result (<!! (client/transact db-conn
-                      {:tx-data (map #(->tx % (Long. (:eid params))) (:tx params))}))]
+  (let [result (d/transact db-conn
+                 (map #(->tx % (Long. (:eid params))) (:tx params)))]
     (response {:temp-ids (:tempids result)})))

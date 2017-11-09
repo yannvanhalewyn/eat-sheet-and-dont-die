@@ -1,7 +1,5 @@
 (ns sheet-bucket.models.user
-  (:require [sheet-bucket.components.db :as db]
-            [datomic.client :as client]
-            [clojure.core.async :refer [<!!]]))
+  (:require [sheet-bucket.components.db :as db]))
 
 (defn create! [conn {:keys [first-name last-name email password]}]
   (db/transact! conn [{:user/first-name first-name
@@ -10,10 +8,8 @@
                        :user/password-digest password}]))
 
 (defn find-by-email [db email]
-  (<!! (client/pull db {:eid [:user/email email]
-                        :selector '[*]})))
+  (db/pull db '[*] [:user/email email]))
 
 (defn sheets-for-user [db user]
   (:playlist/sheets
-   (<!! (client/pull db {:eid user
-                         :selector '[{:playlist/sheets [*]}]}))))
+   (db/pull db user '[{:playlist/sheets [*]}])))

@@ -5,5 +5,5 @@
 
 (defn new-system [config]
   (c/system-map
-    :db (db/component (:db config))
+    :db (db/component (:db-url config))
     :web (c/using (web/component (:port config)) [:db])))

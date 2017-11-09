@@ -6,6 +6,9 @@
 
   :min-lein-version "2.6.1"
 
+  :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
+                                   :creds :gpg}}
+
   :dependencies [[org.clojure/clojure "1.9.0-RC1"]
                  [org.clojure/clojurescript "1.9.946"]
                  [org.clojure/core.match "0.3.0-alpha5"]
@@ -19,7 +22,8 @@
                  [ring/ring-devel "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
                  [metosin/muuntaja "0.3.2"]
-                 [com.datomic/clj-client "0.8.606"]
+                 [com.datomic/datomic-pro "0.9.5561.62"
+                  :exclusions [com.google.guava/guava]]
 
                  ;; CLJS
                  [reagent "0.7.0"]
