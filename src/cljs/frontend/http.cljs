@@ -5,13 +5,14 @@
 (defn- response-handler [key [success response]]
   (dispatch [(keyword :remote (if success "success" "failure")) key response]))
 
-(defn request [{:keys [path method]} handler]
+(defn request [{:keys [path method params]} handler]
   (ajax/ajax-request
     {:uri path
      :method (or method :get)
      :handler handler
-     :format (ajax/json-request-format)
-     :response-format (ajax/json-response-format {:keywords? true})}))
+     :format (ajax/transit-request-format)
+     :response-format (ajax/transit-response-format)
+     :params params}))
 
 (defn request-fx [requests]
   (doall

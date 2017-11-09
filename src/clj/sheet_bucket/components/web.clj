@@ -3,9 +3,10 @@
   (:require [sheet-bucket.routes :as routes]
             [sheet-bucket.utils :refer [parse-int]]
             [com.stuartsierra.component :as c]
-            [ring.middleware.params :refer [wrap-params]]
-            [ring.middleware.json :refer [wrap-json-response wrap-json-params]]
-            [ring.middleware.defaults :refer [api-defaults wrap-defaults]]))
+            [muuntaja.core :as m]
+            [muuntaja.middleware :refer [wrap-format wrap-params]]
+            [ring.middleware.defaults :refer [api-defaults wrap-defaults]]
+            [ring.middleware.reload :refer [wrap-reload]]))
 
 (defn- wrap-db [handler db]
   (fn [req] (handler (assoc req :db-conn (:conn db)))))
@@ -18,13 +19,21 @@
              :keywordize true}
     :static {:resources "public"}))
 
+(def muuntaja-options
+  (m/create
+    (->
+      m/default-options
+      (assoc :default-format "application/transit+json")
+      #_(update :formats select-keys ["application/transit+json"]))))
+
+
 (defn make-handler [db]
   (-> #'routes/app-routes
       (wrap-db db)
-      wrap-params
-      wrap-json-response
-      wrap-json-params
-      (wrap-defaults app-defaults)))
+      (wrap-params)
+      (wrap-format muuntaja-options)
+      (wrap-defaults app-defaults)
+      wrap-reload))
 
 (defrecord Web [port db]
   c/Lifecycle

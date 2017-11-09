@@ -18,7 +18,7 @@
                  [http-kit "2.2.0"]
                  [ring/ring-devel "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
-                 [ring/ring-json "0.4.0"]
+                 [metosin/muuntaja "0.3.2"]
                  [com.datomic/clj-client "0.8.606"]
 
                  ;; CLJS
