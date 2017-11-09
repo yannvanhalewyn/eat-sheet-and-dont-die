@@ -28,7 +28,12 @@
 (defrecord Db [uri]
   c/Lifecycle
   (start [this]
-    (assoc this :conn (d/connect uri)))
+    (try
+      (d/create-database uri)
+      (assoc this :conn (d/connect uri))
+      (catch Exception e
+        (println "Could not connect to database with url: " uri (.getMessage e))
+        this)))
   (stop [this]
     (dissoc this :conn)))
 
