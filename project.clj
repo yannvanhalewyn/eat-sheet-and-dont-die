@@ -28,6 +28,7 @@
                  ;; CLJS
                  [reagent "0.7.0"]
                  [re-frame "0.10.2"]
+                 [bidi "2.1.2"]
                  [cljs-ajax "0.7.3"]]
 
   :profiles {:dev {:dependencies [[devcards "0.2.4" :exclusions [cljsjs/react]]

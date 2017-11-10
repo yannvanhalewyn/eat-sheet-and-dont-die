@@ -15,7 +15,9 @@
 (reg-event-fx
   :event/init
   (fn [_]
-    {:db {:db/sheet {} :db/selected nil}
+    {:db {:db/sheet {}
+          :db/selected nil
+          :db/active-route {:route/handler :route/index}}
      :remote {:get-sheet {:path "/api/sheets"}}}))
 
 (reg-event-db
@@ -74,3 +76,8 @@
   (fn [db event]
     (.log js/console "FAILED" event)
     db))
+
+(reg-event-db
+  :route/browser-url
+  (fn [db [_ route]]
+    (assoc db :db/active-route route)))
