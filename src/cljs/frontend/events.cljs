@@ -15,8 +15,10 @@
 (reg-event-fx
   :event/init
   (fn [_]
-    {:db {:db/sheet {}
+    {:remote {:get-current-user {:path "/api/me"}}
+     :db {:db/sheet {}
           :db/selected nil
+          :db/current-user nil
           :db/active-route {:route/handler :route/index}}}))
 
 (reg-event-fx
@@ -74,7 +76,9 @@
       (let [tmp-ids (:temp-ids response)]
         (-> (update db :db/sheet sheet/replace-temp-ids tmp-ids)
           (update :db/selected #(if-let [new-id (get tmp-ids %)]
-                                  new-id %)))))))
+                                  new-id %))))
+      :get-current-user
+      (assoc db :db/current-user response))))
 
 (reg-event-db
   :remote/failure
