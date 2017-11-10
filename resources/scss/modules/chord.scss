@@ -16,6 +16,7 @@
   font-size: 1.7em;
   width: 100%;
   display: inline-block;
+  min-height: 30px; // Make empty chords selectable hack
 }
 
 .chord__extension {
