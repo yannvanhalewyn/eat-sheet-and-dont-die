@@ -59,6 +59,16 @@
     (let [new-sheet (sheet/delete (selectors/current-loc db) element)]
       (update-sheet-zip db new-sheet))))
 
+(reg-event-db
+  :sheet/set-title
+  (fn [db [_ title]]
+    (assoc-in db [:db/sheet :sheet/title] title)))
+
+(reg-event-db
+  :sheet/set-artist
+  (fn [db [_ artist]]
+    (assoc-in db [:db/sheet :sheet/artist] artist)))
+
 ;; Remote actions
 ;; ==============
 

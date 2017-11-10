@@ -1,14 +1,24 @@
 (ns frontend.views.sheet
   (:require [frontend.views.section :as section]
+            [frontend.views.editable :as editable]
             [re-frame.core :refer [subscribe dispatch]])
   (:require-macros [shared.utils :refer [fori]]))
+
+(def presence #(if (empty? %) nil %))
 
 (defn component [{:keys [sheet-id sheet deselect append] :as props}]
   (let [sheet @(subscribe [:sub/sheet sheet-id])
         selected @(subscribe [:sub/selected])]
     [:div.u-max-height {:on-click #(dispatch [:sheet/deselect])}
-     [:h1 (:sheet/title sheet)]
-     [:h3.u-margin-top--s (:sheet/artist sheet)]
+     (let [title (or (presence (:sheet/title sheet)) "(title)")
+           artist (or (presence (:sheet/artist sheet)) "(artist)")]
+       [:div
+        [editable/component {:on-change #(dispatch [:sheet/set-title %])
+                             :value title}
+         [:h1 title]]
+        [editable/component {:on-change #(dispatch [:sheet/set-artist %])
+                             :value artist}
+         [:h3.u-margin-top--s artist]]])
      [:div.u-margin-top.sections
       (fori [i section (:sheet/sections sheet)]
         ^{:key i} [section/component
