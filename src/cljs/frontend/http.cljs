@@ -15,8 +15,6 @@
      :params params}))
 
 (defn request-fx [requests]
-  (doall
-    (for [[key payload] requests]
-      (do
-        (dispatch [:remote/request key payload])
-        (request payload (partial response-handler key))))))
+  (doseq [[key payload] requests]
+    (dispatch [:remote/request key payload])
+    (request payload (partial response-handler key))))
