@@ -13,8 +13,8 @@
    [:a {:href "#"} "Home"]])
 
 (defn active-panel []
-  (let [route (subscribe [:sub/active-route])]
-    (case (:route/handler @route)
+  (let [route @(subscribe [:sub/active-route])]
+    (case (:route/handler route)
       :route/index [index-view]
       :route/sheets [sheet-list-view]
       :route/sheet [sheet/component {:sheet-id (get-in route [:route/params :sheet/id])}])))

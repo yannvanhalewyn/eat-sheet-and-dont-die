@@ -17,8 +17,13 @@
   (fn [_]
     {:db {:db/sheet {}
           :db/selected nil
-          :db/active-route {:route/handler :route/index}}
-     :remote {:get-sheet {:path "/api/sheets"}}}))
+          :db/active-route {:route/handler :route/index}}}))
+
+(reg-event-fx
+  :remote/get-sheet
+  (fn [{:keys [db]} [_ id]]
+    (if-not (= id (:db/id (:db/sheet db)))
+      {:remote {:get-sheet {:path "/api/sheets"}}})))
 
 (reg-event-db
   :sheet/deselect

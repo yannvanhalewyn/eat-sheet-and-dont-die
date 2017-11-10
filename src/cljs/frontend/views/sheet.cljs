@@ -3,8 +3,8 @@
             [re-frame.core :refer [subscribe dispatch]])
   (:require-macros [shared.utils :refer [fori]]))
 
-(defn component [{:keys [sheet deselect append] :as props}]
-  (let [sheet @(subscribe [:sub/sheet])
+(defn component [{:keys [sheet-id sheet deselect append] :as props}]
+  (let [sheet @(subscribe [:sub/sheet sheet-id])
         selected @(subscribe [:sub/selected])]
     [:div.u-max-height {:on-click #(dispatch [:sheet/deselect])}
      [:h1 (:sheet/title sheet)]
