@@ -1,10 +1,9 @@
 (ns frontend.views.sheet
   (:require [frontend.views.section :as section]
             [frontend.views.editable :as editable]
+            [frontend.util.util :refer [presence]]
             [re-frame.core :refer [subscribe dispatch]])
   (:require-macros [shared.utils :refer [fori]]))
-
-(def presence #(if (empty? %) nil %))
 
 (defn component [{:keys [sheet-id sheet deselect append] :as props}]
   (let [sheet @(subscribe [:sub/sheet sheet-id])

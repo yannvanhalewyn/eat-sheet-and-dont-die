@@ -69,6 +69,14 @@
   (fn [db [_ artist]]
     (assoc-in db [:db/sheet :sheet/artist] artist)))
 
+(reg-event-db
+  :sheet/set-section-title
+  (fn [db [_ section title]]
+    (let [idx (.indexOf (get-in db [:db/sheet :sheet/sections]) section)]
+      (if (>= idx 0)
+        (assoc-in db [:db/sheet :sheet/sections idx :section/title] title)
+        db))))
+
 ;; Remote actions
 ;; ==============
 

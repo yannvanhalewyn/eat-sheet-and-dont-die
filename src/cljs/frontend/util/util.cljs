@@ -27,3 +27,5 @@
     (.stopPropagation event)
     (apply f args)
     nil))
+
+(def presence #(if (empty? %) nil %))
