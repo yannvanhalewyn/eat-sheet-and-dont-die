@@ -13,11 +13,13 @@
    [:a {:href "#"} "Home"]])
 
 (defn active-panel []
-  (let [route @(subscribe [:sub/active-route])]
-    (case (:route/handler route)
-      :route/index [index-view]
-      :route/sheets [sheet-list-view]
-      :route/sheet [sheet/component {:sheet-id (get-in route [:route/params :sheet/id])}])))
+  (if-let [current-user @(subscribe [:sub/current-user])]
+    (let [route @(subscribe [:sub/active-route])]
+      (case (:route/handler route)
+        :route/index [index-view]
+        :route/sheets [sheet-list-view]
+        :route/sheet [sheet/component {:sheet-id (get-in route [:route/params :sheet/id])}]))
+    [:h1 "Login panel"]))
 
 (defn component [props]
   [:div.u-max-height

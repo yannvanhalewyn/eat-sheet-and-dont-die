@@ -7,6 +7,7 @@
 
 (reg-sub-key :sub/selected :db/selected)
 (reg-sub-key :sub/active-route :db/active-route)
+(reg-sub-key :sub/current-user :db/current-user)
 
 (reg-sub-raw
   :sub/sheet
