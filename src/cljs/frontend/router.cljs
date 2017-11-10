@@ -37,16 +37,17 @@
   [path]
   (set! (.. js/window -location -hash) path))
 
+(defn- sync-url []
+  (if-let [match (match-route (.. js/window -location -hash))]
+    (dispatch [:route/browser-url match])))
+
 (defn listen
   "Starts a watcher on the browser url and enables browser
   history. Will launch an update route action when browser url is
   submitted to change."
   []
   (let [h (History.)]
-    (events/listen h EventType/NAVIGATE
-      (fn [e]
-        (if-let [match (match-route (.. js/window -location -hash))]
-          (dispatch [:route/browser-url match]))))
+    (events/listen h EventType/NAVIGATE sync-url)
     (.setEnabled h true)))
 
 ;; Path utils

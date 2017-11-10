@@ -10,6 +10,12 @@
 (reg-sub-key :sub/current-user :db/current-user)
 
 (reg-sub-raw
+  :sub/sheets
+  (fn [db [_ user]]
+    (dispatch [:remote/get-sheets-for-user user])
+    (reaction (:db/sheets @db))))
+
+(reg-sub-raw
   :sub/sheet
   (fn [db [_ id]]
     (dispatch [:remote/get-sheet id])

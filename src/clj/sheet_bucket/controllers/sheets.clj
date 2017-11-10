@@ -2,11 +2,16 @@
   (:require [datomic.api :as d]
             [ring.util.response :refer [response]]))
 
-(defn index [{:keys [db-conn]}]
+(defn index [{:keys [db-conn params]}]
   (response
-    (ffirst (d/q
-              '[:find (pull ?sheet [*]) :where [?sheet :sheet/title]]
-              (d/db db-conn)))))
+    (flatten (d/q '[:find (pull ?sheet [:db/id :sheet/artist :sheet/title])
+                    :in $ ?user
+                    :where [?user :playlist/sheets ?sheet]]
+               (d/db db-conn)
+               (Long. (:user-id params))))))
+
+(defn show [{:keys [db-conn params]}]
+  (response (d/pull (d/db db-conn) '[*] (Long. (:eid params)))))
 
 (defn ->tx [tx sheet-id]
   (if-let [retract (:removed tx)]

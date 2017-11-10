@@ -17,4 +17,4 @@
 
 (def on-js-load app/render!)
 
-(app/init!)
+(defonce _ (app/init!))

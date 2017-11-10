@@ -14,6 +14,7 @@
 (defroutes app-routes
   (GET "/" [] index-view)
   (GET "/api/me" [] session/show)
-  (GET "/api/sheets" [] sheets/index)
+  (GET "/api/users/:user-id/sheets" [] sheets/index)
+  (GET "/api/sheets/:eid" [] sheets/show)
   (PATCH "/api/sheets/:eid" [] sheets/update)
   (route/not-found "<h1>NOT FOUND</h1>"))

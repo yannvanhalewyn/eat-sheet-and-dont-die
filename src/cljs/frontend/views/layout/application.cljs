@@ -1,5 +1,6 @@
 (ns frontend.views.layout.application
   (:require [frontend.views.sheet :as sheet]
+            [frontend.views.sheet-list :as sheet-list]
             [re-frame.core :refer [subscribe]]))
 
 (defn index-view []
@@ -7,17 +8,12 @@
    [:h1 "Home"]
    [:a {:href "#sheets/"} "Sheets"]])
 
-(defn sheet-list-view []
-  [:div
-   [:h1 "Sheets"]
-   [:a {:href "#"} "Home"]])
-
 (defn active-panel []
   (if-let [current-user @(subscribe [:sub/current-user])]
     (let [route @(subscribe [:sub/active-route])]
       (case (:route/handler route)
         :route/index [index-view]
-        :route/sheets [sheet-list-view]
+        :route/sheets [sheet-list/component {:user current-user}]
         :route/sheet [sheet/component {:sheet-id (get-in route [:route/params :sheet/id])}]))
     [:h1 "Login panel"]))
 

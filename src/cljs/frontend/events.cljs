@@ -21,11 +21,8 @@
           :db/current-user nil
           :db/active-route {:route/handler :route/index}}}))
 
-(reg-event-fx
-  :remote/get-sheet
-  (fn [{:keys [db]} [_ id]]
-    (if-not (= id (:db/id (:db/sheet db)))
-      {:remote {:get-sheet {:path "/api/sheets"}}})))
+;; Editor operations
+;; =================
 
 (reg-event-db
   :sheet/deselect
@@ -62,6 +59,22 @@
     (let [new-sheet (sheet/delete (selectors/current-loc db) element)]
       (update-sheet-zip db new-sheet))))
 
+;; Remote actions
+;; ==============
+
+(reg-event-fx
+  :remote/get-sheet
+  (fn [{:keys [db]} [_ id]]
+    (if-not (= id (:db/id (:db/sheet db)))
+      {:remote {:get-sheet {:path (str "/api/sheets/" id)}}})))
+
+(reg-event-fx
+  :remote/get-sheets-for-user
+  (fn [{:keys [db]} [_ user]]
+    (if (empty? (:db/sheets db))
+      {:remote {:get-sheets
+                {:path (str "/api/users/" (:db/id user) "/sheets")}}})))
+
 (reg-event-db
   :remote/request
   (fn [db event] db))
@@ -78,7 +91,9 @@
           (update :db/selected #(if-let [new-id (get tmp-ids %)]
                                   new-id %))))
       :get-current-user
-      (assoc db :db/current-user response))))
+      (assoc db :db/current-user response)
+      :get-sheets
+      (assoc db :db/sheets response))))
 
 (reg-event-db
   :remote/failure
