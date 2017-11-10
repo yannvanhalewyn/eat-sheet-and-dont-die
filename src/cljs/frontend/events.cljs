@@ -80,19 +80,6 @@
 ;; Remote actions
 ;; ==============
 
-(reg-event-fx
-  :remote/get-sheet
-  (fn [{:keys [db]} [_ id]]
-    (if-not (= id (:db/id (:db/sheet db)))
-      {:remote {:get-sheet {:path (str "/api/sheets/" id)}}})))
-
-(reg-event-fx
-  :remote/get-sheets-for-user
-  (fn [{:keys [db]} [_ user]]
-    (if (empty? (:db/sheets db))
-      {:remote {:get-sheets
-                {:path (str "/api/users/" (:db/id user) "/sheets")}}})))
-
 (reg-event-db
   :remote/request
   (fn [db event] db))

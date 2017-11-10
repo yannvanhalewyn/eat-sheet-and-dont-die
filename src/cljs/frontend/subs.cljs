@@ -1,9 +1,24 @@
 (ns frontend.subs
-  (:require [re-frame.core :refer [dispatch reg-sub reg-sub-raw]]
+  (:require [re-frame.core :refer [reg-sub reg-sub-raw]]
+            [frontend.http :as http]
             [reagent.ratom :refer [reaction]]))
 
-(defn reg-sub-key [name key]
+;; Remote subscriptions
+;; ====================
+(defn- get-user-sheets [db user]
+  (if (empty? (:db/sheets db))
+    (http/request-fx
+      {:get-sheets {:path (str "/api/users/" (:db/id user) "/sheets")}})))
+
+(defn- get-sheet-data [db id]
+  (if-not (= id (:db/id (:db/sheet db)))
+    (http/request-fx {:get-sheet {:path (str "/api/sheets/" id)}})))
+
+(defn- reg-sub-key [name key]
   (reg-sub name (fn [db] (get db key))))
+
+;; Re-frame subscriptions
+;; ======================
 
 (reg-sub-key :sub/selected :db/selected)
 (reg-sub-key :sub/active-route :db/active-route)
@@ -12,11 +27,11 @@
 (reg-sub-raw
   :sub/sheets
   (fn [db [_ user]]
-    (dispatch [:remote/get-sheets-for-user user])
+    (get-user-sheets db user)
     (reaction (:db/sheets @db))))
 
 (reg-sub-raw
   :sub/sheet
   (fn [db [_ id]]
-    (dispatch [:remote/get-sheet id])
+    (get-sheet-data db id)
     (reaction (:db/sheet @db))))
