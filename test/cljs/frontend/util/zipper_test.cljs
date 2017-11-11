@@ -1,9 +1,6 @@
 (ns frontend.util.zipper-test
-  (:require [frontend.util.zipper :as sut :refer [next-leaf
-                                                  prev-leaf
-                                                  locate
-                                                  locate-left
-                                                  nth-child]]
+  (:require [frontend.util.zipper :as sut :refer [next-leaf prev-leaf locate
+                                                  locate-left nth-child]]
             [clojure.zip :as zip :refer [vector-zip node up down right rightmost branch?]]
             [cljs.test :refer-macros [deftest is testing]]))
 
@@ -57,4 +54,5 @@
   (is (= nil (-> subject down rightmost (nth-child 10)))))
 
 (deftest edit-children
-  (is (= [3 4] (-> subject down (sut/edit-children + 2) node))))
+  (testing "It hands the child's index to the update fn"
+    (is (= [[2 0] [3 1]] (-> subject down (sut/edit-children #(vector (inc %1) %2)) node)))))

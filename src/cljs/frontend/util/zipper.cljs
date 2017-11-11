@@ -45,11 +45,11 @@
   (nth (iterate zip/right (zip/down loc)) n))
 
 (defn edit-children
-  "Updates all children by applying f and args to them, then returns
-  the updated zipper at parent location."
+  "Updates all children by applying (f node idx args). Returns the
+  updated zipper at parent location."
   [loc f & args]
-  (loop [l (zip/down loc)]
-    (let [l (apply zip/edit l f args)]
+  (loop [idx 0 l (zip/down loc)]
+    (let [l (zip/edit l #(apply f % idx args))]
       (if-let [next (zip/right l)]
-        (recur next)
+        (recur (inc idx) next)
         (zip/up l)))))
