@@ -64,7 +64,7 @@
                              :value artist}
          [:h3.u-margin-top--s artist]]])
      [:div.u-margin-top.sections
-      (fori [i section (:sheet/sections sheet)]
+      (fori [i section (sort-by :coll/position (:sheet/sections sheet))]
         ^{:key i} [section/component
                    {:section section
                     :selected selected

@@ -14,12 +14,13 @@
 (def extension? #{9 13})
 
 (s/def :db/id (s/spec (s/or :datomic int? :tmp-id string?) :gen gen-id))
+(s/def :coll/position pos-int?)
 (s/def :chord/root (s/tuple root? accidental?))
 (s/def :chord/triad #{:minor :major :augmented :diminished})
 (s/def :chord/seventh #{:minor :major})
 (s/def :chord/ninth accidental?)
-(s/def ::chord (s/keys :req [:db/id]
-                       :opt [:chord/root :chord/triad :chord/seventh :chord/ninth]))
+(s/def ::chord (s/keys :req [:db/id :coll/position]
+                 :opt [:chord/root :chord/triad :chord/seventh :chord/ninth]))
 
 ;; Sheet
 ;; =====
@@ -27,14 +28,14 @@
 (s/def :bar/chords (s/coll-of ::chord :min-count 1 :gen-max 4))
 (s/def :bar/start-repeat boolean?)
 (s/def :bar/end-repeat boolean?)
-(s/def ::bar (s/keys :req [:db/id :bar/chords :bar/start-repeat :bar/end-repeat]))
+(s/def ::bar (s/keys :req [:db/id :coll/position :bar/chords :bar/start-repeat :bar/end-repeat]))
 
-(s/def :row/bars (s/coll-of ::bar :min-count 1 :gen-max 4))
-(s/def ::row (s/keys :req [:db/id :row/bars]))
+(s/def :row/bars (s/coll-of ::bar :min-count 1 :gen-max 3))
+(s/def ::row (s/keys :req [:db/id :coll/position :row/bars]))
 
 (s/def :section/title (s/spec string? :gen #(s/gen #{"Intro" "Verse" "Chorus"})))
 (s/def :section/rows (s/coll-of ::row :min-count 1 :gen-max 3))
-(s/def ::section (s/keys :req [:db/id :section/title :section/rows]))
+(s/def ::section (s/keys :req [:db/id :coll/position :section/title :section/rows]))
 
 (s/def :sheet/title (s/spec string? :gen #(s/gen #{"Whole lotta love" "Breathe" "Lean on me"})))
 (s/def :sheet/artist (s/spec string? :gen #(s/gen #{"Led Zeppelin" "Pink Floyd" "Bill Withers"})))

@@ -21,7 +21,7 @@
     [:div.row {:style {:margin-bottom "10px" :white-space :nowrap}}
      (when (:bar/start-repeat (first bars)) [:i.barline--start-repeat])
      (interleave
-       (for [bar bars]
+       (for [bar (sort-by :coll/position bars)]
          ^{:key (:db/id bar)}
          [bar/component (-> (dissoc props :row :attrs)
                           (assoc :bar bar))])
@@ -33,6 +33,6 @@
      [editable/component {:on-change #(dispatch [:sheet/set-section-title section %])
                           :value title}
       [:h4.u-margin-top title]])
-   (for [row (:section/rows section)]
+   (for [row (sort-by :coll/position (:section/rows section))]
      ^{:key (:db/id row)}
      [row-component (-> (dissoc props :section) (assoc :row row))])])
