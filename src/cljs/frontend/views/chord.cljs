@@ -1,6 +1,7 @@
 (ns frontend.views.chord
   (:require [reagent.core :as reagent]
             [frontend.util.util :refer [stop-propagation prevent-default]]
+            [re-frame.core :refer [dispatch]]
             [goog.events.KeyCodes :refer [TAB SPACE ENTER ESC BACKSPACE LEFT RIGHT UP DOWN]]
             [clojure.core.match :refer-macros [match]]
             [clojure.string :as str]))
@@ -50,46 +51,6 @@
      [:span [base chord]
       [:small.chord__extension [extension chord]]])])
 
-(defn key-down-handler [{:keys [append remove move deselect update-chord]}]
-  (fn [e]
-    (let [code (.-which e)
-          shift (if (.-shiftKey e) :shift)
-          alt (if (.-altKey e) :alt)
-          meta (if (.-metaKey e) :meta)
-          pattern (filter identity [alt meta shift code])
-          value (.. e -target -value)
-          run (fn [handler] (.preventDefault e) (update-chord value) (handler))]
-      (case pattern
-        [ESC] (run deselect)
-
-        [SPACE] (run #(append :chord))
-        [:shift SPACE] (run #(append :chord))
-
-        [TAB] (run #(move :right))
-        [:shift TAB] (run #(move :left))
-
-        [ENTER] (run #(append :bar))
-        [:shift ENTER] (run #(append :row))
-        [:meta ENTER] (run #(append :section))
-
-        [BACKSPACE] (if (empty? value) (run #(remove :chord)))
-        [:meta BACKSPACE] (run #(remove :bar))
-        [:shift BACKSPACE] (run #(remove :row))
-        [:alt :shift BACKSPACE] (run #(remove :section))
-
-        [LEFT] (run #(move :left))
-        [:meta LEFT] (run #(move :bar-left))
-
-        [RIGHT] (run #(move :right))
-        [:meta RIGHT] (run #(move :bar-right))
-
-        [UP] (run #(move :up))
-        [:shift UP] (run #(move :up))
-
-        [DOWN] (run #(move :down))
-        [:shift DOWN] (run #(move :down))
-        nil))))
-
 (defn editable-chord
   "An input box for editing a chord"
   []
@@ -103,6 +64,5 @@
        [:input.chord--editing
         {:type "text"
          :on-click #(.stopPropagation %)
-         :on-blur #(update-chord  (.. % -target -value))
-         :on-key-down (key-down-handler props)
+         :on-blur #(dispatch [:sheet/update-chord (.. % -target -value)])
          :default-value (:chord/value chord)}])}))
