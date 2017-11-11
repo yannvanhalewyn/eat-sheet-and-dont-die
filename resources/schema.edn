@@ -89,4 +89,10 @@
           {:db/ident :bar/end-repeat
            :db/valueType :db.type/boolean
            :db/cardinality :db.cardinality/one
-           :db/doc "Wether or not the bar has an end-repeat sign."}]]}}
+           :db/doc "Wether or not the bar has an end-repeat sign."}]]}
+
+ :sheet-bucket/add-card-many-positions
+ {:txes [[{:db/ident :coll/position
+           :db/valueType :db.type/long
+           :db/cardinality :db.cardinality/one
+           :db/doc "A child node's index in parent's card many relation"}]]}}
