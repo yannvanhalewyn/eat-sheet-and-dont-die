@@ -2,12 +2,12 @@
   (:require [frontend.views.section :as section]
             [frontend.views.editable :as editable]
             [frontend.views.sheet-tools :as sheet-tools]
-            [frontend.util.util :refer [presence]]
+            [frontend.util.util :refer [presence prevent-default]]
             [re-frame.core :refer [subscribe dispatch]]
             [goog.events.KeyCodes :refer [TAB SPACE ENTER ESC BACKSPACE LEFT RIGHT UP DOWN]])
   (:require-macros [shared.utils :refer [fori]]))
 
-(defn key-down-handler [{:keys [append remove move deselect update-chord]}]
+(defn key-down-handler [selected]
   (fn [e]
     (let [code (.-which e)
           shift (if (.-shiftKey e) :shift)
@@ -15,10 +15,9 @@
           meta (if (.-metaKey e) :meta)
           pattern (filter identity [alt meta shift code])
           value (.. e -target -value)
-          run (fn [event]
-                (.preventDefault e)
-                (dispatch [:sheet/update-chord value])
-                (dispatch event))]
+          run (fn [rf-event] (.preventDefault e)
+                (when selected (dispatch [:sheet/update-chord selected value]))
+                (dispatch rf-event))]
       (case pattern
         [ESC] (run [:sheet/deselect])
 
@@ -54,7 +53,7 @@
   (let [sheet @(subscribe [:sub/sheet sheet-id])
         selected @(subscribe [:sub/selected])]
     [:div.u-max-height {:on-click #(dispatch [:sheet/deselect])
-                        :on-key-down (key-down-handler props)}
+                        :on-key-down (key-down-handler selected)}
      (let [title (or (presence (:sheet/title sheet)) "(title)")
            artist (or (presence (:sheet/artist sheet)) "(artist)")]
        [:div
@@ -69,9 +68,5 @@
         ^{:key i} [section/component
                    {:section section
                     :selected selected
-                    :on-chord-click #(dispatch [:sheet/select-chord %])
-                    :update-chord #(dispatch [:sheet/update-chord %])
-                    :append #(dispatch [:sheet/append %])
-                    :move #(dispatch [:sheet/move %])
-                    :remove #(dispatch [:sheet/remove %])}])]
+                    :on-chord-click #(dispatch [:sheet/select-chord %])}])]
      [sheet-tools/component]]))

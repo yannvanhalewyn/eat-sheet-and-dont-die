@@ -64,5 +64,5 @@
        [:input.chord--editing
         {:type "text"
          :on-click #(.stopPropagation %)
-         :on-blur #(dispatch [:sheet/update-chord (.. % -target -value)])
+         :on-blur #(dispatch [:sheet/update-chord (:db/id chord) (.. % -target -value)])
          :default-value (:chord/value chord)}])}))

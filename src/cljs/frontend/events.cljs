@@ -35,9 +35,11 @@
 
 (reg-event-db
   :sheet/update-chord
-  (fn [db [_ value]]
-    (let [new-sheet (zip/root (zip/edit (selectors/current-loc db)
-                                assoc :chord/value value))]
+  (fn [db [_ id value]]
+    (let [new-sheet (-> (sheet/zipper (selectors/sheet db))
+                      (sheet/navigate-to id)
+                      (zip/edit assoc :chord/value value)
+                      zip/root)]
       (update-sheet db new-sheet))))
 
 (reg-event-db
