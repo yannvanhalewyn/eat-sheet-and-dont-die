@@ -1,0 +1,24 @@
+.barline {
+  border-right: 2px solid #666;
+  margin-right: 5px;
+}
+
+.barline--end-repeat {
+  @include background-image("/img/end-repeat.svg");
+  height: 50px;
+  flex: 0 0 12px;
+}
+
+.barline--start-repeat {
+  @include background-image("/img/start-repeat.svg");
+  height: 50px;
+  flex: 0 0 12px;
+  margin-right: 10px;
+}
+
+.barline--both-repeat {
+  @include background-image("/img/both-repeat.svg");
+  height: 50px;
+  flex: 0 0 18.75px;
+  margin-right: 10px;
+}
