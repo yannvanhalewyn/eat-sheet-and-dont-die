@@ -2,7 +2,8 @@
   (:require [clojure.zip
              :as zip
              :refer [up down right left end? next node insert-right lefts branch? children]]
-            [frontend.util.zipper :refer [nth-child next-leaf prev-leaf locate locate-left]]))
+            [frontend.util.zipper :as uzip :refer [nth-child next-leaf prev-leaf
+                                                   locate locate-left]]))
 
 ;; Initializing nodes
 ;; ==================
@@ -11,10 +12,12 @@
   (let [count (atom 0)]
     (fn [] (swap! count dec) (str @count))))
 
-(defn new-chord [id]
+(defn new-chord
+  [id]
   {:db/id id :chord/value ""})
 
-(defn new-bar [[id chord-id]]
+(defn new-bar
+  [[id chord-id]]
   {:db/id id
    :bar/chords [(new-chord chord-id)]})
 
@@ -68,19 +71,26 @@
 ;; Adding
 ;; ======
 
+(defn- reset-positions [parent-loc]
+  (uzip/edit-children parent-loc #(assoc %1 :coll/position %2)))
+
 (defmulti append (fn [_ t _] t))
 
 (defmethod append :chord [chord-loc _ [id]]
-  (-> chord-loc (insert-right (new-chord id)) right))
+  (-> chord-loc (insert-right (new-chord id)) up reset-positions (navigate-to id)))
 
 (defmethod append :bar [chord-loc _ ids]
-  (-> chord-loc up (insert-right (new-bar ids)) right down))
+  (-> chord-loc up (insert-right (new-bar ids)) up reset-positions (navigate-to (second ids))))
 
 (defmethod append :row [chord-loc _ ids]
-  (-> chord-loc up up (insert-right (new-row ids)) right down down))
+  (let [new-chord-id (first (drop 2 ids))]
+    (-> chord-loc up up (insert-right (new-row ids))
+      up reset-positions (navigate-to new-chord-id))))
 
 (defmethod append :section [chord-loc _ ids]
-  (-> chord-loc up up up (insert-right (new-section ids)) right down down down))
+  (let [new-chord-id (first (drop 3 ids))]
+    (-> chord-loc up up up (insert-right (new-section ids))
+      up reset-positions (navigate-to new-chord-id))))
 
 ;; Removing
 ;; ========

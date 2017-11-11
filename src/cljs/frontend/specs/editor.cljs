@@ -14,7 +14,7 @@
 (def extension? #{9 13})
 
 (s/def :db/id (s/spec (s/or :datomic int? :tmp-id string?) :gen gen-id))
-(s/def :coll/position pos-int?)
+(s/def :coll/position int?)
 (s/def :chord/root (s/tuple root? accidental?))
 (s/def :chord/triad #{:minor :major :augmented :diminished})
 (s/def :chord/seventh #{:minor :major})

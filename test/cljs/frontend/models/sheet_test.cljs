@@ -19,27 +19,35 @@
                     (append :chord id-pool) (navigate-to "chord1") node :db/id))))
 
 (deftest addChord
-  (let [new-chord (-> test-loc (append :chord id-pool))]
-    (is (= 2 (-> new-chord up children count)))
-    (is (= (first id-pool) (-> new-chord node :db/id)))))
+  (let [[id1 id2] (take 2 id-pool)
+        new-chord (-> test-loc (append :chord [id1]) left (append :chord [id2]))]
+    (testing  "It correctly assigns the chord positions and returns the zipper at the new chord"
+      (is (= [0 1 2] (map :coll/position (-> new-chord up children))))
+      (is (= id2 (-> new-chord node :db/id))))))
 
 (deftest addBar
-  (let [ids (take 2 id-pool)
-        new-chord (-> test-loc (append :bar ids))]
-    (is (= 2 (-> new-chord up up children count)))
-    (is (= (last ids) (-> new-chord node :db/id)))))
+  (let [ids (take 4 id-pool)
+        ids1 (take 2 ids)
+        ids2 (drop 2 ids)
+        new-chord (-> test-loc (append :bar ids1) up left down (append :bar ids2))]
+    (testing "It correctly assigns the bar positions and returns the zipper at the new chord"
+      (is (= [0 1 2] (map :coll/position (-> new-chord up up children))))
+      (is (= (last ids) (-> new-chord node :db/id))))))
 
 (deftest addRow
-  (let [ids (take 3 id-pool)
-        new-chord (-> test-loc (append :row ids))]
-    (is (= 2 (-> new-chord up up up children count)))
-    (is (= (last ids) (-> new-chord node :db/id)))))
+  (let [[ids1 ids2] (partition 3 (take 6 id-pool))
+        new-chord (-> test-loc (append :row ids1) up up left down down (append :row ids2))]
+    (testing "It correctly assigns the row positions and returns the zipper at the new chord"
+      (is (= [0 1 2] (map :coll/position (-> new-chord up up up children))))
+      (is (= (last ids2) (-> new-chord node :db/id))))))
 
 (deftest addSection
-  (let [ids (take 4 id-pool)
-        new-chord (-> test-loc (append :section ids))]
-    (is (= 2 (-> new-chord up up up up children count)))
-    (is (= (last ids) (-> new-chord node :db/id)))))
+  (let [[ids1 ids2] (partition 4 (take 8 id-pool))
+        new-chord (-> test-loc (append :section ids1) up up up left down down down
+                    (append :section ids2))]
+    (testing  "It correctly assigns the section positions and returns the zipper at the new chord"
+      (is (= [0 1 2]  (map :coll/position (-> new-chord up up up up children))))
+      (is (= (last ids2) (-> new-chord node :db/id))))))
 
 (deftest removing
   (let [sheet (-> test-loc
