@@ -1,5 +1,6 @@
 (ns sheet-bucket.controllers.sheets
   (:require [datomic.api :as d]
+            [clojure.walk :refer [postwalk]]
             [ring.util.response :refer [response status]]))
 
 (defn index [{:keys [db-conn params]}]
@@ -10,8 +11,16 @@
                (d/db db-conn)
                (Long. (:user-id params))))))
 
+(defn- sort-children [root]
+  (postwalk
+    (fn [node]
+      (if (and (sequential? node) (map? (first node)))
+        (sort-by :coll/position node)
+        node))
+    root))
+
 (defn show [{:keys [db-conn params]}]
-  (response (d/pull (d/db db-conn) '[*] (Long. (:eid params)))))
+  (response (sort-children (d/pull (d/db db-conn) '[*] (Long. (:eid params))))))
 
 (defn ->tx [tx sheet-id]
   (if-let [retract (:removed tx)]
