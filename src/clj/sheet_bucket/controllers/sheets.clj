@@ -1,6 +1,6 @@
 (ns sheet-bucket.controllers.sheets
   (:require [datomic.api :as d]
-            [ring.util.response :refer [response]]))
+            [ring.util.response :refer [response status]]))
 
 (defn index [{:keys [db-conn params]}]
   (response
@@ -28,4 +28,7 @@
 (defn update [{:keys [db-conn params] :as req}]
   (let [result (d/transact db-conn
                  (map #(->tx % (Long. (:eid params))) (:tx params)))]
-    (response {:temp-ids (:tempids result)})))
+    (try
+      (response {:temp-ids (:tempids @result)})
+      (catch Exception e
+        (status (response {:error (.getMessage e)}) 500)))))
