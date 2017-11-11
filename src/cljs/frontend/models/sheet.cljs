@@ -147,3 +147,9 @@
     :bar-left (locate-left (zip/prev loc) first-chord-of-bar?)
     :up (move-vertically loc :up)
     :down (move-vertically loc :down)))
+
+;; Bars / tools
+;; ============
+
+(defn- toggle [loc type]
+  (zip/edit (up loc) update type not))

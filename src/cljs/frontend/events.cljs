@@ -77,6 +77,12 @@
         (assoc-in db [:db/sheet :sheet/sections idx :section/title] title)
         db))))
 
+(reg-event-db
+  :sheet/toggle
+  (fn [db [_ type]]
+    (let [new-sheet (zip/root (sheet/toggle (selectors/current-loc db) type))]
+      (update-sheet db new-sheet))))
+
 ;; Remote actions
 ;; ==============
 

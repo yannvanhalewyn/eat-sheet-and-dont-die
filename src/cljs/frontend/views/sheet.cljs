@@ -1,6 +1,7 @@
 (ns frontend.views.sheet
   (:require [frontend.views.section :as section]
             [frontend.views.editable :as editable]
+            [frontend.views.sheet-tools :as sheet-tools]
             [frontend.util.util :refer [presence]]
             [re-frame.core :refer [subscribe dispatch]])
   (:require-macros [shared.utils :refer [fori]]))
@@ -27,4 +28,5 @@
                     :update-chord #(dispatch [:sheet/update-chord %])
                     :append #(dispatch [:sheet/append %])
                     :move #(dispatch [:sheet/move %])
-                    :remove #(dispatch [:sheet/remove %])}])]]))
+                    :remove #(dispatch [:sheet/remove %])}])]
+     [sheet-tools/component]]))
