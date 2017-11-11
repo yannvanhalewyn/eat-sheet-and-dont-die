@@ -24,6 +24,7 @@
                  [metosin/muuntaja "0.3.2"]
                  [com.datomic/datomic-pro "0.9.5561.62"
                   :exclusions [com.google.guava/guava]]
+                 [io.rkn/conformity "0.5.1"] ;; Datomic migrations
 
                  ;; CLJS
                  [reagent "0.7.0"]

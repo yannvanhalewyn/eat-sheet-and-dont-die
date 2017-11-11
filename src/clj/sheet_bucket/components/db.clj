@@ -1,8 +1,7 @@
 (ns sheet-bucket.components.db
   (:require [com.stuartsierra.component :as c]
             [datomic.api :as d]
-            [clojure.edn :as edn]
-            [clojure.java.io :as io]))
+            [io.rkn.conformity :as conform]))
 
 ;; Helper fns
 ;; ==========
@@ -13,27 +12,26 @@
 (defn pull [db eid selector]
   (d/pull db selector eid))
 
-(defn- read-schema! []
-  (->> (io/file "resources/schema.edn") slurp edn/read-string))
-
-(defn load-schema! [conn]
-  (transact! conn (read-schema!)))
-
 (defn retract-entity! [conn eid]
   (transact! conn [[:db.fn/retractEntity eid]]))
 
 ;; Component
 ;; =========
 
+(defn connect [uri]
+  (try
+    (d/create-database uri)
+    (d/connect uri)
+    (catch Exception e
+      (println "Could not connect to database with url: " uri (.getMessage e)))))
+
 (defrecord Db [uri]
   c/Lifecycle
   (start [this]
-    (try
-      (d/create-database uri)
-      (assoc this :conn (d/connect uri))
-      (catch Exception e
-        (println "Could not connect to database with url: " uri (.getMessage e))
-        this)))
+    (let [conn (connect uri)]
+      (println "Migrating schema...")
+      (conform/ensure-conforms conn (conform/read-resource "schema.edn"))
+      (assoc this :conn (connect uri))))
   (stop [this]
     (dissoc this :conn)))
 
