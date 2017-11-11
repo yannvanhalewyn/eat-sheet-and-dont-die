@@ -43,3 +43,13 @@
   "Jumps to the nth child of loc. Should take a location of a branch"
   [loc n]
   (nth (iterate zip/right (zip/down loc)) n))
+
+(defn edit-children
+  "Updates all children by applying f and args to them, then returns
+  the updated zipper at parent location."
+  [loc f & args]
+  (loop [l (zip/down loc)]
+    (let [l (apply zip/edit l f args)]
+      (if-let [next (zip/right l)]
+        (recur next)
+        (zip/up l)))))

@@ -1,5 +1,9 @@
 (ns frontend.util.zipper-test
-  (:require [frontend.util.zipper :refer [next-leaf prev-leaf locate locate-left nth-child]]
+  (:require [frontend.util.zipper :as sut :refer [next-leaf
+                                                  prev-leaf
+                                                  locate
+                                                  locate-left
+                                                  nth-child]]
             [clojure.zip :as zip :refer [vector-zip node up down right rightmost branch?]]
             [cljs.test :refer-macros [deftest is testing]]))
 
@@ -51,3 +55,6 @@
 (deftest nthChild
   (is (= 8 (-> subject down rightmost (nth-child 2) node)))
   (is (= nil (-> subject down rightmost (nth-child 10)))))
+
+(deftest edit-children
+  (is (= [3 4] (-> subject down (sut/edit-children + 2) node))))
