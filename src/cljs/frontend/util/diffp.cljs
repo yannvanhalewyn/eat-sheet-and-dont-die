@@ -1,9 +1,6 @@
 (ns frontend.util.diffp
   (:require [clojure.set :as set]))
 
-(defn- is-leaf? [x]
-  (or (nil? x) (keyword? x) (string? x) (number? x)))
-
 (defn- find-match [elem coll ident-fn]
   (loop [[test & others] coll]
     (if (nil? test)
@@ -32,20 +29,40 @@
      :missing (map first missing)
      :added (map first added)}))
 
+
+
 (defn diffp
   "Takes in two data structures and returns a list of removals,
-  additions or updates. Diffp stands for diff-paths."
+  additions or updates. Diffp stands for diff-paths.
+
+  Examples:
+  ```
+  (diffp {:name \"Fred\" :age 22} {:name \"Fred\" :age 23})
+  ;; => ({:path [:age], :old-value 22, :new-value 23})
+
+  (diffp {:name \"Fred\"} {:name \"Fred\" :age 22})
+  ;; => ({:path [:age], :old-value 22, :new-value 23})
+  ```
+
+  diffp will also find matches in collections, in case an element
+  moved. Notice how the diff only says \"Rose\" was removed, even
+  though the other children moved in the collection:
+
+  ```
+  (diffp {:name \"Fred\" :children [\"Mary\" \"Rose\" \"Elsa\"]}
+         {:name \"Fred\" :children [\"Elsa\" \"Mary\"]})
+  ;; => ({:path [:children], :removed \"Rose\"})
+  ```
+
+  You can pass in a custom identity function to match children in a
+  list, eg: `:db/id`
+  "
   ([in1 in2] (diffp in1 in2 identity [] []))
   ([in1 in2 ident-fn] (diffp in1 in2 ident-fn [] []))
   ([in1 in2 ident-fn path ret]
    (if (= in1 in2)
      ret
      (cond
-
-       ;; Leaf case
-       (is-leaf? in1)
-       (conj ret {:path path :old-value in1 :new-value in2})
-
        ;; Map case
        (map? in1)
        (let [keys-in1 (set (keys in1))
@@ -60,4 +77,8 @@
            (map (fn [e] {:path path :removed e}) missing)
            (map (fn [e] {:path path :added e}) added)
            (mapcat (fn [[a b]] (diffp a b ident-fn (conj path (ident-fn a)) ret))
-             matched)))))))
+             matched)))
+
+       ;; Leaf case
+       :leaf
+       (conj ret {:path path :old-value in1 :new-value in2})))))

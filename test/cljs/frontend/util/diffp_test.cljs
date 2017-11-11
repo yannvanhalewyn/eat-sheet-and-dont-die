@@ -38,4 +38,10 @@
       [{:path [:key1 :key2] :removed {:id "id2" :children ["childx" "childy"]}}
        {:path [:key1 :key2] :added {:id "id3" :children []}}
        {:path [:key1 :key2 "id1" :children] :removed "child1"}
-       {:path [:key1 :key2 "id1" :children] :added "child3"}])))
+       {:path [:key1 :key2 "id1" :children] :added "child3"}]))
+
+  (testing "boolean key diffs"
+    (are [a b diff] (= diff (sut/diffp a b :id))
+      {:children [{:id 1 :bar/repeat false}]}
+      {:children [{:id 1 :bar/repeat true}]}
+      [{:path [:children 1 :bar/repeat] :old-value false :new-value true}])))
