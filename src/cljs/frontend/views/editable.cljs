@@ -17,6 +17,7 @@
             {:type "text"
              :default-value value
              :on-key-down (fn [e]
+                            (.stopPropagation e) ;; Don't intervene with editor's keybindings
                             (when (#{ENTER ESC TAB} (.-which e))
                               (reset! editing false)
                               (on-change (.. e -target -value))))

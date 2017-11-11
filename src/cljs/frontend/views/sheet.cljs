@@ -46,7 +46,8 @@
 (defn component [{:keys [sheet-id sheet deselect append] :as props}]
   (let [sheet @(subscribe [:sub/sheet sheet-id])
         selected @(subscribe [:sub/selected])]
-    [:div.u-max-height {:on-click #(dispatch [:sheet/deselect])}
+    [:div.u-max-height {:on-click #(dispatch [:sheet/deselect])
+                        :on-key-down (key-down-handler selected)}
      (let [title (or (presence (:sheet/title sheet)) "(title)")
            artist (or (presence (:sheet/artist sheet)) "(artist)")]
        [:div
@@ -56,11 +57,10 @@
         [editable/component {:on-change #(dispatch [:sheet/set-artist %])
                              :value artist}
          [:h3.u-margin-top--s artist]]])
-     [:div {:on-key-down (key-down-handler selected)}
-      [:div.u-margin-top.sections
-       (fori [i section (sort-by :coll/position (:sheet/sections sheet))]
-         ^{:key i} [section/component
-                    {:section section
-                     :selected selected
-                     :on-chord-click #(dispatch [:sheet/select-chord %])}])]
-      [sheet-tools/component]]]))
+     [:div.u-margin-top.sections
+      (fori [i section (sort-by :coll/position (:sheet/sections sheet))]
+        ^{:key i} [section/component
+                   {:section section
+                    :selected selected
+                    :on-chord-click #(dispatch [:sheet/select-chord %])}])]
+     [sheet-tools/component]]))
