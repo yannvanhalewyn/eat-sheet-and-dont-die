@@ -25,7 +25,9 @@
 ;; =====
 
 (s/def :bar/chords (s/coll-of ::chord :min-count 1 :gen-max 4))
-(s/def ::bar (s/keys :req [:db/id :bar/chords]))
+(s/def :bar/start-repeat boolean?)
+(s/def :bar/end-repeat boolean?)
+(s/def ::bar (s/keys :req [:db/id :bar/chords :bar/start-repeat :bar/end-repeat]))
 
 (s/def :row/bars (s/coll-of ::bar :min-count 1 :gen-max 4))
 (s/def ::row (s/keys :req [:db/id :row/bars]))
