@@ -1,25 +1,32 @@
 .barline {
   border-right: 2px solid #666;
-  margin-right: 10px;
 }
 
+$svg-ratio: 18 / 80;
+$height: 50px;
+$width: $height * $svg-ratio;
 .barline--end-repeat {
   @include background-image("/img/end-repeat.svg");
-  height: 50px;
-  flex: 0 0 12px;
-  margin-right: 10px;
+  height: $height;
+  width: $width;
+  .row & { margin-left: -$width; }
 }
 
 .barline--start-repeat {
   @include background-image("/img/start-repeat.svg");
-  height: 50px;
-  flex: 0 0 12px;
-  margin-right: 10px;
+  height: $height;
+  width: $width;
+  .row & { margin-right: -$width; }
 }
 
+$svg-ratio: 30 / 80;
+$width: $height * $svg-ratio;
 .barline--both-repeat {
   @include background-image("/img/both-repeat.svg");
   height: 50px;
-  flex: 0 0 18.75px;
-  margin-right: 10px;
+  width: $width;
+  .row & {
+    margin-left: -$width / 2;
+    margin-right: -$width / 2;
+  }
 }
