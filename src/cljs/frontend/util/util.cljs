@@ -28,4 +28,13 @@
     (apply f args)
     nil))
 
+(defn event->keychord
+  "Takes a keydown event, and returns a vector of all important keys like META, SHIFT, CTRL, ALT,.."
+  [e]
+  (let [code (.-which e)
+        shift (if (.-shiftKey e) :shift)
+        alt (if (.-altKey e) :alt)
+        meta (if (.-metaKey e) :meta)]
+    (filter identity [alt meta shift code])))
+
 (def presence #(if (empty? %) nil %))
