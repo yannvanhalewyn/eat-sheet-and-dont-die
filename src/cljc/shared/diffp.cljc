@@ -23,13 +23,11 @@
   [coll1 coll2 ident-fn]
   (let [matches1 (map #(find-match % coll2 ident-fn) coll1)
         matches2 (map #(find-match % coll1 ident-fn) coll2)
-        [missing matched1] (split (comp nil? second) matches1)
-        [added matched2] (split (comp nil? second) matches2)]
-    {:matched (map vec matched1 matched2)
+        [missing matched] (split (comp nil? second) matches1)
+        added (filter (comp nil? second) matches2)]
+    {:matched matched
      :missing (map first missing)
      :added (map first added)}))
-
-
 
 (defn diffp
   "Takes in two data structures and returns a list of removals,
