@@ -46,6 +46,8 @@
 
   :source-paths ["src/clj" "src/cljc"]
 
+  :test-paths ["test/clj"]
+
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
   :cljsbuild {:builds [{:id "cards"

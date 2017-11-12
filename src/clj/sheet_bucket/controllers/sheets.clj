@@ -1,5 +1,6 @@
 (ns sheet-bucket.controllers.sheets
-  (:require [datomic.api :as d]
+  (:require [sheet-bucket.models.sheet :as sheet]
+            [datomic.api :as d]
             [clojure.walk :refer [postwalk]]
             [ring.util.response :refer [response status]]))
 
@@ -22,21 +23,8 @@
 (defn show [{:keys [db-conn params]}]
   (response (sort-children (d/pull (d/db db-conn) '[*] (Long. (:eid params))))))
 
-(defn ->tx [tx sheet-id]
-  (if-let [retract (:removed tx)]
-    [:db.fn/retractEntity (:db/id retract)]
-    (if-let [new-entity (or (:added tx) (:new-value tx))]
-      (reduce
-        (fn [children [id ref-key]]
-          {:db/id id
-           ref-key children})
-        new-entity
-        (reverse (partition-all 2
-                   (cons sheet-id (:path tx))))))))
-
 (defn update [{:keys [db-conn params] :as req}]
-  (let [result (d/transact db-conn
-                 (map #(->tx % (Long. (:eid params))) (:tx params)))]
+  (let [result (d/transact db-conn (sheet/diff->tx (:tx params) (Long. (:eid params))))]
     (try
       (response {:temp-ids (:tempids @result)})
       (catch Exception e
