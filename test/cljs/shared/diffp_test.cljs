@@ -1,5 +1,5 @@
-(ns frontend.util.diffp-test
-  (:require [frontend.util.diffp :as sut]
+(ns shared.diffp-test
+  (:require [shared.diffp :as sut]
             [cljs.test :refer-macros [deftest is are testing]]))
 
 (deftest diffp

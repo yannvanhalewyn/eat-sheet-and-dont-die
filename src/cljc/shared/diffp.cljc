@@ -1,4 +1,4 @@
-(ns frontend.util.diffp
+(ns shared.diffp
   (:require [clojure.set :as set]))
 
 (defn- find-match [elem coll ident-fn]

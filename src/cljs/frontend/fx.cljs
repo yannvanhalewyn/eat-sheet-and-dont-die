@@ -1,7 +1,7 @@
 (ns frontend.fx
   (:require [frontend.http :as http]
             [frontend.selectors :as sel]
-            [frontend.util.diffp :refer [diffp]]
+            [shared.diffp :refer [diffp]]
             [re-frame.core :as rf]
             [clojure.data :refer [diff]]
             [goog.string :refer [format]]))
