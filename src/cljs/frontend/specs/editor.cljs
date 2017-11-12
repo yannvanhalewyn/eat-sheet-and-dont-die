@@ -4,8 +4,23 @@
             [clojure.test.check.generators]
             [clojure.spec.gen.alpha :as gen]))
 
+;; Generators
+;; ==========
+(defn unparse-chord
+  "Takes a parsed chord and returns a possible raw input value for that chord."
+  [{:keys [:chord/root :chord/triad :chord/seventh :chord/ninth]}]
+  (str
+    (first root)
+    (case (second root) :sharp "#" :flat "b" "")
+    (case triad :minor "-" :augmented "+" :diminished "b5" "")
+    (case seventh :major "Maj7" :minor "7" "")
+    (case ninth :natural "9" :flat "b9" :sharp "#9" "")))
+
 (defn gen-id []
   (gen/fmap (fn [_] (sheet/gen-temp-id)) (gen/any)))
+
+(defn gen-chord-value []
+  (gen/fmap unparse-chord (s/gen :chord/parsed)))
 
 ;; Chord
 ;; =====
@@ -15,12 +30,16 @@
 
 (s/def :db/id (s/spec (s/or :datomic int? :tmp-id string?) :gen gen-id))
 (s/def :coll/position int?)
+(s/def :chord/value (s/spec string? :gen gen-chord-value))
+(s/def ::chord (s/keys :req [:db/id :coll/position :chord/value]))
+
+;; Parsed chord
 (s/def :chord/root (s/tuple root? accidental?))
 (s/def :chord/triad #{:minor :major :augmented :diminished})
 (s/def :chord/seventh #{:minor :major})
 (s/def :chord/ninth accidental?)
-(s/def ::chord (s/keys :req [:db/id :coll/position]
-                 :opt [:chord/root :chord/triad :chord/seventh :chord/ninth]))
+(s/def :chord/parsed (s/keys :req [:db/id :coll/position]
+                       :opt [:chord/root :chord/triad :chord/seventh :chord/ninth]))
 
 ;; Sheet
 ;; =====

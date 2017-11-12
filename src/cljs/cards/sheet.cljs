@@ -1,12 +1,11 @@
 (ns cards.sheet
-  (:require [cards.util :refer [unparse-sheet]]
-            [frontend.views.sheet :as subject]
+  (:require [frontend.views.sheet :as subject]
             [frontend.util.util :refer [gen]]
             [frontend.specs.editor :as specs]
             [re-frame.core :refer [reg-sub reg-event-db]])
   (:require-macros [devcards.core :refer [defcard-rg defcard-doc]]))
 
-(defonce sheet (unparse-sheet (first (gen ::specs/sheet 1))))
+(defonce sheet (first (gen ::specs/sheet 1)))
 (def selected (-> sheet :sheet/sections first :section/rows first :row/bars first :bar/chords second :db/id))
 
 (reg-sub :sub/sheet (constantly sheet))

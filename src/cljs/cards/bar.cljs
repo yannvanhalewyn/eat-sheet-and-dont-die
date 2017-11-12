@@ -1,18 +1,12 @@
 (ns cards.bar
   (:require [reagent.core :as reagent]
-            [cards.util :as util :refer [unparse-chord]]
             [frontend.views.bar :refer [component]]
             [frontend.specs.editor :as specs]
             [frontend.util.util :refer [gen]])
   (:require-macros [cards.core :refer [defcard-props]]
                    [devcards.core :as dc :refer [defcard-doc defcard-rg]]))
 
-(defn gen-with-root []
-  (-> (first (gen ::specs/chord 1))
-    (assoc :chord/root (first (gen :chord/root 1)))
-    unparse-chord))
-
-(defonce chords (repeatedly gen-with-root))
+(defonce chords (repeatedly #(first (gen ::specs/chord 1))))
 
 (defcard-doc
   "# Bar"

@@ -1,12 +1,11 @@
 (ns cards.section
-  (:require [cards.util :refer [unparse-section]]
-            [frontend.views.section :as subject]
+  (:require [frontend.views.section :as subject]
             [frontend.util.util :refer [gen]]
             [frontend.specs.editor :as specs])
   (:require-macros [devcards.core :refer [defcard-rg defcard-doc]]
                    [cards.core :refer [defcard-props]]))
 
-(defonce section (unparse-section (first (gen ::specs/section 1))))
+(defonce section (first (gen ::specs/section 1)))
 (def selected (-> section :section/rows first :row/bars second :bars/chords first :db/id))
 
 (defcard-doc
