@@ -2,12 +2,13 @@
   (:require [frontend.models.sheet
              :refer [zipper navigate-to append delete]
              :as sheet]
+            [shared.utils :as sutils]
             [cljs.test :refer-macros [deftest is testing]]
             [goog.string :refer [format]]
             [clojure.zip :refer [node up left down children rights]]
             [clojure.zip :as zip]))
 
-(def id-pool (repeatedly sheet/gen-temp-id))
+(def id-pool (repeatedly sutils/gen-temp-id))
 (def new-sheet (sheet/new-sheet ["sheet" "section1" "row1" "bar1" "chord1"]))
 
 (def test-loc (-> new-sheet zipper (navigate-to "chord1")))

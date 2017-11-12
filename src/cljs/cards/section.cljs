@@ -1,7 +1,7 @@
 (ns cards.section
   (:require [frontend.views.section :as subject]
             [frontend.util.util :refer [gen]]
-            [frontend.specs.editor :as specs])
+            [shared.specs :as specs])
   (:require-macros [devcards.core :refer [defcard-rg defcard-doc]]
                    [cards.core :refer [defcard-props]]))
 

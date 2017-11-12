@@ -1,6 +1,7 @@
 (ns frontend.events
   (:require [frontend.selectors :as selectors]
             [frontend.fx :refer [reg-event-db reg-event-fx]]
+            [shared.utils :refer [gen-temp-id]]
             [clojure.zip :as zip]
             [frontend.models.sheet :as sheet]))
 
@@ -46,7 +47,7 @@
   :sheet/append
   (fn [db [_ type]]
     (update-sheet-zip db
-      (sheet/append (selectors/current-loc db) type (repeatedly sheet/gen-temp-id)))))
+      (sheet/append (selectors/current-loc db) type (repeatedly gen-temp-id)))))
 
 (reg-event-db
   :sheet/move

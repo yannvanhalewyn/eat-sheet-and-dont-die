@@ -25,3 +25,7 @@
         (fn [~index-sym ~val-sym]
           ~@body)
         ~coll))))
+
+(def gen-temp-id
+  (let [count (atom 0)]
+    (fn [] (swap! count dec) (str @count))))

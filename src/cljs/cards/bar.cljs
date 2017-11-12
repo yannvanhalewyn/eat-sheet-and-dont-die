@@ -1,7 +1,7 @@
 (ns cards.bar
   (:require [reagent.core :as reagent]
             [frontend.views.bar :refer [component]]
-            [frontend.specs.editor :as specs]
+            [shared.specs :as specs]
             [frontend.util.util :refer [gen]])
   (:require-macros [cards.core :refer [defcard-props]]
                    [devcards.core :as dc :refer [defcard-doc defcard-rg]]))

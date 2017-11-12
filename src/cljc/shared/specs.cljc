@@ -1,5 +1,5 @@
-(ns frontend.specs.editor
-  (:require [frontend.models.sheet :as sheet]
+(ns shared.specs
+  (:require [shared.utils :refer [gen-temp-id]]
             [clojure.spec.alpha :as s]
             [clojure.test.check.generators]
             [clojure.spec.gen.alpha :as gen]))
@@ -17,7 +17,7 @@
     (case ninth :natural "9" :flat "b9" :sharp "#9" "")))
 
 (defn gen-id []
-  (gen/fmap (fn [_] (sheet/gen-temp-id)) (gen/any)))
+  (gen/fmap (fn [_] (gen-temp-id)) (gen/any)))
 
 (defn gen-chord-value []
   (gen/fmap unparse-chord (s/gen :chord/parsed)))
@@ -28,7 +28,7 @@
 (def accidental? #{:flat :sharp :natural})
 (def extension? #{9 13})
 
-(s/def :db/id (s/spec (s/or :datomic int? :tmp-id string?) :gen gen-id))
+(s/def :db/id (s/spec (s/or :datomic pos-int? :tmp-id string?) :gen gen-id))
 (s/def :coll/position int?)
 (s/def :chord/value (s/spec string? :gen gen-chord-value))
 (s/def ::chord (s/keys :req [:db/id :coll/position :chord/value]))

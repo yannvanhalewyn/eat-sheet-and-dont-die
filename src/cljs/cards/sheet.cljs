@@ -1,7 +1,7 @@
 (ns cards.sheet
   (:require [frontend.views.sheet :as subject]
             [frontend.util.util :refer [gen]]
-            [frontend.specs.editor :as specs]
+            [shared.specs :as specs]
             [re-frame.core :refer [reg-sub reg-event-db]])
   (:require-macros [devcards.core :refer [defcard-rg defcard-doc]]))
 
