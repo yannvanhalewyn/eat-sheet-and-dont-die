@@ -23,7 +23,8 @@
     (root->str root)
     (case triad :minor "-" :augmented "+" :diminished "b5" "")
     (when-not (= :natural ninth) (case seventh :major "Maj7" :minor "7" ""))
-    (case ninth :natural "9" :flat "b9" :sharp "#9" "")))
+    (case ninth :natural "9" :flat "b9" :sharp "#9" "")
+    (when bass (str "/" (root->str bass)))))
 
 (defn gen-id []
   (gen/fmap (fn [_] (gen-temp-id)) (gen/any)))
@@ -47,10 +48,12 @@
 (s/def :chord/triad #{:minor :major :augmented :diminished})
 (s/def :chord/seventh (s/nilable #{:minor :major}))
 (s/def :chord/ninth (s/nilable accidental?))
+(s/def :chord/bass (s/nilable :chord/root))
 (s/def :chord/parsed (s/keys :req [:chord/root
                                    :chord/triad
                                    :chord/seventh
-                                   :chord/ninth]))
+                                   :chord/ninth
+                                   :chord/bass]))
 
 ;; Sheet
 ;; =====
