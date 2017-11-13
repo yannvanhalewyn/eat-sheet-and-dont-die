@@ -4,8 +4,7 @@
             [frontend.views.sheet-tools :as sheet-tools]
             [frontend.util.util :as util :refer [presence prevent-default]]
             [re-frame.core :refer [subscribe dispatch]]
-            [goog.events.KeyCodes :refer [TAB SPACE ENTER ESC BACKSPACE LEFT RIGHT UP DOWN]])
-  (:require-macros [shared.utils :refer [fori]]))
+            [goog.events.KeyCodes :refer [TAB SPACE ENTER ESC BACKSPACE LEFT RIGHT UP DOWN]]))
 
 (defn key-down-handler [selected]
   (fn [e]
@@ -43,7 +42,7 @@
 
         nil))))
 
-(defn component [{:keys [sheet-id sheet deselect append] :as props}]
+(defn component [{:keys [sheet-id sheet] :as props}]
   (let [sheet @(subscribe [:sub/sheet sheet-id])
         selected @(subscribe [:sub/selected])]
     [:div.u-max-height {:on-click #(dispatch [:sheet/deselect])
@@ -58,9 +57,7 @@
                              :value artist}
          [:h3.u-margin-top--s artist]]])
      [:div.u-margin-top.sections
-      (fori [i section (sort-by :coll/position (:sheet/sections sheet))]
-        ^{:key i} [section/component
-                   {:section section
-                    :selected selected
-                    :on-chord-click #(dispatch [:sheet/select-chord %])}])]
+      (for [section (sort-by :coll/position (:sheet/sections sheet))]
+        ^{:key (:db/id section)}
+        [section/component {:section section :selected selected}])]
      [sheet-tools/component]]))

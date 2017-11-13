@@ -45,7 +45,7 @@
 
 (defn displayed-chord
   "A displayable formatted chord"
-  [{:keys [chord on-click] :as props}]
+  [{:keys [chord on-click]}]
   [:div.chord {:on-click (stop-propagation on-click)}
    (if (:chord/root chord)
      [:span [base chord]
@@ -65,7 +65,7 @@
        (.focus (reagent/dom-node this))
        (.select (reagent/dom-node this)))
      :reagent-render
-     (fn [{:keys [update-chord chord] :as props}]
+     (fn [{:keys [chord]}]
        [:input.chord--editing
         {:type "text"
          :on-click #(.stopPropagation %)

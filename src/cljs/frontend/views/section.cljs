@@ -16,18 +16,17 @@
       (when next [:i.barline]))
     {:key (str "barline" (:db/id prev) "-" (:db/id next))}))
 
-(defn row-component [{:keys [row] :as props}]
+(defn row-component [{:keys [row selected]}]
   (let [bars (:row/bars row)]
     [:div.row {:style {:margin-bottom "10px" :white-space :nowrap}}
      (when (:bar/start-repeat (first bars)) [:i.barline--start-repeat])
      (interleave
        (for [bar (sort-by :coll/position bars)]
          ^{:key (:db/id bar)}
-         [bar/component (-> (dissoc props :row :attrs)
-                          (assoc :bar bar))])
+         [bar/component {:bar bar :selected selected}])
        (mappad nil barline bars (drop 1 bars)))]))
 
-(defn component [{:keys [section] :as props}]
+(defn component [{:keys [section selected]}]
   [:div.section
    (let [title (or (presence (:section/title section)) "(section)")]
      [editable/component {:on-change #(dispatch [:sheet/set-section-title section %])
@@ -35,4 +34,4 @@
       [:h4.u-margin-top title]])
    (for [row (sort-by :coll/position (:section/rows section))]
      ^{:key (:db/id row)}
-     [row-component (-> (dissoc props :section) (assoc :row row))])])
+     [row-component {:row row :selected selected}])])
