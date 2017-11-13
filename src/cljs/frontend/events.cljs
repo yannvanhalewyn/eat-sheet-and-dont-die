@@ -1,6 +1,7 @@
 (ns frontend.events
   (:require [frontend.selectors :as selectors]
             [frontend.fx :refer [reg-event-db reg-event-fx]]
+            [frontend.router :as router]
             [shared.utils :refer [gen-temp-id key-by]]
             [clojure.zip :as zip]
             [frontend.models.sheet :as sheet]))
@@ -86,6 +87,16 @@
     (let [new-sheet (zip/root (sheet/toggle (selectors/current-loc db) type))]
       (update-sheet db new-sheet))))
 
+;; Playlist actions
+;; ================
+
+(reg-event-fx
+  :playlist/create-sheet
+  (fn [db [_ owner-id]]
+    {:remote {:create-sheet {:path "/api/sheets"
+                             :method :post
+                             :params {:owner-id owner-id}}}}))
+
 ;; Remote actions
 ;; ==============
 
@@ -108,7 +119,9 @@
       :get-current-user
       (assoc db :db/current-user response)
       :get-sheets
-      (assoc db :db/sheets.by-id (key-by :db/id response)))))
+      (assoc db :db/sheets.by-id (key-by :db/id response))
+      :create-sheet
+      (assoc db :db/active-route (router/sheet (:id response))))))
 
 (reg-event-db
   :remote/failure

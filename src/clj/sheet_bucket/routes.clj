@@ -2,7 +2,7 @@
   (:require [sheet-bucket.controllers.sheets :as sheets]
             [sheet-bucket.controllers.session :as session]
             [clojure.java.io :as io]
-            [compojure.core :refer [defroutes GET PATCH]]
+            [compojure.core :refer [defroutes GET PATCH POST]]
             [compojure.route :as route]))
 
 (def index-view
@@ -16,5 +16,6 @@
   (GET "/api/me" [] session/show)
   (GET "/api/users/:user-id/sheets" [] sheets/index)
   (GET "/api/sheets/:eid" [] sheets/show)
+  (POST "/api/sheets" [] sheets/create)
   (PATCH "/api/sheets/:eid" [] sheets/update)
   (route/not-found "<h1>NOT FOUND</h1>"))
