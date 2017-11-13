@@ -49,7 +49,11 @@
   [:div.chord {:on-click (stop-propagation on-click)}
    (if (:chord/root chord)
      [:span [base chord]
-      [:small.chord__extension [extension chord]]])])
+      [:small.chord__extension [extension chord]]
+      (if-let [[note acc] (:chord/bass chord)]
+        [:small.chord__inversion "/"
+         (str/upper-case note)
+         (case acc :flat [flat] :sharp [sharp] nil)])])])
 
 (defn editable-chord
   "An input box for editing a chord"
