@@ -3,7 +3,7 @@
             [re-frame.core :refer [dispatch]]))
 
 (defn- response-handler [key [success response]]
-  (dispatch [(keyword :remote (if success "success" "failure")) key response]))
+  (dispatch [(keyword (if success "response" "response.failure") key) response]))
 
 (defn request [{:keys [path method params]} handler]
   (ajax/ajax-request
@@ -16,5 +16,5 @@
 
 (defn request-fx [requests]
   (doseq [[key payload] requests]
-    (dispatch [:remote/request key payload])
+    (dispatch [(keyword "request" key) payload])
     (request payload (partial response-handler key))))

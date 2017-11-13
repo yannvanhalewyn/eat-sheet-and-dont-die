@@ -97,39 +97,17 @@
 ;; Remote actions
 ;; ==============
 
-(reg-event-db
-  :remote/request
-  (fn [db event] db))
+(defn reg-events-remote [key]
+  (doseq [type #{:request :response :response.failure}]
+    (reg-event-db (keyword (name type) (name key))
+      (fn [db event] (reducer/app db event)))))
 
-(reg-event-db
-  :remote/success
-  (fn [db [_ key response]]
-    (case key
-      :get-sheet
-      (assoc-in db [:db/sheets.by-id (:db/id response)] response)
-      :sync-sheet
-      (let [tmp-ids (:temp-ids response)]
-        (-> (update-in db [:db/sheets.by-id (selectors/current-sheet-id db)]
-              sheet/replace-temp-ids tmp-ids)
-          (update :db/selected #(if-let [new-id (get tmp-ids %)]
-                                  new-id %))))
-      :get-current-user
-      (assoc db :db/current-user response)
-      :get-sheets
-      (assoc db :db/sheets.by-id (key-by :db/id response))
-      :create-sheet
-      (-> (assoc-in db [:db/sheets.by-id :db/id] response)
-        (assoc
-            :db/active-route (router/sheet (:db/id response))
-            :db/selected (:db/id (sheet/first-chord response))))
-      :destroy-sheet
-      (dissoc-in db [:db/sheets.by-id (:removed-id response)]))))
-
-(reg-event-db
-  :remote/failure
-  (fn [db event]
-    (.log js/console "FAILED" event)
-    db))
+(reg-events-remote :get-sheet)
+(reg-events-remote :get-sheets)
+(reg-events-remote :sync-sheet)
+(reg-events-remote :get-current-user)
+(reg-events-remote :create-sheet)
+(reg-events-remote :destroy-sheet)
 
 (reg-event-db
   :route/browser-url

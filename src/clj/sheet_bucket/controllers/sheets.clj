@@ -40,7 +40,8 @@
 (defn update [{:keys [db-conn params] :as req}]
   (let [result (d/transact db-conn (sheet/diff->tx (:tx params) (Long. (:eid params))))]
     (try
-      (response {:temp-ids (:tempids @result)})
+      (response {:temp-ids (:tempids @result)
+                 :sheet-id (Long. (:eid params))})
       (catch Exception e
         (status (response {:error (.getMessage e)}) 500)))))
 
