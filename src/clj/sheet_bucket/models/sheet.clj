@@ -8,7 +8,8 @@
     #(if-let [retract (:removed %)]
        [:db.fn/retractEntity (:db/id retract)]
        (let [new-entity (or (:added %) (:new-value %))]
-         (if-not (nil? new-entity)
+         (if (nil? new-entity)
+           (flatten [:db/retract (take-last 2 (:path %)) (:old-value %)])
            (reduce
              (fn [children [id ref-key]]
                {:db/id id

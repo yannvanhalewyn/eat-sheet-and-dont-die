@@ -17,7 +17,7 @@
                                                                :chord/value "B"}]}]}]}]})
 
 (defn- test [old new]
-  (sut/diff->tx (diffp sheet new :db/id) (:db/id old)))
+  (sut/diff->tx (diffp old new :db/id) (:db/id old)))
 
 (deftest diff->tx
   (is (= [{:db/id 1 :sheet/title "New title"}]
@@ -44,4 +44,11 @@
                              :bar/end-repeat] false)))))
   (testing "It handles retractions"
     (is (= [[:db.fn/retractEntity 2]]
-          (test sheet (dissoc sheet :sheet/sections))))))
+          (test sheet (dissoc sheet :sheet/sections)))))
+
+  (testing "It retracts nilled values"
+    (let [with-coda #(assoc-in sheet [:sheet/sections 0 :section/rows 0 :row/bars 0
+                                      :bar/coda] %)]
+
+      (is (= [[:db/retract 4 :bar/coda :left]]
+            (test (with-coda :left) (with-coda nil)))))))
