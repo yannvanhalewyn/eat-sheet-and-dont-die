@@ -47,8 +47,8 @@
 
 (defmethod report [::test/default :fail] [{:keys [message] :as m}]
   (test/inc-report-counter! :fail)
-  (let [expected (second (:expected m))
-        actual (-> (:actual m) last last)]
+  (let [expected (:expected m)
+        actual (:actual m)]
     (if message (info "MESSAGE" message))
     (info "EXPECTED" expected)
     (info "ACTUAL" actual)))

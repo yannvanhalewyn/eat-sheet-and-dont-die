@@ -1,10 +1,10 @@
 (ns frontend.models.chord-test
-  (:require [frontend.models.chord :refer [parse]]
+  (:require [frontend.models.chord :as sut :refer [parse]]
             [goog.string :refer [format]]
-            [cljs.test :refer-macros [deftest is testing]]
-            [clojure.spec.test.alpha :as stest]))
+            [test.util :refer-macros [deftest-gen]]
+            [cljs.test :refer-macros [deftest is testing]]))
 
-(stest/check `parse)
+(deftest-gen chord-parser `sut/parse)
 
 (def roots ["a" "b" "c" "d" "e" "f" "g"
             "A" "B" "C" "D" "E" "F" "G"

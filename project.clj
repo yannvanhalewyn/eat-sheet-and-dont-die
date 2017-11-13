@@ -46,7 +46,7 @@
 
   :source-paths ["src/clj" "src/cljc"]
 
-  :test-paths ["test/clj"]
+  :test-paths ["test/clj" "test/cljc"]
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
@@ -74,7 +74,7 @@
                                    :output-dir "resources/public/js/compiled/out"}}
 
                        {:id "test"
-                        :source-paths ["src/cljs" "src/cljc" "test/cljs" "env/test"]
+                        :source-paths ["src/cljs" "src/cljc" "test/cljs" "test/cljc" "env/test"]
                         :figwheel true
                         :compiler {:main frontend.test-runner
                                    :asset-path "js/compiled/test-out"

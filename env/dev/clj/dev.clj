@@ -10,8 +10,10 @@
 (def figwheel-config
   (assoc-in (ra-sys/fetch-config) [:data :build-ids] ["dev" "test" "cards"]))
 
-(defn cljs []
-  (ra-sys/cljs-repl (:figwheel-system repl/system)))
+(defn cljs
+  ([] (cljs "dev"))
+  ([build-id]
+   (ra-sys/cljs-repl (:figwheel-system repl/system) build-id)))
 
 (def db-conn #(get-in system [:db :conn]))
 (def db (comp d/db db-conn))
