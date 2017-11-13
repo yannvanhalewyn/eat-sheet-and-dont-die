@@ -7,13 +7,11 @@
 ;; Remote subscriptions
 ;; ====================
 (defn- get-user-sheets [db user]
-  (if (empty? (:db/sheets db))
-    (http/request-fx
-      {:get-sheets {:path (str "/api/users/" (:db/id user) "/sheets")}})))
+  (http/request-fx
+    {:get-sheets {:path (str "/api/users/" (:db/id user) "/sheets")}}))
 
 (defn- get-sheet-data [db id]
-  (if-not (= id (:db/id (:db/sheet db)))
-    (http/request-fx {:get-sheet {:path (str "/api/sheets/" id)}})))
+  (http/request-fx {:get-sheet {:path (str "/api/sheets/" id)}}))
 
 (defn- reg-sub-key [name key]
   (reg-sub name (fn [db] (get db key))))
