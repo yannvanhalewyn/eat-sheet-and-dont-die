@@ -121,7 +121,8 @@
       :get-sheets
       (assoc db :db/sheets.by-id (key-by :db/id response))
       :create-sheet
-      (assoc db :db/active-route (router/sheet (:id response))))))
+      (-> (assoc-in db [:db/sheets.by-id :db/id] response)
+        (assoc :db/active-route (router/sheet (:db/id response)))))))
 
 (reg-event-db
   :remote/failure
