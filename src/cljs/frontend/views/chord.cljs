@@ -1,8 +1,7 @@
 (ns frontend.views.chord
   (:require [reagent.core :as reagent]
-            [frontend.util.util :refer [stop-propagation prevent-default]]
+            [frontend.util.util :refer [stop-propagation]]
             [re-frame.core :refer [dispatch]]
-            [goog.events.KeyCodes :refer [TAB SPACE ENTER ESC BACKSPACE LEFT RIGHT UP DOWN]]
             [clojure.core.match :refer-macros [match]]
             [clojure.string :as str]))
 

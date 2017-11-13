@@ -1,23 +1,22 @@
 (ns frontend.events
   (:require [frontend.selectors :as selectors]
             [frontend.fx :refer [reg-event-db reg-event-fx]]
-            [shared.utils :refer [gen-temp-id]]
+            [shared.utils :refer [gen-temp-id key-by]]
             [clojure.zip :as zip]
             [frontend.models.sheet :as sheet]))
 
 (defn- update-sheet [db new-sheet]
-  (assoc db :db/sheet new-sheet))
+  (assoc-in db [:db/sheets.by-id (:db/id new-sheet)] new-sheet))
 
 (defn- update-sheet-zip [db new-sheet-loc]
-  (assoc db
-    :db/sheet (zip/root new-sheet-loc)
-    :db/selected (-> new-sheet-loc zip/node :db/id)))
+  (-> (update-sheet db (zip/root new-sheet-loc))
+    (assoc :db/selected (-> new-sheet-loc zip/node :db/id))))
 
 (reg-event-fx
   :event/init
   (fn [_]
     {:remote {:get-current-user {:path "/api/me"}}
-     :db {:db/sheet {}
+     :db {:db/sheets.by-id {}
           :db/selected nil
           :db/current-user nil
           :db/active-route {:route/handler :route/index}}}))
@@ -65,19 +64,20 @@
 (reg-event-db
   :sheet/set-title
   (fn [db [_ title]]
-    (assoc-in db [:db/sheet :sheet/title] title)))
+    (update-sheet db (assoc (selectors/sheet db) :sheet/title title))))
 
 (reg-event-db
   :sheet/set-artist
   (fn [db [_ artist]]
-    (assoc-in db [:db/sheet :sheet/artist] artist)))
+    (update-sheet db (assoc (selectors/sheet db) :sheet/artist artist))))
 
 (reg-event-db
   :sheet/set-section-title
   (fn [db [_ section title]]
-    (let [idx (.indexOf (get-in db [:db/sheet :sheet/sections]) section)]
+    (let [idx (.indexOf (:sheet/sections (selectors/sheet db)) section)]
       (if (>= idx 0)
-        (assoc-in db [:db/sheet :sheet/sections idx :section/title] title)
+        (update-sheet db
+          (assoc-in (selectors/sheet db) [:sheet/sections idx :section/title] title))
         db))))
 
 (reg-event-db
@@ -98,16 +98,17 @@
   (fn [db [_ key response]]
     (case key
       :get-sheet
-      (assoc db :db/sheet response)
+      (assoc-in db [:db/sheets.by-id (:db/id response)] response)
       :sync-sheet
       (let [tmp-ids (:temp-ids response)]
-        (-> (update db :db/sheet sheet/replace-temp-ids tmp-ids)
+        (-> (update-in db [:db/sheets.by-id (selectors/current-sheet-id db)]
+              sheet/replace-temp-ids tmp-ids)
           (update :db/selected #(if-let [new-id (get tmp-ids %)]
                                   new-id %))))
       :get-current-user
       (assoc db :db/current-user response)
       :get-sheets
-      (assoc db :db/sheets response))))
+      (assoc db :db/sheets.by-id (key-by :db/id response)))))
 
 (reg-event-db
   :remote/failure

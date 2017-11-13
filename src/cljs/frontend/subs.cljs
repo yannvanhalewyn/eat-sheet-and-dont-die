@@ -1,5 +1,6 @@
 (ns frontend.subs
-  (:require [re-frame.core :refer [reg-sub reg-sub-raw]]
+  (:require [frontend.selectors :as sel]
+            [re-frame.core :refer [reg-sub reg-sub-raw]]
             [frontend.http :as http]
             [reagent.ratom :refer [reaction]]))
 
@@ -28,10 +29,10 @@
   :sub/sheets
   (fn [db [_ user]]
     (get-user-sheets db user)
-    (reaction (:db/sheets @db))))
+    (reaction (vals (:db/sheets.by-id @db)))))
 
 (reg-sub-raw
   :sub/sheet
   (fn [db [_ id]]
     (get-sheet-data db id)
-    (reaction (:db/sheet @db))))
+    (reaction (sel/sheet @db))))
