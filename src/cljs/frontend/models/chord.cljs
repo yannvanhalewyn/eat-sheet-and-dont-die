@@ -3,9 +3,11 @@
             [clojure.core.match :refer-macros [match]]
             [clojure.spec.alpha :as s]
             [goog.string :refer [format contains caseInsensitiveContains]]
-            [goog.string.format]))
+            [goog.string.format]
+            [clojure.string :as str]))
 
-;; Negative lookahead for ending accidental that are part of "b5", like Eb5 -> root = E
+;; Negative lookahead for ending accidental that are part of "b5",
+;; like Eb5 -> root = E
 (def root-regx (str "([#b])?([a-gA-G1-7])([#b])?(?!5)"))
 ;; Negative lookahead for 'm' that is not part of 'maj'
 (def triad-regx (str "min|m(?!aj)|-|aug|\\+|#5|b5"))
@@ -34,10 +36,11 @@
                       (:or "aug" "+" "#5") :augmented
                       "b5" :diminished
                       :else :major))
-     :chord/seventh (cond
-                      (caseInsensitiveContains (or extension "") "maj") :major
-                      extension :minor
-                      :else nil)
+     :chord/seventh (let [e (str/lower-case (or extension ""))]
+                      (cond
+                        (contains e "maj") :major
+                        (contains e "7") :minor
+                        :else nil))
      :chord/ninth (match ninth
                     "9" :natural
                     "b9" :flat

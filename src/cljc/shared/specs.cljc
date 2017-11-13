@@ -13,7 +13,7 @@
     (first root)
     (case (second root) :sharp "#" :flat "b" "")
     (case triad :minor "-" :augmented "+" :diminished "b5" "")
-    (case seventh :major "Maj7" :minor "7" "")
+    (when-not (= :natural ninth) (case seventh :major "Maj7" :minor "7" ""))
     (case ninth :natural "9" :flat "b9" :sharp "#9" "")))
 
 (defn gen-id []
@@ -36,8 +36,8 @@
 ;; Parsed chord
 (s/def :chord/root (s/tuple root? accidental?))
 (s/def :chord/triad #{:minor :major :augmented :diminished})
-(s/def :chord/seventh #{:minor :major})
-(s/def :chord/ninth accidental?)
+(s/def :chord/seventh (s/nilable #{:minor :major}))
+(s/def :chord/ninth (s/nilable accidental?))
 (s/def :chord/parsed (s/keys :req [:chord/root :chord/triad :chord/seventh :chord/ninth]))
 
 ;; Sheet
