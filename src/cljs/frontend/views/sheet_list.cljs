@@ -9,7 +9,7 @@
      [:button.btn.u-pull-right {:on-click #(dispatch [:playlist/create-sheet (:db/id user)])}
       "+ New sheet"]
      [:h1 "My Sheets"]
-     [:div.u-margin-top
+     [:div.u-margin-top--l
       (for [{:keys [:db/id :sheet/artist :sheet/title]} sheets]
         ^{:key id}
         [:a.l-flex-row.l-space-between.sheet-list-item
