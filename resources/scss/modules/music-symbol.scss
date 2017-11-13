@@ -32,6 +32,12 @@
   left: -$width / 2;
 }
 
+.music-symbol--coda-start-first-bar {
+  @extend .music-symbol--coda-start;
+  top: 8px;
+  left: -20px;
+}
+
 .music-symbol--coda-end {
   $height: 30px;
   $width: 30px;

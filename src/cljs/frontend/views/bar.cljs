@@ -19,4 +19,8 @@
           [displayed-chord {:chord (parse (:chord/value chord))
                             :on-click #(dispatch [:sheet/select-chord (:db/id chord)])}])]))
    (when-let [coda (:bar/coda bar)]
-     [:div.music-symbol {:class (str "music-symbol--coda-" (name coda))}])])
+     (if (= :start coda)
+       (if (zero? (:coll/position bar))
+         [:div.music-symbol.music-symbol--coda-start-first-bar]
+         [:div.music-symbol.music-symbol--coda-start])
+       [:div.music-symbol.music-symbol--coda-end]))])
