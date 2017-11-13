@@ -25,7 +25,11 @@
 
 (defn create [{:keys [db-conn params]}]
   (let [res (d/transact db-conn
-              [{:db/id "new-sheet" :sheet/title "Title" :sheet/artist "Artist"}
+              [{:db/id "new-sheet"
+                :sheet/title "Title"
+                :sheet/artist "Artist"
+                :sheet/sections {:section/title "Intro"
+                                 :section/rows {:row/bars {:bar/chords {:chord/value ""}}}}}
                {:db/id (:owner-id params) :playlist/sheets "new-sheet"}])]
     (try
       (response

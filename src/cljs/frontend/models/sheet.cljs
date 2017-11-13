@@ -56,6 +56,9 @@
       (= id (:db/id (node loc))) loc
       :else (recur (next loc)))))
 
+(defn first-chord [sheet]
+  (-> sheet zipper next-leaf node))
+
 (defn replace-temp-ids [sheet replacements]
   (loop [loc (zipper sheet)]
     (if (zip/end? loc)

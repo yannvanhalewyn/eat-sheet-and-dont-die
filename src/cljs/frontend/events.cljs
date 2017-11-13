@@ -128,7 +128,9 @@
       (assoc db :db/sheets.by-id (key-by :db/id response))
       :create-sheet
       (-> (assoc-in db [:db/sheets.by-id :db/id] response)
-        (assoc :db/active-route (router/sheet (:db/id response))))
+        (assoc
+            :db/active-route (router/sheet (:db/id response))
+            :db/selected (:db/id (sheet/first-chord response))))
       :destroy-sheet
       (dissoc-in db [:db/sheets.by-id (:removed-id response)]))))
 
