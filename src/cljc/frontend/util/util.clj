@@ -6,17 +6,17 @@
 
   Example:
 
-    (def app-state {:trips {1 \"trip1\" 2 \"trip2\"})
-    ;; => #'user/app-state
+    (def app-state {:first-name \"John\" :last-name \"Williams\"})
+    (def first-name :first-name)
+    (def last-name :last-name)
 
-    (def trips :trips)
-    ;; => #'user/trips
+    (defselector full-name [first-name last-name]
+      (str first-name \" \" last-name))
 
-    (defselector first-trip [trips] (first trips))
-    ;; => #'user/first-trip
-
-    (first-trip app-state)
-    ;; => \"trip1\""
+    (full-name app-state)
+    ;; => \"John Williams\""
   [name selectors & body]
   `(def ~name
-     (frontend.util.util/create-selector ~selectors (fn ~selectors ~@body))))
+     (fn [state#]
+       (let [args# (map #(% state#) ~selectors)]
+         (apply (fn ~selectors ~@body) args#)))))
