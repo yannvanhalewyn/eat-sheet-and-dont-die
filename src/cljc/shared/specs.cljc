@@ -18,12 +18,13 @@
 
 (defn unparse-chord
   "Takes a parsed chord and returns a possible raw input value for that chord."
-  [{:keys [:chord/root :chord/triad :chord/seventh :chord/ninth :chord/bass]}]
+  [{:keys [:chord/root :chord/sus :chord/triad :chord/seventh :chord/ninth :chord/bass]}]
   (str
     (root->str root)
     (case triad :minor "-" :augmented "+" :diminished "b5" "")
     (when-not (= :natural ninth) (case seventh :major "Maj7" :minor "7" ""))
     (case ninth :natural "9" :flat "b9" :sharp "#9" "")
+    (when sus (str "sus" sus))
     (when bass (str "/" (root->str bass)))))
 
 (defn gen-id []
@@ -49,7 +50,9 @@
 (s/def :chord/seventh (s/nilable #{:minor :major}))
 (s/def :chord/ninth (s/nilable accidental?))
 (s/def :chord/bass (s/nilable :chord/root))
+(s/def :chord/sus (s/nilable #{"2" "4"}))
 (s/def :chord/parsed (s/keys :req [:chord/root
+                                   :chord/sus
                                    :chord/triad
                                    :chord/seventh
                                    :chord/ninth

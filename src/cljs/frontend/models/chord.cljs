@@ -12,9 +12,11 @@
 ;; Negative lookahead for 'm' that is not part of 'maj'
 (def triad-regx (str "min|m(?!aj)|-|aug|\\+|#5|b5"))
 (def extension-regx (str "(7|maj|Maj)?7?([#b]?9)?([#b]5)?"))
+(def sus-regex (str "sus([24])"))
 (def bass-regx (str "([#b]?[0-7]|[a-gA-G][#b]?)"))
-(def chord-regex (re-pattern (format "(%s)(%s)?(%s)?(\\/%s)?"
-                               root-regx triad-regx extension-regx bass-regx)))
+(def chord-regex (re-pattern (format "(%s)(%s)?(%s)(%s)?(\\/%s)?"
+                               root-regx triad-regx extension-regx
+                               sus-regex bass-regx)))
 
 (defn- parse-note [note-str]
   (when note-str
@@ -24,9 +26,10 @@
 (defn parse
   "Parses a raw chord string to chord data"
   [s]
-  (let [[_ root _ _ triad extension seventh ninth fifth _ bass]
+  (let [[_ root _ _ triad extension seventh ninth fifth _ sus _ bass]
         (re-find chord-regex s)]
     {:chord/root (parse-note root)
+     :chord/sus sus
      :chord/triad (or (case fifth "b5" :diminished "#5" :augmented nil)
                     (match triad
                       (:or "m" "min" "-") :minor
