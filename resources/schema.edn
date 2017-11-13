@@ -95,4 +95,15 @@
  {:txes [[{:db/ident :coll/position
            :db/valueType :db.type/long
            :db/cardinality :db.cardinality/one
-           :db/doc "A child node's index in parent's card many relation"}]]}}
+           :db/doc "A child node's index in parent's card many relation"}]]}
+
+ :sheet-bucket/add-coda-and-segno
+ {:txes [[{:db/ident :bar/coda
+           :db/valueType :db.type/keyword
+           :db/cardinality :db.cardinality/one
+           :db/doc "The position of a coda symbol on a bar"}
+
+          {:db/ident :bar/segno
+           :db/valueType :db.type/boolean
+           :db/cardinality :db.cardinality/one
+           :db/doc "The presence of a segno symbol on a bar"}]]}}
