@@ -8,5 +8,7 @@
      [:h1 "My Sheets"]
      (for [{:keys [:db/id :sheet/artist :sheet/title]} sheets]
        ^{:key id}
-       [:a {:href (str "#sheets/" id)}
-        [:h2 title " - " [:small artist]]])]))
+       [:div
+        [:a {:href (str "#sheets/" id)}
+         [:h2 title " - " [:small artist]]]
+        [:button.btn {:on-click #(dispatch [:playlist/destroy-sheet id])} "Remove"]])]))

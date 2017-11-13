@@ -39,3 +39,10 @@
       (response {:temp-ids (:tempids @result)})
       (catch Exception e
         (status (response {:error (.getMessage e)}) 500)))))
+
+(defn destroy [{:keys [db-conn params] :as req}]
+  (let [result (d/transact db-conn [[:db.fn/retractEntity (Long. (:eid params))]])]
+    (try
+      (response {:success true :removed-id (Long. (:eid params))})
+      (catch Exception e
+        (status (response {:error (.getMessage e)}) 500)))))

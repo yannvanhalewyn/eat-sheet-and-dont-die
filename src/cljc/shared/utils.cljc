@@ -39,3 +39,8 @@
 (def gen-temp-id
   (let [count (atom 0)]
     (fn [] (swap! count dec) (str @count))))
+
+(defn dissoc-in
+  "Dissoc's the element at path in coll"
+  [coll path]
+  (update-in coll (butlast path) dissoc (last path)))

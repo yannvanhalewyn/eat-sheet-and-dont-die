@@ -2,7 +2,7 @@
   (:require [frontend.selectors :as selectors]
             [frontend.fx :refer [reg-event-db reg-event-fx]]
             [frontend.router :as router]
-            [shared.utils :refer [gen-temp-id key-by]]
+            [shared.utils :refer [gen-temp-id key-by dissoc-in]]
             [clojure.zip :as zip]
             [frontend.models.sheet :as sheet]))
 
@@ -97,6 +97,12 @@
                              :method :post
                              :params {:owner-id owner-id}}}}))
 
+(reg-event-fx
+  :playlist/destroy-sheet
+  (fn [db [_ sheet-id]]
+    {:remote {:destroy-sheet {:path (str "/api/sheets/" sheet-id)
+                              :method :delete}}}))
+
 ;; Remote actions
 ;; ==============
 
@@ -122,7 +128,9 @@
       (assoc db :db/sheets.by-id (key-by :db/id response))
       :create-sheet
       (-> (assoc-in db [:db/sheets.by-id :db/id] response)
-        (assoc :db/active-route (router/sheet (:db/id response)))))))
+        (assoc :db/active-route (router/sheet (:db/id response))))
+      :destroy-sheet
+      (dissoc-in db [:db/sheets.by-id (:removed-id response)]))))
 
 (reg-event-db
   :remote/failure
