@@ -1,4 +1,4 @@
-(ns redux.utils)
+(ns frontend.util.util)
 
 (defmacro defselector
   "Enables easier selector composition, but ultimatly only generates a simple
@@ -19,4 +19,4 @@
     ;; => \"trip1\""
   [name selectors & body]
   `(def ~name
-     (redux.utils/create-selector ~selectors (fn ~selectors ~@body))))
+     (frontend.util.util/create-selector ~selectors (fn ~selectors ~@body))))
