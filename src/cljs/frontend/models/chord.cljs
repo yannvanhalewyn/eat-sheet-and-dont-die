@@ -6,31 +6,27 @@
             [goog.string.format]
             [clojure.string :as str]))
 
-;; Negative lookahead for ending accidental that are part of "b5",
+;; Negative lookahead for ending accidental that are part of "b5" or "b9"
 ;; like Eb5 -> root = E
-(def root-regx (str "([#b])?([a-gA-G1-7])([#b])?(?!5)"))
+(def root-regx (str "((([#b])?([0-7]))|(([a-gA-G])([#b])?))?(?!5)"))
 ;; Negative lookahead for 'm' that is not part of 'maj'
 (def triad-regx (str "min|m(?!aj)|-|aug|\\+|#5|b5"))
 (def extension-regx (str "(7|maj|Maj)?7?([#b]?9)?([#b]5)?"))
 (def chord-regex (re-pattern (format "%s(%s)?(%s)?"
-                                     root-regx triad-regx extension-regx)))
+                               root-regx triad-regx extension-regx)))
 
 (defn parse
   "Parses a raw chord string to chord data"
   [s]
-  (let [result (rest (re-find chord-regex s))
-        [_ root _ triad extension seventh ninth fifth] result]
-    {:chord/root (when root
-                   (match (vec (take 3 result))
-                     ["b" root _] [root :flat]
-                     ["#" root _] [root :sharp]
-                     [_ root "b"] [root :flat]
-                     [_ root "#"] [root :sharp]
-                     :else [root :natural]))
-     :chord/triad (or (case fifth
-                        "b5" :diminished
-                        "#5" :augmented
-                        nil)
+  (let [result (re-find chord-regex s)
+        [nashville-acc nashville-root _ root acc
+         triad extension seventh ninth fifth] (drop 3 result)]
+    {:chord/root (cond
+                   nashville-root
+                   [nashville-root (case nashville-acc "#" :sharp "b" :flat :natural)]
+                   root
+                   [root (case acc "#" :sharp "b" :flat :natural)])
+     :chord/triad (or (case fifth "b5" :diminished "#5" :augmented nil)
                     (match triad
                       (:or "m" "min" "-") :minor
                       (:or "aug" "+" "#5") :augmented

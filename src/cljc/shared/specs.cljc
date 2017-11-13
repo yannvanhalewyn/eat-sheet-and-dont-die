@@ -6,12 +6,21 @@
 
 ;; Generators
 ;; ==========
+(defn- number-str? [s]
+  #?(:cljs
+     (not (js/isNaN (js/parseInt s)))))
+
+(defn- root->str [[note acc]]
+  (let [acc (case acc :flat "b" :sharp "#" "")]
+    (if (number-str? note)
+      (str acc note)    ;; b3
+      (str note acc)))) ;; Eb
+
 (defn unparse-chord
   "Takes a parsed chord and returns a possible raw input value for that chord."
-  [{:keys [:chord/root :chord/triad :chord/seventh :chord/ninth]}]
+  [{:keys [:chord/root :chord/triad :chord/seventh :chord/ninth :chord/bass]}]
   (str
-    (first root)
-    (case (second root) :sharp "#" :flat "b" "")
+    (root->str root)
     (case triad :minor "-" :augmented "+" :diminished "b5" "")
     (when-not (= :natural ninth) (case seventh :major "Maj7" :minor "7" ""))
     (case ninth :natural "9" :flat "b9" :sharp "#9" "")))
@@ -38,7 +47,10 @@
 (s/def :chord/triad #{:minor :major :augmented :diminished})
 (s/def :chord/seventh (s/nilable #{:minor :major}))
 (s/def :chord/ninth (s/nilable accidental?))
-(s/def :chord/parsed (s/keys :req [:chord/root :chord/triad :chord/seventh :chord/ninth]))
+(s/def :chord/parsed (s/keys :req [:chord/root
+                                   :chord/triad
+                                   :chord/seventh
+                                   :chord/ninth]))
 
 ;; Sheet
 ;; =====
