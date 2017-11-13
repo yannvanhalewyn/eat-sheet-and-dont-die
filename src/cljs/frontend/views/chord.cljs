@@ -50,6 +50,7 @@
    (if (:chord/root chord)
      [:span [base chord]
       [:small.chord__extension [extension chord]]
+      (when-let [sus (:chord/sus chord)] [:small.chord__extension "sus" sus])
       (if-let [[note acc] (:chord/bass chord)]
         [:small.chord__inversion "/"
          (str/upper-case note)
