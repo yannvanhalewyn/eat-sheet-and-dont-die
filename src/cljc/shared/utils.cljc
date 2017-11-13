@@ -44,3 +44,14 @@
   "Dissoc's the element at path in coll"
   [coll path]
   (update-in coll (butlast path) dissoc (last path)))
+
+(defn cycle
+  "Given a list of elements and a current element, returns the next one.
+
+  Examples:
+  ```
+  (next [:left :right :up :down] :right) ;; => :up"
+  [coll cur]
+  (let [coll (vec coll)
+        idx (.indexOf coll cur)]
+    (or (get coll (inc idx)) (first coll))))

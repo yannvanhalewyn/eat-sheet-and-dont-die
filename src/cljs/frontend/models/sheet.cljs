@@ -1,5 +1,6 @@
 (ns frontend.models.sheet
-  (:require [clojure.zip
+  (:require [shared.utils :as util]
+            [clojure.zip
              :as zip
              :refer [up down right left end? next node insert-right lefts branch? children]]
             [frontend.util.zipper :as uzip :refer [nth-child next-leaf prev-leaf
@@ -163,5 +164,7 @@
 ;; Bars / tools
 ;; ============
 
+(def togglers {:bar/coda (partial util/cycle [nil :start :end])})
+
 (defn- toggle [loc type]
-  (zip/edit (up loc) update type not))
+  (zip/edit (up loc) update type (or (togglers type) not)))

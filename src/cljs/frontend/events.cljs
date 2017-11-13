@@ -75,8 +75,10 @@
 (reg-event-db
   :sheet/toggle
   (fn [db [_ type]]
-    (let [new-sheet (zip/root (sheet/toggle (selectors/current-loc db) type))]
-      (reducer/app db [:sheet/replace new-sheet]))))
+    (if-let [loc (selectors/current-loc db)]
+      (let [new-sheet (zip/root (sheet/toggle loc type))]
+        (reducer/app db [:sheet/replace new-sheet]))
+      db)))
 
 ;; Playlist actions
 ;; ================
