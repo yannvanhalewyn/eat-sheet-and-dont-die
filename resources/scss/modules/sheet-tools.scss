@@ -9,19 +9,35 @@
   background: #FFF;
 }
 
+$height: 40px;
 .sheet-tool {
   padding: 0;
-  width: 42px;
+  width: 50px;
   height: 100%;
+  padding: 5px;
   cursor: pointer;
   border-radius: 5px;
 
   &:hover {background: #aac; }
 }
 
+$svg-ratio: 18 / 80;
+$width: $height * $svg-ratio;
+.sheet-tool--start-repeat {
+  @include background-image("/img/start-repeat.svg");
+  height: $height;
+  width: $height - $width / 2;
+  .row & { margin-left: -$width; }
+}
+
+.sheet-tool--end-repeat {
+  @include background-image("/img/end-repeat.svg");
+  height: $height;
+  width: $height - $width / 2;
+}
+
 .sheet-tool--segno {
   $svg-ratio: 54 / 80;
-  $height: 50px;
   $width: $height * $svg-ratio;
   @include background-image("/img/segno.svg");
   height: $height;

@@ -9,14 +9,14 @@ $width: $height * $svg-ratio;
   @include background-image("/img/end-repeat.svg");
   height: $height;
   width: $width;
-  .row & { margin-left: -$width; }
+  margin-left: -$width;
 }
 
 .barline--start-repeat {
   @include background-image("/img/start-repeat.svg");
   height: $height;
   width: $width;
-  .row & { margin-right: -$width; }
+  margin-right: -$width;
 }
 
 $svg-ratio: 30 / 80;

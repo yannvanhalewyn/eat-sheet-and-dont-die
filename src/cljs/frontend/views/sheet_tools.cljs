@@ -10,8 +10,8 @@
 (defn component [props]
   [:div.sheet-tools
    [:button.sheet-tool {:on-click (handler :bar/start-repeat)}
-    [:div.barline--start-repeat]]
+    [:div.sheet-tool--start-repeat]]
    [:button.sheet-tool {:on-click (handler :bar/end-repeat)}
-    [:div.barline--end-repeat]]
+    [:div.sheet-tool--end-repeat]]
    [:button.sheet-tool {:on-click (handler :bar/segno)}
     [:div.sheet-tool--segno]]])
