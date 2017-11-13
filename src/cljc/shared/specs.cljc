@@ -38,8 +38,7 @@
 (s/def :chord/triad #{:minor :major :augmented :diminished})
 (s/def :chord/seventh #{:minor :major})
 (s/def :chord/ninth accidental?)
-(s/def :chord/parsed (s/keys :req [:db/id :coll/position]
-                       :opt [:chord/root :chord/triad :chord/seventh :chord/ninth]))
+(s/def :chord/parsed (s/keys :req [:chord/root :chord/triad :chord/seventh :chord/ninth]))
 
 ;; Sheet
 ;; =====

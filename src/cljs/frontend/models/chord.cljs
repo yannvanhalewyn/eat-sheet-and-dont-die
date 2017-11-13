@@ -1,5 +1,7 @@
 (ns frontend.models.chord
-  (:require [clojure.core.match :refer-macros [match]]
+  (:require [shared.specs :as specs]
+            [clojure.core.match :refer-macros [match]]
+            [clojure.spec.alpha :as s]
             [goog.string :refer [format contains caseInsensitiveContains]]
             [goog.string.format]))
 
@@ -22,16 +24,16 @@
                      ["#" root _] [root :sharp]
                      [_ root "b"] [root :flat]
                      [_ root "#"] [root :sharp]
-                     :else [root]))
+                     :else [root :natural]))
      :chord/triad (or (case fifth
                         "b5" :diminished
                         "#5" :augmented
                         nil)
-                      (match triad
-                        (:or "m" "min" "-") :minor
-                        (:or "aug" "+" "#5") :augmented
-                        "b5" :diminished
-                        :else :major))
+                    (match triad
+                      (:or "m" "min" "-") :minor
+                      (:or "aug" "+" "#5") :augmented
+                      "b5" :diminished
+                      :else :major))
      :chord/seventh (cond
                       (caseInsensitiveContains (or extension "") "maj") :major
                       extension :minor
@@ -41,3 +43,8 @@
                     "b9" :flat
                     "#9" :sharp
                     :else nil)}))
+
+(s/fdef parse
+  :args (s/cat :input :chord/value)
+  :ret :chord/parsed
+  :fn (fn [res] (= (specs/unparse-chord (:ret res)) (-> res :args :input))))
