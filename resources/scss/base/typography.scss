@@ -5,6 +5,7 @@
 
 body {
   font: 16px / 25px "Montserrat", sans-serif;
+  color: $light-grey1;
 }
 
 h1 {
@@ -16,7 +17,7 @@ h1 {
 h3 {
   font-weight: bold;
   font-size: 1.5em;
-  color: lighten(#4A4A4A, 5);
+  color: $light-grey1;
 }
 
 h4 {

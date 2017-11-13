@@ -1,0 +1,8 @@
+.sheet-list-item {
+  font-size: 1.1em;
+  border-top: 1px solid $light-grey5;
+  padding: 20px 10px;
+  &:hover {
+    background: $light-grey10;
+  }
+}

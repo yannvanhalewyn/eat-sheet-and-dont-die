@@ -2,7 +2,7 @@
   background: $color;
 
   &:hover {
-    background: darken($color, 10%);
+    background: darken($color, 8%);
   }
 
   &:active {
@@ -10,7 +10,7 @@
   }
 
   &[disabled] {
-    background: $light-grey3;
+    background: $light-grey4;
     color: $light-grey2;
     cursor: default;
   }
@@ -52,7 +52,7 @@
   padding: 7px;
   border-radius: 50%;
   cursor: pointer;
-  color: $dark-grey1;
+  color: $light-grey3;
   user-select: none;
   &:hover {
     background: rgba(0,0,0,0.1);
