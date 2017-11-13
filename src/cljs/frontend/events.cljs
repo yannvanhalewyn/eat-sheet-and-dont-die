@@ -2,25 +2,16 @@
   (:require [frontend.selectors :as selectors]
             [frontend.fx :refer [reg-event-db reg-event-fx]]
             [frontend.router :as router]
+            [frontend.reducer :as reducer]
             [shared.utils :refer [gen-temp-id key-by dissoc-in]]
             [clojure.zip :as zip]
             [frontend.models.sheet :as sheet]))
 
-(defn- update-sheet [db new-sheet]
-  (assoc-in db [:db/sheets.by-id (:db/id new-sheet)] new-sheet))
-
-(defn- update-sheet-zip [db new-sheet-loc]
-  (-> (update-sheet db (zip/root new-sheet-loc))
-    (assoc :db/selected (-> new-sheet-loc zip/node :db/id))))
-
 (reg-event-fx
-  :event/init
-  (fn [_]
+  :app/init
+  (fn [_ event]
     {:remote {:get-current-user {:path "/api/me"}}
-     :db {:db/sheets.by-id {}
-          :db/selected nil
-          :db/current-user nil
-          :db/active-route {:route/handler :route/index}}}))
+     :db (reducer/app nil event)}))
 
 ;; Editor operations
 ;; =================
@@ -31,8 +22,8 @@
 
 (reg-event-db
   :sheet/select-chord
-  (fn [db [_ id]]
-    (assoc db :db/selected id)))
+  (fn [db event]
+    (reducer/app db event)))
 
 (reg-event-db
   :sheet/update-chord
@@ -41,51 +32,51 @@
                       (sheet/navigate-to id)
                       (zip/edit assoc :chord/value value)
                       zip/root)]
-      (update-sheet db new-sheet))))
+      (reducer/app db [:sheet/replace new-sheet]))))
 
 (reg-event-db
   :sheet/append
   (fn [db [_ type]]
-    (update-sheet-zip db
-      (sheet/append (selectors/current-loc db) type (repeatedly gen-temp-id)))))
+    (reducer/app db
+      [:sheet/replace-zip
+       (sheet/append (selectors/current-loc db) type (repeatedly gen-temp-id))])))
 
 (reg-event-db
   :sheet/move
   (fn [db [_ dir]]
     (if-let [new-sheet (sheet/move (selectors/current-loc db) dir)]
-      (update-sheet-zip db new-sheet)
+      (reducer/app db [:sheet/replace-zip new-sheet])
       db)))
 
 (reg-event-db
   :sheet/remove
   (fn [db [_ element]]
-    (let [new-sheet (sheet/delete (selectors/current-loc db) element)]
-      (update-sheet-zip db new-sheet))))
+    (reducer/app db [:sheet/replace-zip
+                     (sheet/delete (selectors/current-loc db) element)])))
 
 (reg-event-db
   :sheet/set-title
-  (fn [db [_ title]]
-    (update-sheet db (assoc (selectors/sheet db) :sheet/title title))))
+  (fn [db event] (reducer/app db event)))
 
 (reg-event-db
   :sheet/set-artist
-  (fn [db [_ artist]]
-    (update-sheet db (assoc (selectors/sheet db) :sheet/artist artist))))
+  (fn [db event] (reducer/app db event)))
 
 (reg-event-db
   :sheet/set-section-title
   (fn [db [_ section title]]
-    (let [idx (.indexOf (:sheet/sections (selectors/sheet db)) section)]
-      (if (>= idx 0)
-        (update-sheet db
-          (assoc-in (selectors/sheet db) [:sheet/sections idx :section/title] title))
-        db))))
+    (if-let [new-sheet (-> (selectors/sheet db) sheet/zipper
+                         (sheet/navigate-to (:db/id section))
+                         (zip/edit assoc :section/title title)
+                         zip/root)]
+      (reducer/app db [:sheet/replace new-sheet])
+      db)))
 
 (reg-event-db
   :sheet/toggle
   (fn [db [_ type]]
     (let [new-sheet (zip/root (sheet/toggle (selectors/current-loc db) type))]
-      (update-sheet db new-sheet))))
+      (reducer/app db [:sheet/replace new-sheet]))))
 
 ;; Playlist actions
 ;; ================
@@ -142,5 +133,4 @@
 
 (reg-event-db
   :route/browser-url
-  (fn [db [_ route]]
-    (assoc db :db/active-route route)))
+  (fn [db event] (reducer/app db event)))

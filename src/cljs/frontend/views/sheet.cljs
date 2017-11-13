@@ -50,10 +50,10 @@
      (let [title (or (presence (:sheet/title sheet)) "(title)")
            artist (or (presence (:sheet/artist sheet)) "(artist)")]
        [:div
-        [editable/component {:on-change #(dispatch [:sheet/set-title %])
+        [editable/component {:on-change #(dispatch [:sheet/set-title (:db/id sheet) %])
                              :value title}
          [:h1 title]]
-        [editable/component {:on-change #(dispatch [:sheet/set-artist %])
+        [editable/component {:on-change #(dispatch [:sheet/set-artist (:db/id sheet) %])
                              :value artist}
          [:h3.u-margin-top--s artist]]])
      [:div.u-margin-top.sections

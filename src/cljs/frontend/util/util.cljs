@@ -38,3 +38,10 @@
     (filter identity [alt meta shift code])))
 
 (def presence #(if (empty? %) nil %))
+
+(defn combine-reducers
+  "Returns a reducer fn that invokes every reducer inside the reducers
+  map, and constructs a state object with the same shape."
+  [reducers]
+  (fn [state action]
+    (reduce-kv #(assoc %1 %2 (%3 (%2 state) action)) {} reducers)))

@@ -12,6 +12,6 @@
   (reagent/render containers/app (gdom/getElement "app")))
 
 (defn init! []
-  (rf/dispatch-sync [:event/init])
+  (rf/dispatch-sync [:app/init])
   (router/listen)
   (render!))
