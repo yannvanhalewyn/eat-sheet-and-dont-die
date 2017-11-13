@@ -10,8 +10,10 @@
    `(def ~(vary-meta name assoc
             :test `(fn []
                      (.log js/console "Running generation tests for" ~sym-or-syms)
+                     (.time js/console "Time")
                      (let [check-results# (cljs.spec.test.alpha/check ~sym-or-syms ~opts)
                            checks-passed?# (every? nil? (map :failure check-results#))]
+                       (.timeEnd js/console "Time")
                        (if checks-passed?#
                          (cljs.test/do-report {:type    :pass
                                                :message (str "Generative tests pass for "
