@@ -1,0 +1,72 @@
+@mixin btn-color($color) {
+  background: $color;
+
+  &:hover {
+    background: darken($color, 10%);
+  }
+
+  &:active {
+    background: darken($color, 15%);
+  }
+
+  &[disabled] {
+    background: $light-grey3;
+    color: $light-grey2;
+    cursor: default;
+  }
+}
+
+.btn {
+  @include btn-color($blue1);
+  display: inline-block;
+  color: #FFF;
+  border: none;
+  font: inherit;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 3px;
+  user-select: none;
+  outline: none;
+  cursor: pointer;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+  > .material-icon {
+    vertical-align: -7px;
+    margin-right: 5px;
+  }
+}
+
+.btn--red {
+  @include btn-color($red1);
+}
+
+.btn--grey {
+  background: #bcced7;
+  color: #758a97;
+}
+
+.icon-btn {
+  display: inline-block;
+  text-align: center;
+  width: 45px;
+  height: 45px;
+  padding: 7px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: $dark-grey1;
+  user-select: none;
+  &:hover {
+    background: rgba(0,0,0,0.1);
+    color: $light-grey1;
+  }
+  &:active {
+    background: rgba(0,0,0,0.2);
+    color: $light-grey1;
+  }
+}
+
+.icon-btn--red {
+  &:hover, &:active {
+    background: lighten($red1, 30%);
+    color: $red1;
+  }
+}

@@ -22,7 +22,6 @@
     (update state (:sheet-id arg1) sheet/replace-temp-ids (:temp-ids arg1))
     state))
 
-
 (defn selected-chord [state [type arg]]
   (case type
     :app/init nil

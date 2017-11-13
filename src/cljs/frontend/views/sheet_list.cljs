@@ -11,4 +11,5 @@
        [:div
         [:a {:href (str "#sheets/" id)}
          [:h2 title " - " [:small artist]]]
-        [:button.btn {:on-click #(dispatch [:playlist/destroy-sheet id])} "Remove"]])]))
+        [:button.icon-btn.icon-btn--red {:on-click #(dispatch [:playlist/destroy-sheet id])}
+         [:i.material-icons "delete"]]])]))
