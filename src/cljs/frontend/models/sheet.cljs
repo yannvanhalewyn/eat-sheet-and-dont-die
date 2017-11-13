@@ -164,7 +164,7 @@
 ;; Bars / tools
 ;; ============
 
-(def togglers {:bar/coda (partial util/cycle [nil :start :end])})
+(def togglers {:bar/coda (partial util/cycle [nil :end :start])})
 
 (defn- toggle [loc type]
   (zip/edit (up loc) update type (or (togglers type) not)))
