@@ -3,10 +3,10 @@
   padding: 0 4px;
 }
 
-$svg-ratio: 54 / 80;
-$height: 30px;
-$width: $height * $svg-ratio;
 .music-symbol--segno {
+  $svg-ratio: 54 / 80;
+  $height: 30px;
+  $width: $height * $svg-ratio;
   @include background-image("/img/segno.svg");
   height: $height;
   width: $width;
@@ -19,4 +19,26 @@ $width: $height * $svg-ratio;
   @extend .music-symbol--segno;
   top: 8px;
   left: -14px;
+}
+
+.music-symbol--coda-start {
+  $height: 30px;
+  $width: 30px;
+  @include background-image("/img/coda.svg");
+  height: $height;
+  width: $width;
+  position: absolute;
+  top: -$height - 3;
+  left: -$width / 2;
+}
+
+.music-symbol--coda-end {
+  $height: 30px;
+  $width: 30px;
+  @include background-image("/img/coda.svg");
+  height: $height;
+  width: $width;
+  position: absolute;
+  top: -$height - 3;
+  right: -$width / 2 - 1;
 }

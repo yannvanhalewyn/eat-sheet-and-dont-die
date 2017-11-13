@@ -14,4 +14,6 @@
    [:button.sheet-tool {:on-click (handler :bar/end-repeat)}
     [:div.sheet-tool--end-repeat]]
    [:button.sheet-tool {:on-click (handler :bar/segno)}
-    [:div.sheet-tool--segno]]])
+    [:div.sheet-tool--segno]]
+   [:button.sheet-tool {:on-click (handler :bar/coda)}
+    [:div.sheet-tool--coda]]])

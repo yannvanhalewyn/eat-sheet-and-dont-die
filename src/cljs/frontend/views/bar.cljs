@@ -17,4 +17,6 @@
         (if (= selected (:db/id chord))
           [editable-chord {:chord chord}]
           [displayed-chord {:chord (parse (:chord/value chord))
-                            :on-click #(dispatch [:sheet/select-chord (:db/id chord)])}])]))])
+                            :on-click #(dispatch [:sheet/select-chord (:db/id chord)])}])]))
+   (when (:bar/coda bar)
+     [:div.music-symbol.music-symbol--coda])])

@@ -43,3 +43,10 @@ $width: $height * $svg-ratio;
   height: $height;
   width: $width;
 }
+
+.sheet-tool--coda {
+  $width: $height;
+  @include background-image("/img/coda.svg");
+  height: $height;
+  width: $height;
+}
