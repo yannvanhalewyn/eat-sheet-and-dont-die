@@ -2,8 +2,12 @@
   (:require [frontend.models.sheet :as sheet]
             [redux.utils :refer-macros [defselector]]))
 
+(def current-user :db/current-user)
+(def active-route :db/active-route)
+(def params (comp :route/params active-route))
+
 (defn current-sheet-id [db]
-  (js/parseInt (get-in db [:db/active-route :route/params :sheet/id])))
+  (-> db params :sheet/id js/parseInt))
 
 (defn sheet [db]
   (get-in db [:db/sheets.by-id (current-sheet-id db)]))

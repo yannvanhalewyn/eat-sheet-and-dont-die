@@ -13,15 +13,12 @@
 (defn- get-sheet-data [db id]
   (http/request-fx {:get-sheet {:path (str "/api/sheets/" id)}}))
 
-(defn- reg-sub-key [name key]
-  (reg-sub name (fn [db] (get db key))))
-
 ;; Re-frame subscriptions
 ;; ======================
 
-(reg-sub-key :sub/selected :db/selected)
-(reg-sub-key :sub/active-route :db/active-route)
-(reg-sub-key :sub/current-user :db/current-user)
+(reg-sub :sub/selected sel/selected)
+(reg-sub :sub/active-route sel/active-route)
+(reg-sub :sub/current-user sel/current-user)
 
 (reg-sub-raw
   :sub/sheets
