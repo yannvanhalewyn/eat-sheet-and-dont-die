@@ -40,7 +40,7 @@
 (def extension? #{9 13})
 
 (s/def :db/id (s/spec (s/or :datomic pos-int? :tmp-id string?) :gen gen-id))
-(s/def :coll/position int?)
+(s/def :coll/position nat-int?)
 (s/def :chord/value (s/spec string? :gen gen-chord-value))
 (s/def ::chord (s/keys :req [:db/id :coll/position :chord/value]))
 

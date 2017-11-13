@@ -2,3 +2,21 @@
   height: 40px;
   padding: 0 4px;
 }
+
+$svg-ratio: 54 / 80;
+$height: 30px;
+$width: $height * $svg-ratio;
+.music-symbol--segno {
+  @include background-image("/img/segno.svg");
+  height: $height;
+  width: $width;
+  position: absolute;
+  top: -$height - 4;
+  left: -$width / 2;
+}
+
+.music-symbol--segno-first-bar {
+  @extend .music-symbol--segno;
+  top: 8px;
+  left: -14px;
+}

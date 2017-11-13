@@ -5,6 +5,9 @@
 
 (defn component [{:keys [bar selected] :as props}]
   [:div.bar
+   (when (:bar/segno bar)
+     [:div.music-symbol {:class (str "music-symbol--segno"
+                                  (if (zero? (:coll/position bar)) "-first-bar"))}])
    (let [width (/ 100 (count (:bar/chords bar)))]
      (for [chord (sort-by :coll/position (:bar/chords bar))]
        ^{:key (:db/id chord)}

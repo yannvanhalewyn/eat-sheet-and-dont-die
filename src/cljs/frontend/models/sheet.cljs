@@ -10,19 +10,22 @@
 
 (defn new-chord
   [id]
-  {:db/id id :chord/value ""})
+  {:db/id id :chord/value "" :coll/position 0})
 
 (defn new-bar
   [[id chord-id]]
   {:db/id id
+   :coll/position 0
    :bar/chords [(new-chord chord-id)]})
 
 (defn new-row [[id & ids]]
   {:db/id id
+   :coll/position 0
    :row/bars [(new-bar ids)]})
 
 (defn new-section [[id & ids]]
   {:db/id id
+   :coll/position 0
    :section/title "Intro"
    :section/rows [(new-row ids)]})
 

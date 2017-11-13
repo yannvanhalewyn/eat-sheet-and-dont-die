@@ -12,4 +12,6 @@
    [:button.sheet-tool {:on-click (handler :bar/start-repeat)}
     [:div.barline--start-repeat]]
    [:button.sheet-tool {:on-click (handler :bar/end-repeat)}
-    [:div.barline--end-repeat]]])
+    [:div.barline--end-repeat]]
+   [:button.sheet-tool {:on-click (handler :bar/segno)}
+    [:div.sheet-tool--segno]]])

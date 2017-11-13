@@ -18,3 +18,12 @@
 
   &:hover {background: #aac; }
 }
+
+.sheet-tool--segno {
+  $svg-ratio: 54 / 80;
+  $height: 50px;
+  $width: $height * $svg-ratio;
+  @include background-image("/img/segno.svg");
+  height: $height;
+  width: $width;
+}
