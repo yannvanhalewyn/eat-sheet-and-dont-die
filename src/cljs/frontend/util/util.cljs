@@ -28,6 +28,18 @@
     (apply f args)
     nil))
 
+(defn confirm
+  "Returns a function which first prompts the user with a confirm dialog
+  before calling f. The return value of the fn is always nil. If f and
+  args is supplied, calls f with args."
+  [msg f & args]
+  (fn [event]
+    (.preventDefault event)
+    (.stopPropagation event)
+    (when (.confirm js/window msg)
+      (apply f args))
+    nil))
+
 (defn event->keychord
   "Takes a keydown event, and returns a vector of all important keys like META, SHIFT, CTRL, ALT,.."
   [e]
