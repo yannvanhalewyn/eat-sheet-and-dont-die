@@ -1,8 +1,4 @@
 #!/bin/sh
 
-BUILD_ID="$(git rev-parse --short HEAD)-$(date +%Y-%m-%d:%Hh%m)"
-FILE_PATH="target/uberjar/sheet-bucket-${BUILD_ID}.zip"
-
 sass -r sass-globbing resources/scss/application.scss resources/public/css/application.css
-# lein uberjar
-zip -X -r $FILE_PATH Procfile target/sheet-bucket-standalone.jar
+lein uberjar

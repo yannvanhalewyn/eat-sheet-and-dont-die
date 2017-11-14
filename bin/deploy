@@ -1,0 +1,30 @@
+#!/bin/sh
+
+APP_NAME="sheet-bucket"
+ENV_ID="e-nmexgncjwa"
+S3_BUCKET="elasticbeanstalk-eu-central-1-179026462843"
+
+BUILD_ID="$(git rev-parse --short HEAD)-$(date +%Y-%m-%d:%Hh%m)"
+FILE_NAME="sheet-bucket-${BUILD_ID}.zip"
+FILE_PATH="target/uberjar/${FILE_NAME}"
+S3_URL="s3://${S3_BUCKET}/${FILE_NAME}"
+
+./bin/build
+echo "Building WAR file.. -- ${FILE_PATH}"
+zip -X -r $FILE_PATH Procfile target/sheet-bucket-standalone.jar
+echo "Uploading to S3 -- ${S3_URL}"
+aws s3 cp $FILE_PATH $S3_URL
+
+echo "Creating application version"
+aws elasticbeanstalk create-application-version \
+    --application-name $APP_NAME \
+    --version-label $BUILD_ID \
+    --source-bundle S3Bucket="$S3_BUCKET",S3Key=$FILE_NAME \
+    --region eu-central-1
+
+echo "Switching to new version"
+aws elasticbeanstalk update-environment \
+    --application-name $APP_NAME \
+    --environment-id $ENV_ID \
+    --version-label $BUILD_ID \
+    --region eu-central-1
