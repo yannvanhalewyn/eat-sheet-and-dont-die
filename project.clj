@@ -40,9 +40,17 @@
                                   [com.cemerick/piggieback "0.2.2"]]
                    :source-paths ["env/dev/clj"]
                    :repl-options {:init (set! *print-length* 50)
-                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
+                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
+             :uberjar {:jvm-opts ["-server"]
+                       :aot :all
+                       :main sheet-bucket.main
+                       :omit-source true
+                       :prep-tasks ["compile" ["cljsbuild" "once" "prod"]]
+                       :source-paths ["src/clj" "src/cljc" "env/production/clj"]}}
 
-  :plugins [[lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
+  :uberjar-name "sheet-bucket-standalone.jar"
+
+  :plugins [[lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
   :source-paths ["src/clj" "src/cljc"]
 
@@ -82,11 +90,13 @@
                                    :output-dir "resources/public/js/compiled/test-out"
                                    :optimizations :none}}
 
-                       {:id "min"
-                        :source-paths ["src/cljs" "src/cljc"]
+                       {:id "prod"
+                        :source-paths ["src/cljs" "src/cljc" "env/production/cljs"]
                         :compiler {:output-to "resources/public/js/app.js"
-                                   :main frontend.core
+                                   :main frontend.main
                                    :optimizations :advanced
-                                   :pretty-print false}}]}
+                                   :pretty-print false
+                                   :parallel-build true
+                                   :closure-defines {"goog.DEBUG" false}}}]}
 
   :figwheel {:css-dirs ["resources/public/css"]})

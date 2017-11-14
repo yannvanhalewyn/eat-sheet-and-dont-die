@@ -1,7 +1,6 @@
 (ns shared.specs
   (:require [shared.utils :refer [gen-temp-id]]
             [clojure.spec.alpha :as s]
-            [clojure.test.check.generators]
             [clojure.spec.gen.alpha :as gen]))
 
 ;; Generators

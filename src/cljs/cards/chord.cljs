@@ -1,8 +1,7 @@
 (ns cards.chord
-  (:require [cards.util :refer [alert]]
+  (:require [cards.util :refer [alert gen]]
             [frontend.models.chord :refer [parse]]
             [shared.specs :as specs]
-            [frontend.util.util :refer [gen]]
             [frontend.views.chord :refer [displayed-chord editable-chord]]
             [devcards.core :refer [markdown->react]]
             [reagent.core :as r])

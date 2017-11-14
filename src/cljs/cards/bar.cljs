@@ -2,7 +2,7 @@
   (:require [reagent.core :as reagent]
             [frontend.views.bar :refer [component]]
             [shared.specs :as specs]
-            [frontend.util.util :refer [gen]])
+            [cards.util :refer [gen]])
   (:require-macros [cards.core :refer [defcard-props]]
                    [devcards.core :as dc :refer [defcard-doc defcard-rg]]))
 

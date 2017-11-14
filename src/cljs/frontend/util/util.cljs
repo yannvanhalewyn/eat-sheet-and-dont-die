@@ -1,12 +1,4 @@
-(ns frontend.util.util
-  (:require [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]
-            [clojure.test.check.generators]))
-
-(defn gen
-  "Will generate any amount of data based on a spec"
-  [spec count]
-  (gen/sample (s/gen spec) count))
+(ns frontend.util.util)
 
 (defn prevent-default
   "Returns a function to be used as an browser event handler. That
