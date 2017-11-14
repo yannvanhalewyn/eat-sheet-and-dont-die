@@ -2,7 +2,6 @@
   (:require [sheet-bucket.config :refer [config]]
             [datomic.api :as d]
             [dev.scss-watcher :as scss]
-            [dev.datomic-server :as datomic-server]
             [figwheel-sidecar.system :as ra-sys]
             [reloaded.repl :as repl :refer [go start stop reset system]]
             [sheet-bucket.core :as app]))
