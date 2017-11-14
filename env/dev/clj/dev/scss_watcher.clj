@@ -4,7 +4,7 @@
 
 (def DEFAULTS
   {:executable-path "scss"
-   :input-file "resources/scss/application.scss"
+   :input-file "scss/application.scss"
    :output-file "resources/public/css/application.css"})
 
 (defn watcher

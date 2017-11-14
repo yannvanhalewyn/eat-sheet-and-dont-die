@@ -1,4 +1,4 @@
 #!/bin/sh
 
-sass -r sass-globbing resources/scss/application.scss resources/public/css/application.css
+sass -r sass-globbing scss/application.scss resources/public/css/application.css
 lein uberjar

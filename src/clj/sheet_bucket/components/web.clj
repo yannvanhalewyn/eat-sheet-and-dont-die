@@ -20,20 +20,15 @@
     :static {:resources "public"}))
 
 (def muuntaja-options
-  (m/create
-    (->
-      m/default-options
-      (assoc :default-format "application/transit+json")
-      #_(update :formats select-keys ["application/transit+json"]))))
-
+  (m/create (assoc m/default-options :default-format "application/transit+json")))
 
 (defn make-handler [db]
   (-> #'routes/app-routes
-      (wrap-db db)
-      (wrap-params)
-      (wrap-format muuntaja-options)
-      (wrap-defaults app-defaults)
-      wrap-reload))
+    (wrap-db db)
+    (wrap-params)
+    (wrap-format muuntaja-options)
+    (wrap-defaults app-defaults)
+    wrap-reload))
 
 (defrecord Web [port db]
   c/Lifecycle
