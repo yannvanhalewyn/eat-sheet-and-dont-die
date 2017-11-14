@@ -18,7 +18,7 @@ $height: 40px;
   cursor: pointer;
   border-radius: 5px;
 
-  &:hover {background: #aac; }
+  &:hover {background: $light-grey5; }
 }
 
 $svg-ratio: 18 / 80;
