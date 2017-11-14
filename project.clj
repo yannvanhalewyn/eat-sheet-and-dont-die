@@ -45,6 +45,7 @@
                        :aot :all
                        :main sheet-bucket.main
                        :omit-source true
+                       :dependencies [[com.amazonaws/aws-java-sdk-dynamodb "1.11.228"]]
                        :prep-tasks ["compile" ["cljsbuild" "once" "prod"]]
                        :source-paths ["src/clj" "src/cljc" "env/production/clj"]}}
 
