@@ -1,1 +1,1 @@
-web: java -jar target/sheet-bucket-standalone.jar
+web: java -jar -Ddatomic.objectCacheMax="256m" target/sheet-bucket-standalone.jar
