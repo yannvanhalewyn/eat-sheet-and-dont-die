@@ -16,4 +16,4 @@
 
 (defn add [loc type]
   (let [pos (or (defaults type) (position 0 0))]
-    (zip/edit (up loc) assoc type pos)))
+    (zip/edit (up loc) update type #(if % nil pos))))
