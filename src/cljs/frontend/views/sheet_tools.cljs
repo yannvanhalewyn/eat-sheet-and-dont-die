@@ -5,7 +5,7 @@
 (defn- handler [type]
   (stop-propagation
     (fn []
-      (dispatch [:sheet/toggle type]))))
+      (dispatch [:sheet/add-symbol type]))))
 
 (defn component [props]
   [:div.sheet-tools

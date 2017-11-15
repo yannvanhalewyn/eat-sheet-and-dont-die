@@ -3,9 +3,10 @@
             [frontend.fx :refer [reg-event-db reg-event-fx]]
             [frontend.router :as router]
             [frontend.reducer :as reducer]
+            [frontend.models.sheet :as sheet]
+            [frontend.models.sheet-symbol :as sheet-symbol]
             [shared.utils :refer [gen-temp-id key-by dissoc-in]]
-            [clojure.zip :as zip]
-            [frontend.models.sheet :as sheet]))
+            [clojure.zip :as zip]))
 
 (reg-event-fx
   :app/init
@@ -73,10 +74,10 @@
       db)))
 
 (reg-event-db
-  :sheet/toggle
+  :sheet/add-symbol
   (fn [db [_ type]]
     (if-let [loc (selectors/current-loc db)]
-      (let [new-sheet (zip/root (sheet/toggle loc type))]
+      (let [new-sheet (zip/root (sheet-symbol/add loc type))]
         (reducer/app db [:sheet/replace new-sheet]))
       db)))
 

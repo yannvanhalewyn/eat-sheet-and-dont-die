@@ -9,19 +9,22 @@
     (let [travel (map - (util/e->pos e) start-pos)]
       (swap! position assoc :offset (map + start-offset travel)))))
 
-(defn- mouse-down [drag e]
-  (let [start-pos (util/e->pos e)
-        start-offset (:offset @drag)
-        on-move (mouse-move-handler drag start-offset start-pos)]
-    (events/listen js/window MOUSEMOVE on-move)
-    (events/listen js/window MOUSEUP
-      #(events/unlisten js/window MOUSEMOVE on-move))))
+(defn- mouse-down-handler [drag props]
+  (fn [e]
+    (let [start-pos (util/e->pos e)
+          start-offset (:offset @drag)
+          on-move (mouse-move-handler drag start-offset start-pos)]
+      (events/listen js/window MOUSEMOVE on-move)
+      (events/listen js/window MOUSEUP
+        #(events/unlisten js/window MOUSEMOVE on-move)))))
 
 (defn component [{:keys [start-pos]}]
   (let [drag (r/atom {:offset start-pos})]
     (fn [props]
       (let [[x y] (:offset @drag)]
-        [:div.draggable {:on-mouse-down (partial mouse-down drag)
+        [:div.draggable {:on-mouse-down (mouse-down-handler drag props)
+                         :on-mouse-up (when-let [callback (:on-drag-end props)]
+                                        #(callback (:offset @drag)))
                          :on-click (stop-propagation identity)
                          :class (:class props)
                          :style (assoc (:style props)

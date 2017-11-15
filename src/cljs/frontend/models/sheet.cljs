@@ -160,11 +160,3 @@
     :bar-left (locate-left (zip/prev loc) first-chord-of-bar?)
     :up (move-vertically loc :up)
     :down (move-vertically loc :down)))
-
-;; Bars / tools
-;; ============
-
-(def togglers {:bar/coda (partial util/cycle [nil :end :start])})
-
-(defn- toggle [loc type]
-  (zip/edit (up loc) update type (or (togglers type) not)))
