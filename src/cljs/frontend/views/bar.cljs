@@ -4,7 +4,6 @@
             [frontend.views.util.draggable :as draggable]
             [re-frame.core :refer [dispatch]]))
 
-
 (def svg-ratio (/ 54 80))
 (def height 30)
 (def width (* height svg-ratio))

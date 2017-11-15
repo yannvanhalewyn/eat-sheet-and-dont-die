@@ -183,11 +183,3 @@
         (is-nil "chord1" :bar-left)
         (is-nil "chord1" :up)
         (is-nil "chord12" :down)))))
-
-(deftest bars
-  (is (-> (sheet/toggle test-loc :bar/end-repeat)
-        zip/root
-        (get-in [:sheet/sections 0 :section/rows 0 :row/bars 0 :bar/end-repeat])))
-  (is (-> (sheet/toggle test-loc :bar/start-repeat)
-        zip/root
-        (get-in [:sheet/sections 0 :section/rows 0 :row/bars 0 :bar/start-repeat]))))
