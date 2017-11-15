@@ -11,6 +11,7 @@ S3_URL="s3://${S3_BUCKET}/${FILE_NAME}"
 
 ./bin/build
 echo "Building WAR file.. -- ${FILE_PATH}"
+[[ -d target/uberjar ]] || mkdir target/uberjar
 zip -X -r $FILE_PATH Procfile target/sheet-bucket-standalone.jar
 echo "Uploading to S3 -- ${S3_URL}"
 aws s3 cp $FILE_PATH $S3_URL
