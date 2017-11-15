@@ -27,4 +27,5 @@
                          :style (assoc (:style props)
                                   :position "absolute"
                                   :top y
-                                  :left x)}]))))
+                                  :left (when-not (= :align-right (:mode props)) x)
+                                  :right (when (= :align-right (:mode props)) (- x)))}]))))

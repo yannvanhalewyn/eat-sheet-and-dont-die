@@ -31,6 +31,7 @@
    (when-let [coda (:bar/coda bar)]
      [draggable/component {:style {:width height :height height}
                            :class "music-symbol music-symbol--coda"
+                           :mode :align-right
                            :start-pos
                            (if (zero? (:coll/position bar))
                              [-20 8]
