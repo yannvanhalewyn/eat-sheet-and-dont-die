@@ -28,7 +28,7 @@
 (defrecord Db [uri]
   c/Lifecycle
   (start [this]
-    (let [conn (connect uri)]
+    (when-let [conn (connect uri)]
       (println "Migrating schema...")
       (conform/ensure-conforms conn (conform/read-resource "schema.edn"))
       (assoc this :conn (connect uri))))

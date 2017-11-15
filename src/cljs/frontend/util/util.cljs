@@ -41,6 +41,11 @@
         meta (if (.-metaKey e) :meta)]
     (filter identity [alt meta shift code])))
 
+(defn- e->pos
+  "Given an event will return the position tuple [x y] for the mouse coords."
+  [e]
+  [(.-clientX e) (.-clientY e)])
+
 (def presence #(if (empty? %) nil %))
 
 (defn combine-reducers
