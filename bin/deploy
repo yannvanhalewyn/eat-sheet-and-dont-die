@@ -4,7 +4,7 @@ APP_NAME="sheet-bucket"
 ENV_ID="e-nmexgncjwa"
 S3_BUCKET="elasticbeanstalk-eu-central-1-179026462843"
 
-BUILD_ID="$(git rev-parse --short HEAD)-$(date +%Y-%m-%d:%Hh%m)"
+BUILD_ID="$(git rev-parse --short HEAD)-$(date +%Y-%m-%dT%Hh%M)"
 FILE_NAME="sheet-bucket-${BUILD_ID}.zip"
 FILE_PATH="target/uberjar/${FILE_NAME}"
 S3_URL="s3://${S3_BUCKET}/${FILE_NAME}"

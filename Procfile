@@ -1,1 +1,1 @@
-web: java -jar -Ddatomic.memoryIndexThreshold="32m" -Ddatomic.memoryIndexMax="256m" -Ddatomic.objectCacheMax="128m" target/sheet-bucket-standalone.jar
+web: java -Ddatomic.memoryIndexThreshold="16m" -Ddatomic.memoryIndexMax="64m" -Ddatomic.objectCacheMax="128m" -jar target/sheet-bucket-standalone.jar
