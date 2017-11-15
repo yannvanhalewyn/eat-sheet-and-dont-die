@@ -12,8 +12,13 @@
 
 (def defaults
   {:bar/coda (position (/ coda-width 2) (- -4 height))
-   :bar/segno (position (/ (- segno-width) 2) (- -4 height))})
+   :bar/segno (position (/ (- segno-width) 2) (- -4 height))
+   :bar/start-repeat true
+   :bar/end-repeat true})
 
 (defn add [loc type]
-  (let [pos (or (defaults type) (position 0 0))]
-    (zip/edit (up loc) update type #(if % nil pos))))
+  (let [value (or (defaults type) (position 0 0))]
+    (zip/edit (up loc) update type #(if % nil value))))
+
+(defn move [loc type pos]
+  (zip/edit (up loc) assoc type (apply position pos)))

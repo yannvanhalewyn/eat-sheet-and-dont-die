@@ -15,7 +15,7 @@
      [draggable/component
       {:class (str "music-symbol music-symbol--segno")
        :style {:width width :height height}
-       :on-drag-end #(.log js/console %)
+       :on-drag-end #(dispatch [:sheet/move-symbol :bar/segno %])
        :start-pos [x y]}])
    (let [width (/ 100 (count (:bar/chords bar)))]
      (for [chord (sort-by :coll/position (:bar/chords bar))]
@@ -31,5 +31,5 @@
      [draggable/component {:style {:width height :height height}
                            :class "music-symbol music-symbol--coda"
                            :mode :align-right
-                           :on-drag-end #(.log js/console %)
+                           :on-drag-end #(dispatch [:sheet/move-symbol :bar/coda %])
                            :start-pos [x y]}])])
