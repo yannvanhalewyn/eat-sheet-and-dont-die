@@ -63,14 +63,6 @@
 (defn first-chord [sheet]
   (-> sheet zipper next-leaf node))
 
-(defn replace-temp-ids [sheet replacements]
-  (loop [loc (zipper sheet)]
-    (if (zip/end? loc)
-      (zip/root loc)
-      (if-let [new-id (get replacements (:db/id (zip/node loc)))]
-        (recur (zip/next (zip/edit loc assoc :db/id new-id)))
-        (recur (zip/next loc))))))
-
 ;; Adding
 ;; ======
 

@@ -1,6 +1,6 @@
 (ns frontend.reducer
   (:require [frontend.util.util :refer [combine-reducers]]
-            [shared.utils :refer [key-by]]
+            [shared.utils :as sutil :refer [key-by]]
             [clojure.zip :as zip]
             [frontend.router :as router]
             [frontend.models.sheet :as sheet]))
@@ -19,7 +19,7 @@
     :response/get-sheets (key-by :db/id arg1)
     :response/destroy-sheet (dissoc state (:removed-id arg1))
     :response/sync-sheet
-    (update state (:sheet-id arg1) sheet/replace-temp-ids (:temp-ids arg1))
+    (update state (:sheet-id arg1) sutil/replace-temp-ids (:temp-ids arg1))
     state))
 
 (defn selected-chord [state [type arg]]
