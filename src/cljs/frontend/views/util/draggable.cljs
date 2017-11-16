@@ -14,6 +14,7 @@
     (let [start-pos (util/e->pos e)
           start-offset (:offset @drag)
           on-move (mouse-move-handler drag start-offset start-pos)]
+      (.preventDefault e)
       (events/listen js/window MOUSEMOVE on-move)
       (events/listen js/window MOUSEUP
         #(events/unlisten js/window MOUSEMOVE on-move)))))

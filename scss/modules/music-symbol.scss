@@ -2,12 +2,19 @@
   height: 40px;
   padding: 0 4px;
   cursor: pointer;
+  padding: 20px;
+  &:hover, &.selected {
+    border: 1px solid $light-grey4;
+    border-radius: 5px;
+  }
 }
 
 .music-symbol--segno {
   @include background-image("/img/segno.svg");
+  background-size: 80% 80%;
 }
 
 .music-symbol--coda {
   @include background-image("/img/coda.svg");
+  background-size: 80% 80%;
 }
