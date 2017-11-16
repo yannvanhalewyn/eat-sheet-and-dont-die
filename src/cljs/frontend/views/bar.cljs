@@ -9,26 +9,29 @@
 (def width (* height svg-ratio))
 
 (defn component [{:keys [bar selected] :as props}]
-  [:div.bar
-   (when-let [{:keys [coord/x coord/y]} (:bar/segno bar)]
-     [draggable/component
-      {:class (str "music-symbol music-symbol--segno")
-       :style {:width width :height height}
-       :on-drag-end #(dispatch [:sheet/move-symbol :bar/segno %])
-       :start-pos [x y]}])
-   (let [width (/ 100 (count (:bar/chords bar)))]
-     (for [chord (sort-by :coll/position (:bar/chords bar))]
-       ^{:key (:db/id chord)}
-       [:div {:style {:display "inline-block"
-                      :width (str width "%")
-                      :margin-right "5px"}}
-        (if (= selected (:db/id chord))
-          [editable-chord {:chord chord}]
-          [displayed-chord {:chord (parse (:chord/value chord))
-                            :on-click #(dispatch [:sheet/select-chord (:db/id chord)])}])]))
-   (when-let [{:keys [coord/x coord/y]} (:bar/coda bar)]
-     [draggable/component {:style {:width height :height height}
-                           :class "music-symbol music-symbol--coda"
-                           :mode :align-right
-                           :on-drag-end #(dispatch [:sheet/move-symbol :bar/coda %])
-                           :start-pos [x y]}])])
+  (let [symbols (group-by :symbol/type (:bar/symbols bar))]
+    [:div.bar
+     (for [{:keys [db/id coord/x coord/y]} (:symbol/segno symbols)]
+       ^{:key id}
+       [draggable/component
+        {:class (str "music-symbol music-symbol--segno")
+         :style {:width width :height height}
+         :on-drag-end #(dispatch [:sheet/move-symbol (:db/id bar) id %])
+         :start-pos [x y]}])
+     (let [width (/ 100 (count (:bar/chords bar)))]
+       (for [chord (sort-by :coll/position (:bar/chords bar))]
+         ^{:key (:db/id chord)}
+         [:div {:style {:display "inline-block"
+                        :width (str width "%")
+                        :margin-right "5px"}}
+          (if (= selected (:db/id chord))
+            [editable-chord {:chord chord}]
+            [displayed-chord {:chord (parse (:chord/value chord))
+                              :on-click #(dispatch [:sheet/select-chord (:db/id chord)])}])]))
+     (for [{:keys [db/id coord/x coord/y]} (:symbol/coda symbols)]
+       ^{:key id}
+       [draggable/component {:style {:width height :height height}
+                             :class "music-symbol music-symbol--coda"
+                             :mode :align-right
+                             :on-drag-end #(dispatch [:sheet/move-symbol (:db/id bar) id %])
+                             :start-pos [x y]}])]))

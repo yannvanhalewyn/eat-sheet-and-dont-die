@@ -97,13 +97,25 @@
            :db/cardinality :db.cardinality/one
            :db/doc "A child node's index in parent's card many relation"}]]}
 
- :sheet-bucket/add-coda-and-segno
- {:txes [[{:db/ident :bar/coda
-           :db/valueType :db.type/keyword
+ :sheet-bucket/add-symbols
+ {:txes [[{:db/ident :coord/x
+           :db/valueType :db.type/long
            :db/cardinality :db.cardinality/one
-           :db/doc "The position of a coda symbol on a bar"}
+           :db/doc "The x of a coordinate"}
+          {:db/ident :coord/y
+           :db/valueType :db.type/long
+           :db/cardinality :db.cardinality/one
+           :db/doc "The y of a coordinate"}]
 
-          {:db/ident :bar/segno
-           :db/valueType :db.type/boolean
+         [{:db/ident :symbol/coda}
+          {:db/ident :symbol/segno}
+          {:db/ident :symbol/type
+           :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one
-           :db/doc "The presence of a segno symbol on a bar"}]]}}
+           :db/doc "The type of a symbol"}]
+
+         [{:db/ident :bar/symbols
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/many
+           :db/isComponent true
+           :db/doc "The collection of symbols linked to a bar"}]]}}

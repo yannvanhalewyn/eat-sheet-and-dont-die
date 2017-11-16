@@ -12,16 +12,22 @@
                (d/db db-conn)
                (Long. (:user-id params))))))
 
-(defn- sort-children [root]
-  (postwalk
-    (fn [node]
-      (if (and (sequential? node) (map? (first node)))
-        (sort-by :coll/position node)
-        node))
-    root))
+(defn- sort-children [node]
+  (if (and (sequential? node) (map? (first node)))
+    (sort-by :coll/position node)
+    node))
+
+(defn- resolve-enums [keys db]
+  (fn [node]
+    (if (and (coll? node) (keys (first node)))
+      (update node 1 #(:db/ident (d/entity db (:db/id %))))
+      node)))
 
 (defn show [{:keys [db-conn params]}]
-  (response (sort-children (d/pull (d/db db-conn) '[*] (Long. (:eid params))))))
+  (let [db (d/db db-conn)]
+    (response (postwalk
+                (comp sort-children (resolve-enums #{:symbol/type} db))
+                (d/pull db '[*] (Long. (:eid params)))))))
 
 (defn create [{:keys [db-conn params]}]
   (let [res (d/transact db-conn

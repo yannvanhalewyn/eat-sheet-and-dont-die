@@ -83,11 +83,10 @@
 
 (reg-event-db
   :sheet/move-symbol
-  (fn [db [_ type pos]]
-    (if-let [loc (selectors/current-loc db)]
-      (let [new-sheet (zip/root (sheet-symbol/move loc type pos))]
-        (reducer/app db [:sheet/replace new-sheet]))
-      db)))
+  (fn [db [_ bar-id symbol-id pos]]
+    (reducer/app db [:sheet/replace
+                     (-> (selectors/sheet db)
+                       (sheet-symbol/move bar-id symbol-id pos))])))
 
 ;; Playlist actions
 ;; ================

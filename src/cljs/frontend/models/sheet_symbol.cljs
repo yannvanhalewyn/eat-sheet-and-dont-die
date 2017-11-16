@@ -1,7 +1,7 @@
 (ns frontend.models.sheet-symbol
-  (:require [clojure.zip :as zip :refer [up]]))
-
-(defn- position [x y] {:coord/x x :coord/y y})
+  (:require [frontend.models.sheet :as sheet]
+            [clojure.zip :as zip :refer [up]]
+            [shared.utils :as sutil]))
 
 ;; Constants
 ;; =========
@@ -10,15 +10,31 @@
 (def segno-width (* height segno-svg-ratio))
 (def coda-width height)
 
-(def defaults
-  {:bar/coda (position (/ coda-width 2) (- -4 height))
-   :bar/segno (position (/ (- segno-width) 2) (- -4 height))
-   :bar/start-repeat true
-   :bar/end-repeat true})
+(def floor (.-floor js/Math))
+
+(defn make [type]
+  (case type
+    :bar/coda {:db/id (sutil/gen-temp-id)
+               :symbol/type :symbol/coda
+               :coord/x (floor (/ coda-width 2))
+               :coord/y (floor (- -4 height))}
+    :bar/segno {:db/id (sutil/gen-temp-id)
+                :symbol/type :symbol/segno
+                :coord/x (floor (/ (- segno-width) 2))
+                :coord/y (floor (- -4 height))}
+    nil))
 
 (defn add [loc type]
-  (let [value (or (defaults type) (position 0 0))]
-    (zip/edit (up loc) update type #(if % nil value))))
+  (case type
+    (:bar/start-repeat :bar/end-repeat) (zip/edit (up loc) update type not)
+    (zip/edit (up loc) update :bar/symbols #(conj % (make type)))))
 
-(defn move [loc type pos]
-  (zip/edit (up loc) assoc type (apply position pos)))
+(defn move [sheet bar-id symbol-id [x y]]
+  (-> (sheet/navigate-to (sheet/zipper sheet) bar-id)
+    (zip/edit update :bar/symbols
+      (fn [symbols] (map
+                      #(if (= (:db/id %) symbol-id)
+                         (assoc % :coord/x (floor x) :coord/y (floor y))
+                         %)
+                      symbols)))
+    zip/root))
