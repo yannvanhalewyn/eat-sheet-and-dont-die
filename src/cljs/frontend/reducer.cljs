@@ -22,11 +22,11 @@
     (update state (:sheet-id arg1) sutil/replace-temp-ids (:temp-ids arg1))
     state))
 
-(defn selected-chord [state [type arg]]
+(defn selection [state [type arg]]
   (case type
     :app/init nil
     :sheet/deselect nil
-    :sheet/select-chord arg
+    :sheet/select arg
     :sheet/replace-zip (:db/id (zip/node arg))
     :response/create-sheet (:db/id (sheet/first-chord arg))
     :response/sync-sheet (if-let [new-id (get-in arg [:temp-ids state])]
@@ -50,6 +50,6 @@
 (def app
   (combine-reducers
     {:db/sheets.by-id sheets-by-id
-     :db/selected selected-chord
+     :db/selection selection
      :db/current-user current-user
      :db/active-route active-route}))

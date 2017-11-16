@@ -12,7 +12,7 @@
 (defn sheet [db]
   (get-in db [:db/sheets.by-id (current-sheet-id db)]))
 
-(def selected :db/selected)
+(def selected :db/selection)
 
 (defselector sheet-loc [sheet] (sheet/zipper sheet))
 

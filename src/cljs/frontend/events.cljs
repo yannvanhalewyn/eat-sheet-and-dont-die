@@ -19,10 +19,10 @@
 
 (reg-event-db
   :sheet/deselect
-  (fn [db] (assoc db :db/selected nil)))
+  (fn [db event] (reducer/app db event)))
 
 (reg-event-db
-  :sheet/select-chord
+  :sheet/select
   (fn [db event]
     (reducer/app db event)))
 

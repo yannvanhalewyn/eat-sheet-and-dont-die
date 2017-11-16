@@ -14,9 +14,10 @@
      (for [{:keys [db/id coord/x coord/y]} (:symbol/segno symbols)]
        ^{:key id}
        [draggable/component
-        {:class (str "music-symbol music-symbol--segno")
+        {:class (str "music-symbol music-symbol--segno" (when (= id selected) " selected"))
          :style {:width width :height height}
          :on-drag-end #(dispatch [:sheet/move-symbol (:db/id bar) id %])
+         :on-click #(dispatch [:sheet/select id])
          :start-pos [x y]}])
      (let [width (/ 100 (count (:bar/chords bar)))]
        (for [chord (sort-by :coll/position (:bar/chords bar))]
@@ -27,11 +28,12 @@
           (if (= selected (:db/id chord))
             [editable-chord {:chord chord}]
             [displayed-chord {:chord (parse (:chord/value chord))
-                              :on-click #(dispatch [:sheet/select-chord (:db/id chord)])}])]))
+                              :on-click #(dispatch [:sheet/select (:db/id chord)])}])]))
      (for [{:keys [db/id coord/x coord/y]} (:symbol/coda symbols)]
        ^{:key id}
        [draggable/component {:style {:width height :height height}
-                             :class "music-symbol music-symbol--coda"
+                             :class (str "music-symbol music-symbol--coda" (when (= id selected) " selected"))
                              :mode :align-right
+                             :on-click #(dispatch [:sheet/select id])
                              :on-drag-end #(dispatch [:sheet/move-symbol (:db/id bar) id %])
                              :start-pos [x y]}])]))
