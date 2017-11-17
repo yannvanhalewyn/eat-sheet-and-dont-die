@@ -11,18 +11,19 @@
            (.focus (r/dom-node this))
            (.select (r/dom-node this))))
        :reagent-render
-       (fn [{:keys [on-change value]} children]
+       (fn [{:keys [on-change value edit-trigger]} children]
          (if @editing
            [:input.editable
             {:type "text"
              :default-value value
              :on-key-down (fn [e]
-                            (.stopPropagation e) ;; Don't intervene with editor's keybindings
+                            ;; Don't intervene with editor's keybindings
+                            (.stopPropagation e)
                             (when (#{ENTER ESC TAB} (.-which e))
                               (reset! editing false)
                               (on-change (.. e -target -value))))
              :on-blur (fn [e]
                         (reset! editing false)
                         (on-change (.. e -target -value)))}]
-           [:span {:on-click #(reset! editing true)}
+           [:span {(or edit-trigger :on-click) #(reset! editing true)}
             children]))})))

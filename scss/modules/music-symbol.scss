@@ -1,16 +1,5 @@
 .music-symbol {
   height: 40px;
-  padding: 0 4px;
-  cursor: pointer;
-  padding: 20px;
-  border-radius: 5px;
-
-  &:hover {
-    border: 1px solid $light-grey5;
-  }
-  &.selected {
-    border: 1px solid $light-grey4;
-  }
 }
 
 .music-symbol--segno {

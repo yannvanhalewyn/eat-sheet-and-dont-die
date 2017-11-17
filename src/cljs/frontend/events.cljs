@@ -68,6 +68,13 @@
   (fn [db event] (reducer/app db event)))
 
 (reg-event-db
+  :sheet/edit-textbox
+  (fn [db [_ bar-id textbox-id value]]
+    (reducer/app db
+      [:sheet/replace
+       (sheet-symbol/edit (selectors/sheet db) bar-id textbox-id value)])))
+
+(reg-event-db
   :sheet/set-artist
   (fn [db event] (reducer/app db event)))
 

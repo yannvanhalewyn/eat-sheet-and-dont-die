@@ -21,15 +21,17 @@
 
 (defn component [{:keys [start-pos]}]
   (let [drag (r/atom {:offset start-pos})]
-    (fn [{:keys [on-click on-drag-end mode] :as props}]
+    (fn [{:keys [on-click on-drag-end mode] :as props} & children]
       (let [[x y] (:offset @drag)]
-        [:div.draggable {:on-mouse-down (mouse-down-handler drag props)
-                         :on-mouse-up (when-let [callback on-drag-end]
-                                        #(callback (:offset @drag)))
-                         :on-click (stop-propagation on-click)
-                         :class (:class props)
-                         :style (assoc (:style props)
-                                  :position "absolute"
-                                  :top y
-                                  :left (when-not (= :align-right mode) x)
-                                  :right (when (= :align-right mode) (- x)))}]))))
+        (into
+          [:div.draggable {:on-mouse-down (mouse-down-handler drag props)
+                           :on-mouse-up (when-let [callback on-drag-end]
+                                          #(callback (:offset @drag)))
+                           :on-click (stop-propagation (or on-click identity))
+                           :class (:class props)
+                           :style (assoc (:style props)
+                                    :position "absolute"
+                                    :top y
+                                    :left (when-not (= :align-right mode) x)
+                                    :right (when (= :align-right mode) (- x)))}]
+          children)))))

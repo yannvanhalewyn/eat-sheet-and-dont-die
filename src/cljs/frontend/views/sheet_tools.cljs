@@ -16,4 +16,6 @@
    [:button.sheet-tool {:on-click (handler :bar/segno)}
     [:div.sheet-tool--segno]]
    [:button.sheet-tool {:on-click (handler :bar/coda)}
-    [:div.sheet-tool--coda]]])
+    [:div.sheet-tool--coda]]
+   [:button.sheet-tool {:on-click (handler :bar/textbox)}
+    [:div.sheet-tool--text "ADD TEXT"]]])
