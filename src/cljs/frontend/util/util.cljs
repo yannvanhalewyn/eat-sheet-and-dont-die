@@ -33,13 +33,15 @@
     nil))
 
 (defn event->keychord
-  "Takes a keydown event, and returns a vector of all important keys like META, SHIFT, CTRL, ALT,.."
+  "Takes a keydown event, and returns a vector of all important keys
+  like META, SHIFT, CTRL, ALT,.."
   [e]
-  (let [code (.-which e)
+  (let [code (.-keyCode e)
+        ctrl (if (.-ctrlKey e) :ctrl)
         shift (if (.-shiftKey e) :shift)
         alt (if (.-altKey e) :alt)
         meta (if (.-metaKey e) :meta)]
-    (filter identity [alt meta shift code])))
+    (filter identity [ctrl alt meta shift code])))
 
 (defn- e->pos
   "Given an event will return the position tuple [x y] for the mouse coords."

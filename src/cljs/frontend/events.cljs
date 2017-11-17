@@ -26,14 +26,15 @@
   (fn [db event]
     (reducer/app db event)))
 
-(reg-event-db
+(reg-event-fx
   :sheet/update-chord
-  (fn [db [_ id value]]
+  (fn [{:keys [db]} [_ id value next]]
     (let [new-sheet (-> (sheet/zipper (selectors/sheet db))
                       (sheet/navigate-to id)
                       (zip/edit assoc :chord/value value)
-                      zip/root)]
-      (reducer/app db [:sheet/replace new-sheet]))))
+                      zip/root)
+          new-db (reducer/app db [:sheet/replace new-sheet])]
+      (if next {:db new-db :dispatch next} {:db new-db}))))
 
 (reg-event-db
   :sheet/append

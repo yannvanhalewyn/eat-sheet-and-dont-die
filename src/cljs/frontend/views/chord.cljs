@@ -1,9 +1,13 @@
 (ns frontend.views.chord
   (:require [reagent.core :as reagent]
             [frontend.util.util :refer [stop-propagation]]
+            [frontend.keybindings :refer [keyboard-shortcuts]]
             [re-frame.core :refer [dispatch]]
             [clojure.core.match :refer-macros [match]]
-            [clojure.string :as str]))
+            [goog.events :as events]
+            [goog.events.EventType :refer [KEYDOWN]]
+            [clojure.string :as str]
+            [frontend.util.util :as util]))
 
 (defn flat [] [:i.music-notation "L"])
 (defn sharp [] [:i.music-notation "K"])
@@ -55,14 +59,24 @@
          (str/upper-case note)
          (case acc :flat [flat] :sharp [sharp] nil)])])])
 
+(defn- keydown-handler [e id]
+  (when-let [rf-event (keyboard-shortcuts (util/event->keychord e))]
+    (.stopPropagation e)
+    (dispatch [:sheet/update-chord id (.. e -target -value) rf-event])))
+
 (defn editable-chord
   "An input box for editing a chord"
   []
   (reagent/create-class
     {:component-did-mount
      (fn [this]
-       (.focus (reagent/dom-node this))
-       (.select (reagent/dom-node this)))
+       (let [node (reagent/dom-node this)
+             {:keys [chord]} (reagent/props this)]
+         (doto node .focus .select
+               ;; Listen with goog.events library io react, stop propagation
+               ;; not working correctly otherwise since the document
+               ;; listener is also from goog.events.BrowserEvent
+               (events/listen KEYDOWN #(keydown-handler % (:db/id chord))))))
      :reagent-render
      (fn [{:keys [chord]}]
        [:input.chord--editing
