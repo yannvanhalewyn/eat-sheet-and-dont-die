@@ -3,9 +3,13 @@
   padding: 0 4px;
   cursor: pointer;
   padding: 20px;
-  &:hover, &.selected {
+  border-radius: 5px;
+
+  &:hover {
+    border: 1px solid $light-grey5;
+  }
+  &.selected {
     border: 1px solid $light-grey4;
-    border-radius: 5px;
   }
 }
 

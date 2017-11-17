@@ -5,7 +5,7 @@
             [frontend.reducer :as reducer]
             [frontend.models.sheet :as sheet]
             [frontend.models.sheet-symbol :as sheet-symbol]
-            [shared.utils :refer [gen-temp-id key-by dissoc-in]]
+            [shared.utils :as sutil :refer [gen-temp-id key-by dissoc-in]]
             [clojure.zip :as zip]))
 
 (reg-event-fx
@@ -55,6 +55,13 @@
   (fn [db [_ element]]
     (reducer/app db [:sheet/replace-zip
                      (sheet/delete (selectors/current-loc db) element)])))
+
+(reg-event-db
+  :sheet/remove-selection
+  (fn [db _]
+    (.log js/console (selectors/selected db))
+    (reducer/app db [:sheet/replace
+                     (sutil/delete-by-id (selectors/sheet db) (selectors/selected db))])))
 
 (reg-event-db
   :sheet/set-title

@@ -14,7 +14,8 @@
      (for [{:keys [db/id coord/x coord/y]} (:symbol/segno symbols)]
        ^{:key id}
        [draggable/component
-        {:class (str "music-symbol music-symbol--segno" (when (= id selected) " selected"))
+        {:class (str "music-symbol music-symbol--segno"
+                  (when (= id selected) " selected"))
          :style {:width width :height height}
          :on-drag-end #(dispatch [:sheet/move-symbol (:db/id bar) id %])
          :on-click #(dispatch [:sheet/select id])
@@ -32,7 +33,8 @@
      (for [{:keys [db/id coord/x coord/y]} (:symbol/coda symbols)]
        ^{:key id}
        [draggable/component {:style {:width height :height height}
-                             :class (str "music-symbol music-symbol--coda" (when (= id selected) " selected"))
+                             :class (str "music-symbol music-symbol--coda"
+                                      (when (= id selected) " selected"))
                              :mode :align-right
                              :on-click #(dispatch [:sheet/select id])
                              :on-drag-end #(dispatch [:sheet/move-symbol (:db/id bar) id %])
