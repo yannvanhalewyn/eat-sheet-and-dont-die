@@ -5,7 +5,6 @@
             [frontend.util.util :as util :refer [presence prevent-default]]
             [frontend.keybindings :refer [keyboard-shortcuts]]
             [re-frame.core :refer [subscribe dispatch]]
-            [goog.events :as events]
             [goog.events.EventType :refer [KEYDOWN]]
             [reagent.core :as reagent]))
 
@@ -18,9 +17,9 @@
   (reagent/create-class
     {:component-will-mount
      #(set! (.-listener js/document)
-        (events/listen js/document KEYDOWN on-key-down))
+        (.addEventListener js/document KEYDOWN #'on-key-down))
      :component-will-unmount
-     #(events/unlistenByKey (.-listener js/document))
+     #(.removeEventListener js/document KEYDOWN #'on-key-down)
      :reagent-render
      (fn []
        (let [sheet @(subscribe [:sub/sheet sheet-id])

@@ -4,7 +4,6 @@
             [frontend.keybindings :refer [keyboard-shortcuts]]
             [re-frame.core :refer [dispatch]]
             [clojure.core.match :refer-macros [match]]
-            [goog.events :as events]
             [goog.events.EventType :refer [KEYDOWN]]
             [clojure.string :as str]
             [frontend.util.util :as util]))
@@ -69,18 +68,12 @@
   []
   (reagent/create-class
     {:component-did-mount
-     (fn [this]
-       (let [node (reagent/dom-node this)
-             {:keys [chord]} (reagent/props this)]
-         (doto node .focus .select
-               ;; Listen with goog.events library io react, stop propagation
-               ;; not working correctly otherwise since the document
-               ;; listener is also from goog.events.BrowserEvent
-               (events/listen KEYDOWN #(keydown-handler % (:db/id chord))))))
+     #(doto (reagent/dom-node %) .focus .select)
      :reagent-render
      (fn [{:keys [chord]}]
        [:input.chord--editing
         {:type "text"
          :on-click #(.stopPropagation %)
+         :on-key-down #(keydown-handler % (:db/id chord))
          :on-blur #(dispatch [:sheet/update-chord (:db/id chord) (.. % -target -value)])
          :default-value (:chord/value chord)}])}))
