@@ -65,3 +65,5 @@
         (remove #(= id (:db/id %)) node)
         node))
     tree))
+
+(def presence #(if (empty? %) nil %))

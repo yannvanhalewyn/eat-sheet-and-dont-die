@@ -48,8 +48,6 @@
   [e]
   [(.-clientX e) (.-clientY e)])
 
-(def presence #(if (empty? %) nil %))
-
 (defn combine-reducers
   "Returns a reducer fn that invokes every reducer inside the reducers
   map, and constructs a state object with the same shape."

@@ -1,8 +1,7 @@
 (ns frontend.views.section
   (:require [frontend.views.bar :as bar]
-            [frontend.util.util :refer [presence]]
             [frontend.views.editable :as editable]
-            [shared.utils :refer [mappad]]
+            [shared.utils :refer [mappad presence]]
             [re-frame.core :refer [dispatch]]))
 
 (defn- barline
