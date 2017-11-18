@@ -19,12 +19,8 @@ $height: 40px;
   cursor: pointer;
   border-radius: 5px;
 
-  &:not([disabled]):hover {
+  &:hover {
     background: $light-grey5;
-  }
-
-  &[disabled] {
-    cursor: default;
   }
 }
 
@@ -32,10 +28,6 @@ $height: 40px;
   background-color: black;
   background-size: contain;
   height: 100%;
-
-  .sheet-tool-btn[disabled] & {
-    background: $light-grey3;
-  }
 }
 
 .sheet-tool--start-repeat {
