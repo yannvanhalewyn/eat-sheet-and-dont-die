@@ -7,15 +7,15 @@
     (fn []
       (dispatch [:sheet/add-symbol type]))))
 
-(defn component [props]
-  [:div.sheet-tools
-   [:button.sheet-tool {:on-click (handler :bar/start-repeat)}
-    [:div.sheet-tool--start-repeat]]
-   [:button.sheet-tool {:on-click (handler :bar/end-repeat)}
-    [:div.sheet-tool--end-repeat]]
-   [:button.sheet-tool {:on-click (handler :attachment/segno)}
-    [:div.sheet-tool--segno]]
-   [:button.sheet-tool {:on-click (handler :attachment/coda)}
-    [:div.sheet-tool--coda]]
-   [:button.sheet-tool {:on-click (handler :attachment/textbox)}
-    [:div.sheet-tool--insert-text]]])
+(defn- tool [{:keys [type disabled]}]
+  [:button.sheet-tool-btn {:on-click (stop-propagation #(dispatch [:sheet/add-symbol type]))
+                           :disabled disabled}
+   [:div.sheet-tool {:class (str "sheet-tool--" (name type))}]])
+
+(defn component [{:keys [selection]}]
+  (let [disabled (not= :selection/chord (:selection/type selection))]
+    [:div.sheet-tools
+     (for [type [:bar/start-repeat :bar/end-repeat :attachment/segno :attachment/coda
+                 :attachment/textbox]]
+       ^{:key type}
+       [tool {:type type :disabled disabled}])]))

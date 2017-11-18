@@ -11,7 +11,7 @@
 }
 
 $height: 40px;
-.sheet-tool {
+.sheet-tool-btn {
   padding: 0;
   width: 50px;
   height: 100%;
@@ -19,42 +19,41 @@ $height: 40px;
   cursor: pointer;
   border-radius: 5px;
 
-  &:hover {background: $light-grey5; }
+  &:not([disabled]):hover {
+    background: $light-grey5;
+  }
+
+  &[disabled] {
+    cursor: default;
+  }
 }
 
-$svg-ratio: 18 / 80;
-$width: $height * $svg-ratio;
+.sheet-tool {
+  background-color: black;
+  background-size: contain;
+  height: 100%;
+
+  .sheet-tool-btn[disabled] & {
+    background: $light-grey3;
+  }
+}
+
 .sheet-tool--start-repeat {
-  @include background-image("/img/start-repeat.svg");
-  height: $height;
-  width: $height - $width / 2;
-  .row & { margin-left: -$width; }
+  @include background-svg("/img/start-repeat.svg");
 }
 
 .sheet-tool--end-repeat {
-  @include background-image("/img/end-repeat.svg");
-  height: $height;
-  width: $height - $width / 2;
+  @include background-svg("/img/end-repeat.svg");
 }
 
 .sheet-tool--segno {
-  $svg-ratio: 54 / 80;
-  $width: $height * $svg-ratio;
-  @include background-image("/img/segno.svg");
-  height: $height;
-  width: $width;
+  @include background-svg("/img/segno.svg");
 }
 
 .sheet-tool--coda {
-  $width: $height;
-  @include background-image("/img/coda.svg");
-  height: $height;
-  width: $height;
+  @include background-svg("/img/coda.svg");
 }
 
-.sheet-tool--insert-text {
-  $width: $height;
-  @include background-image("/img/insert-text.svg");
-  height: $height;
-  width: $height;
+.sheet-tool--textbox {
+  @include background-svg("/img/insert-text.svg");
 }
