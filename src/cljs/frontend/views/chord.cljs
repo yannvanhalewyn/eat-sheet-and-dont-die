@@ -1,7 +1,7 @@
 (ns frontend.views.chord
   (:require [reagent.core :as reagent]
             [frontend.util.util :refer [stop-propagation]]
-            [frontend.keybindings :refer [keyboard-shortcuts]]
+            [frontend.keybindings :as bindings]
             [re-frame.core :refer [dispatch]]
             [clojure.core.match :refer-macros [match]]
             [goog.events :as events]
@@ -60,8 +60,8 @@
          (case acc :flat [flat] :sharp [sharp] nil)])])])
 
 (defn- keydown-handler [e id]
-  (when-let [rf-event (keyboard-shortcuts (util/event->keychord e))]
-    (.stopPropagation e)
+  (.stopPropagation e)
+  (when-let [rf-event (bindings/chord-context (util/event->keychord e))]
     (dispatch [:sheet/update-chord id (.. e -target -value) rf-event])))
 
 (defn editable-chord

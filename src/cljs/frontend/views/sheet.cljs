@@ -3,14 +3,14 @@
             [frontend.views.editable :as editable]
             [frontend.views.sheet-tools :as sheet-tools]
             [frontend.util.util :as util :refer [presence prevent-default]]
-            [frontend.keybindings :refer [keyboard-shortcuts]]
+            [frontend.keybindings :as bindings]
             [re-frame.core :refer [subscribe dispatch]]
             [goog.events :as events]
             [goog.events.EventType :refer [KEYDOWN]]
             [reagent.core :as reagent]))
 
 (defn on-key-down [e]
-  (when-let [rf-event (keyboard-shortcuts (util/event->keychord e))]
+  (when-let [rf-event (bindings/global-context (util/event->keychord e))]
     (.preventDefault e)
     (dispatch rf-event)))
 
