@@ -4,6 +4,7 @@
             [frontend.keybindings :refer [keyboard-shortcuts]]
             [re-frame.core :refer [dispatch]]
             [clojure.core.match :refer-macros [match]]
+            [goog.events :as events]
             [goog.events.EventType :refer [KEYDOWN]]
             [clojure.string :as str]
             [frontend.util.util :as util]))
@@ -68,12 +69,14 @@
   []
   (reagent/create-class
     {:component-did-mount
-     #(doto (reagent/dom-node %) .focus .select)
+     (fn [this]
+       (doto (reagent/dom-node this) .focus .select
+             (events/listen KEYDOWN
+               #(keydown-handler % (:db/id (:chord (reagent/props this)))))))
      :reagent-render
      (fn [{:keys [chord]}]
        [:input.chord--editing
         {:type "text"
          :on-click #(.stopPropagation %)
-         :on-key-down #(keydown-handler % (:db/id chord))
          :on-blur #(dispatch [:sheet/update-chord (:db/id chord) (.. % -target -value)])
          :default-value (:chord/value chord)}])}))
