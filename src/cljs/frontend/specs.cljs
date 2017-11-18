@@ -7,8 +7,8 @@
 ;; ======
 
 (s/def :route/handler (set (map :handler router/ROUTES)))
-(s/def :route/params map?)
-(s/def :route/query-params map?)
+(s/def :route/params (s/nilable map?))
+(s/def :route/query-params (s/nilable map?))
 (s/def ::route (s/keys :req [:route/handler]
                  :opt [:route/params :route/query-params]))
 
@@ -25,7 +25,10 @@
 (s/def :db/current-user (s/nilable ::specs/user))
 (s/def :db/active-route ::route)
 (s/def :db/selection (s/nilable ::selection))
+(s/def :db/sheets.by-id (s/every-kv :db/id ::specs/sheet))
+
 
 (s/def ::app-db (s/keys :req [:db/active-route
                               :db/current-user
-                              :db/selection]))
+                              :db/selection
+                              :db/sheets.by-id]))

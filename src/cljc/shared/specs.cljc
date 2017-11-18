@@ -63,7 +63,8 @@
 (s/def :bar/chords (s/coll-of ::chord :min-count 1 :gen-max 4))
 (s/def :bar/start-repeat boolean?)
 (s/def :bar/end-repeat boolean?)
-(s/def ::bar (s/keys :req [:db/id :coll/position :bar/chords :bar/start-repeat :bar/end-repeat]))
+(s/def ::bar (s/keys :req [:db/id :coll/position :bar/chords]
+               :opt [:bar/start-repeat :bar/end-repeat]))
 
 (s/def :row/bars (s/coll-of ::bar :min-count 1 :gen-max 3))
 (s/def ::row (s/keys :req [:db/id :coll/position :row/bars]))

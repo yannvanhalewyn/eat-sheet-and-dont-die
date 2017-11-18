@@ -35,7 +35,11 @@
                 :sheet/title "Title"
                 :sheet/artist "Artist"
                 :sheet/sections {:section/title "Intro"
-                                 :section/rows {:row/bars {:bar/chords {:chord/value ""}}}}}
+                                 :coll/position 0
+                                 :section/rows {:coll/position 0
+                                                :row/bars {:coll/position 0
+                                                           :bar/chords {:coll/position 0
+                                                                        :chord/value ""}}}}}
                {:db/id (:owner-id params) :playlist/sheets "new-sheet"}])]
     (try
       (response
