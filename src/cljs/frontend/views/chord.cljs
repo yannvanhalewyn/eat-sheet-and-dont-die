@@ -35,10 +35,11 @@
   [{:keys [:chord/root :chord/triad :chord/seventh :chord/ninth]}]
   [:span
    (match [triad seventh ninth]
-     [:diminished :minor _] [half-diminished]
-     [_ :major NINTH] [:span [major-seventh] [Ninth NINTH]]
-     [_ :minor NINTH] [:span [:span (if (= :natural NINTH) "9" [:span "7" [Ninth NINTH]])]]
-     [:diminished :diminished NINTH] [:span [diminished] [Ninth NINTH]]
+     [:diminished :flat _] [half-diminished]
+     [_ :natural NINTH] [:span [major-seventh] [Ninth NINTH]]
+     [_ :flat NINTH] [:span [:span (if (= :natural NINTH) "9" [:span "7" [Ninth NINTH]])]]
+     [_ :diminished NINTH] [:span [diminished] [Ninth NINTH]]
+     [_ :diminished _] [diminished]
      [:diminished _ _] [:span [flat] "5"]
      [:augmented _ _] "+"
      [_ _ :natural] "9"

@@ -21,7 +21,8 @@
   (str
     (root->str root)
     (case triad :minor "-" :augmented "+" :diminished "b5" "")
-    (when-not (= :natural ninth) (case seventh :major "Maj7" :minor "7" ""))
+    (when-not (= :natural ninth)
+      (case seventh :natural "Maj7" :flat "7" :diminished "dim" ""))
     (case ninth :natural "9" :flat "b9" :sharp "#9" "")
     (when sus (str "sus" sus))
     (when bass (str "/" (root->str bass)))))
@@ -46,7 +47,7 @@
 ;; Parsed chord
 (s/def :chord/root (s/tuple root? accidental?))
 (s/def :chord/triad #{:minor :major :augmented :diminished})
-(s/def :chord/seventh (s/nilable #{:minor :major}))
+(s/def :chord/seventh (s/nilable #{:natural :flat :diminished}))
 (s/def :chord/ninth (s/nilable accidental?))
 (s/def :chord/bass (s/nilable :chord/root))
 (s/def :chord/sus (s/nilable #{"2" "4"}))

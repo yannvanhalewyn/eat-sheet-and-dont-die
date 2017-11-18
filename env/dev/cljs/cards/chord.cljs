@@ -77,19 +77,19 @@
 ;; Sevenths
 (defcard-rg Sevenths
   [:div
-   [for-all-roots {:chord/seventh :minor} "Dominant seventh"]
-   [for-all-roots {:chord/seventh :major} "Major seventh"]
-   [for-all-roots {:chord/triad :minor :chord/seventh :minor} "Minor sevenths"]
-   [for-all-roots {:chord/triad :minor :chord/seventh :major} "Minor major sevenths"]
-   [for-all-roots {:chord/triad :diminished :chord/seventh :minor} "Half diminished"]
+   [for-all-roots {:chord/seventh :flat} "Dominant seventh"]
+   [for-all-roots {:chord/seventh :natural} "Major seventh"]
+   [for-all-roots {:chord/triad :minor :chord/seventh :flat} "Minor sevenths"]
+   [for-all-roots {:chord/triad :minor :chord/seventh :natural} "Minor major sevenths"]
+   [for-all-roots {:chord/triad :diminished :chord/seventh :flat} "Half diminished"]
    [for-all-roots {:chord/triad :diminished :chord/seventh :diminished} "Diminished"]])
 
 ;; Ninths
 (defcard-rg Ninths
   [:div
-   [for-all-roots {:chord/seventh :minor :chord/ninth :natural} "Dominant ninths"]
-   [for-all-roots {:chord/seventh :major :chord/ninth :natural} "Major ninths"]
-   [for-all-roots {:chord/triad :minor :chord/seventh :minor :chord/ninth :natural} "Minor ninths"]
+   [for-all-roots {:chord/seventh :flat :chord/ninth :natural} "Dominant ninths"]
+   [for-all-roots {:chord/seventh :natural :chord/ninth :natural} "Major ninths"]
+   [for-all-roots {:chord/triad :minor :chord/seventh :flat :chord/ninth :natural} "Minor ninths"]
    [for-all-roots {:chord/ninth :sharp} "Sharp ninths"]
    [for-all-roots {:chord/ninth :flat} "Flat ninths"]])
 

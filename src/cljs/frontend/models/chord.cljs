@@ -2,7 +2,7 @@
   (:require [shared.specs :as specs]
             [clojure.core.match :refer-macros [match]]
             [clojure.spec.alpha :as s]
-            [goog.string :refer [format contains caseInsensitiveContains]]
+            [goog.string :refer [format contains]]
             [goog.string.format]
             [clojure.string :as str]))
 
@@ -11,7 +11,7 @@
 (def root-regx (str "([#b]?[0-7])|([a-gA-G][#b]?)(?!5)"))
 ;; Negative lookahead for 'm' that is not part of 'maj'
 (def triad-regx (str "min|m(?!aj)|-|aug|\\+|#5|b5"))
-(def extension-regx (str "(7|maj|Maj)?7?([#b]?9)?([#b]5)?"))
+(def extension-regx (str "(7|maj|Maj|dim)?7?([#b]?9)?([#b]5)?"))
 (def sus-regex (str "sus([24])"))
 (def bass-regx (str "([#b]?[0-7]|[a-gA-G][#b]?)"))
 (def chord-regex (re-pattern (format "(%s)(%s)?(%s)(%s)?(\\/%s)?"
@@ -38,8 +38,9 @@
                       :else :major))
      :chord/seventh (let [e (str/lower-case (or extension ""))]
                       (cond
-                        (contains e "maj") :major
-                        (contains e "7") :minor
+                        (contains e "maj") :natural
+                        (contains e "7") :flat
+                        (contains e "dim") :diminished
                         :else nil))
      :chord/ninth (match ninth
                     "9" :natural
