@@ -18,4 +18,4 @@
    [:button.sheet-tool {:on-click (handler :attachment/coda)}
     [:div.sheet-tool--coda]]
    [:button.sheet-tool {:on-click (handler :attachment/textbox)}
-    [:div.sheet-tool--text "ADD TEXT"]]])
+    [:div.sheet-tool--insert-text]]])

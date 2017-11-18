@@ -5,6 +5,7 @@
   right: 0;
   height: 70px;
   padding: 10px 20px;
+  margin-right: 5px;
   box-shadow: 0 -2px 5px 0 rgba(182,181,181,0.50);
   background: #FFF;
 }
@@ -47,6 +48,13 @@ $width: $height * $svg-ratio;
 .sheet-tool--coda {
   $width: $height;
   @include background-image("/img/coda.svg");
+  height: $height;
+  width: $height;
+}
+
+.sheet-tool--insert-text {
+  $width: $height;
+  @include background-image("/img/insert-text.svg");
   height: $height;
   width: $height;
 }

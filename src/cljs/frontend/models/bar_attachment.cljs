@@ -35,8 +35,8 @@
     :attachment/textbox {:db/id (sutil/gen-temp-id)
                          :attachment/type :attachment/textbox
                          :textbox/value "My Text"
-                         :coord/x 0
-                         :coord/y 30}
+                         :coord/x 10
+                         :coord/y 45}
     nil))
 
 (defn add
