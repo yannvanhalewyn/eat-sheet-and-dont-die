@@ -63,8 +63,20 @@
 (s/def :bar/chords (s/coll-of ::chord :min-count 1 :gen-max 4))
 (s/def :bar/start-repeat boolean?)
 (s/def :bar/end-repeat boolean?)
+
+;; Attachments
+(s/def :coord/x int?)
+(s/def :coord/y int?)
+(s/def :attachment/type #{:symbol/coda :symbol/segno :attachment/textbox})
+(s/def :textbox/value string?)
+
+(s/def :attachment/symbol (s/keys :req [:db/id :coord/x :coord/y :attachment/type]))
+(s/def :attachment/textbox (s/keys :req [:db/id :coord/x :coord/y
+                                         :attachment/type :textbox/value]))
+(s/def :bar/attachments (s/coll-of (s/or :symbol :attachment/symbol :texbox :attachment/textbox)))
+
 (s/def ::bar (s/keys :req [:db/id :coll/position :bar/chords]
-               :opt [:bar/start-repeat :bar/end-repeat]))
+               :opt [:bar/start-repeat :bar/end-repeat :bar/attachments]))
 
 (s/def :row/bars (s/coll-of ::bar :min-count 1 :gen-max 3))
 (s/def ::row (s/keys :req [:db/id :coll/position :row/bars]))

@@ -3,7 +3,8 @@
             [frontend.views.chord :refer [editable-chord displayed-chord]]
             [frontend.views.util.draggable :as draggable]
             [re-frame.core :refer [dispatch]]
-            [frontend.views.editable :as editable]))
+            [frontend.views.editable :as editable]
+            [shared.utils :refer [presence]]))
 
 (def svg-ratio (/ 54 80))
 (def height 30)
@@ -35,7 +36,7 @@
        [editable/component {:edit-trigger :on-double-click
                             :on-change #(dispatch [:sheet/edit-textbox (:db/id bar) id %])
                             :value value}
-        [:span value]]])))
+        [:span (or (presence value) "Enter text")]]])))
 
 (defn component [{:keys [bar selection] :as props}]
   [:div.bar

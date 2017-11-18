@@ -34,7 +34,7 @@
                        :coord/y (floor (- -4 height))}
     :attachment/textbox {:db/id (sutil/gen-temp-id)
                          :attachment/type :attachment/textbox
-                         :textbox/value "My Text"
+                         :textbox/value ""
                          :coord/x 10
                          :coord/y 45}
     nil))
