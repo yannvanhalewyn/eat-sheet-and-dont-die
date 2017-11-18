@@ -11,7 +11,6 @@
 
 (defn component [{:keys [bar selected] :as props}]
   (let [symbols (group-by :attachment/type (:bar/attachments bar))]
-    (.log js/console symbols)
     [:div.bar
      ;; Segno's
      ;; =======

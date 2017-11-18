@@ -4,7 +4,7 @@
             [frontend.router :as router]
             [frontend.reducer :as reducer]
             [frontend.models.sheet :as sheet]
-            [frontend.models.sheet-symbol :as sheet-symbol]
+            [frontend.models.bar-attachment :as attachment]
             [shared.utils :as sutil :refer [gen-temp-id key-by dissoc-in]]
             [clojure.zip :as zip]))
 
@@ -59,7 +59,6 @@
 (reg-event-db
   :sheet/remove-selection
   (fn [db _]
-    (.log js/console (selectors/selected db))
     (reducer/app db [:sheet/replace
                      (sutil/delete-by-id (selectors/sheet db) (selectors/selected db))])))
 
@@ -72,7 +71,10 @@
   (fn [db [_ bar-id textbox-id value]]
     (reducer/app db
       [:sheet/replace
-       (sheet-symbol/edit (selectors/sheet db) bar-id textbox-id value)])))
+       (-> (sheet/zipper (selectors/sheet db))
+         (sheet/navigate-to bar-id)
+         (attachment/set-value textbox-id value)
+         zip/root)])))
 
 (reg-event-db
   :sheet/set-artist
@@ -92,7 +94,7 @@
   :sheet/add-symbol
   (fn [db [_ type]]
     (if-let [loc (selectors/current-loc db)]
-      (let [new-sheet (zip/root (sheet-symbol/add loc type))]
+      (let [new-sheet (zip/root (attachment/add loc type))]
         (reducer/app db [:sheet/replace new-sheet]))
       db)))
 
@@ -100,8 +102,10 @@
   :sheet/move-symbol
   (fn [db [_ bar-id symbol-id pos]]
     (reducer/app db [:sheet/replace
-                     (-> (selectors/sheet db)
-                       (sheet-symbol/move bar-id symbol-id pos))])))
+                     (-> (sheet/zipper (selectors/sheet db))
+                       (sheet/navigate-to bar-id)
+                       (attachment/move symbol-id pos)
+                       zip/root)])))
 
 ;; Playlist actions
 ;; ================

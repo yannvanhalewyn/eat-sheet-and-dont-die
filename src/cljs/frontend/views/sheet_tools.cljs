@@ -13,9 +13,9 @@
     [:div.sheet-tool--start-repeat]]
    [:button.sheet-tool {:on-click (handler :bar/end-repeat)}
     [:div.sheet-tool--end-repeat]]
-   [:button.sheet-tool {:on-click (handler :bar/segno)}
+   [:button.sheet-tool {:on-click (handler :attachment/segno)}
     [:div.sheet-tool--segno]]
-   [:button.sheet-tool {:on-click (handler :bar/coda)}
+   [:button.sheet-tool {:on-click (handler :attachment/coda)}
     [:div.sheet-tool--coda]]
-   [:button.sheet-tool {:on-click (handler :bar/textbox)}
+   [:button.sheet-tool {:on-click (handler :attachment/textbox)}
     [:div.sheet-tool--text "ADD TEXT"]]])
