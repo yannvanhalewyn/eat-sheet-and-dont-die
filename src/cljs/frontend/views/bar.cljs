@@ -43,6 +43,7 @@
        ^{:key id}
        [draggable/component {:start-pos [x y]
                              :class "draggable--textbox"
+                             :on-drag-end #(dispatch [:sheet/move-symbol (:db/id bar) id %])
                              :on-click #(dispatch [:sheet/select id])}
         [editable/component {:edit-trigger :on-double-click
                              :on-change #(dispatch [:sheet/edit-textbox (:db/id bar) id %])
