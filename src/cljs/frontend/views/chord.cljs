@@ -9,8 +9,12 @@
             [clojure.string :as str]
             [frontend.util.util :as util]))
 
-(defn flat [] [:i.music-notation "L"])
-(defn sharp [] [:i.music-notation "K"])
+(defn unicode [{:keys [class code]}]
+  [:span {:class class
+          :dangerouslySetInnerHTML {:__html (str "&#" code)}}])
+
+(defn flat [] [unicode {:class "accidental--flat" :code "9837"}])
+(defn sharp [] [unicode {:class "accidental--sharp" :code "9839"}])
 (defn diminished [] [:span "\u006F"])
 (defn half-diminished [] [:span "\u00F8"])
 (defn major-seventh [] [:span "\u0394"])
@@ -25,8 +29,9 @@
   root and triad"
   [{[root accidental] :chord/root triad :chord/triad}]
   [:span
-   (str/upper-case root)
-   (condp = accidental :flat [flat] :sharp [sharp] nil)
+   [:span (str/upper-case root)]
+   [:span.chord__root-accidental
+    (case accidental :flat [flat] :sharp [sharp] nil)]
    (when (= :minor triad) "-")])
 
 (defn- extension
@@ -55,10 +60,10 @@
      [:span [base chord]
       [:small.chord__extension [extension chord]]
       (when-let [sus (:chord/sus chord)] [:small.chord__extension "sus" sus])
-      (if-let [[note acc] (:chord/bass chord)]
+      (when-let [[note acc] (:chord/bass chord)]
         [:small.chord__inversion "/"
          (str/upper-case note)
-         (case acc :flat [flat] :sharp [sharp] nil)])])])
+         [:span.chord__root-accidental (case acc :flat [flat] :sharp [sharp] nil)]])])])
 
 (defn- keydown-handler [e id]
   (.stopPropagation e)

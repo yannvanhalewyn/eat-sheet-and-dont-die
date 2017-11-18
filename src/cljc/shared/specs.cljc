@@ -74,7 +74,8 @@
 (s/def :attachment/symbol (s/keys :req [:db/id :coord/x :coord/y :attachment/type]))
 (s/def :attachment/textbox (s/keys :req [:db/id :coord/x :coord/y
                                          :attachment/type :textbox/value]))
-(s/def :bar/attachments (s/coll-of (s/or :symbol :attachment/symbol :texbox :attachment/textbox)))
+(s/def :bar/attachments (s/coll-of (s/or :symbol :attachment/symbol :texbox :attachment/textbox)
+                          :gen-max 1))
 
 (s/def ::bar (s/keys :req [:db/id :coll/position :bar/chords]
                :opt [:bar/start-repeat :bar/end-repeat :bar/attachments]))

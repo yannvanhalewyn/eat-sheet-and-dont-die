@@ -1,5 +1,4 @@
 .chord {
-  font-family: 'Noto Serif', serif;
   color: black;
   cursor: pointer;
   font-size: 1.8em;
@@ -8,6 +7,23 @@
   padding-top: 13px;
   margin-right: 3px;
   min-height: 30px; // Make empty chords selectable hack
+}
+
+.accidental--sharp {
+  margin-left: -2px;
+  margin-right: -2px;
+  font-size: 0.8em;
+}
+
+.accidental--flat {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+
+.chord__root-accidental {
+  font-size: 0.8em;
+  position: relative;
+  bottom: 4px;
 }
 
 .chord__extension {
