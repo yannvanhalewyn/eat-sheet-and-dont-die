@@ -6,10 +6,13 @@
   (:require-macros [devcards.core :refer [defcard-rg defcard-doc]]))
 
 (defonce sheet (first (gen ::specs/sheet 1)))
-(def selected (-> sheet :sheet/sections first :section/rows first :row/bars first :bar/chords second :db/id))
+(def selected
+  {:selection/type :selection/chord
+   :selection/id (-> sheet :sheet/sections first :section/rows first
+                   :row/bars first :bar/chords second :db/id)})
 
 (reg-sub :sub/sheet (constantly sheet))
-(reg-sub :sub/selected (constantly selected))
+(reg-sub :sub/selection (constantly selected))
 
 (def props
   {:sheet sheet

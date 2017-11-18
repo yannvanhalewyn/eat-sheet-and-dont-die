@@ -60,7 +60,8 @@
   :sheet/remove-selection
   (fn [db _]
     (reducer/app db [:sheet/replace
-                     (sutil/delete-by-id (selectors/sheet db) (selectors/selected db))])))
+                     (sutil/delete-by-id (selectors/sheet db)
+                       (:selection/id (selectors/selection db)))])))
 
 (reg-event-db
   :sheet/set-title

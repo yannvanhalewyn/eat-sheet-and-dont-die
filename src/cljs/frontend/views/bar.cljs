@@ -12,7 +12,7 @@
 (defn attachment [{:keys [attachment bar selected]}]
   (let [{:keys [db/id coord/x coord/y textbox/value]} attachment
         props {:on-drag-end #(dispatch [:sheet/move-symbol (:db/id bar) id %])
-               :on-click #(dispatch [:sheet/select id])
+               :on-click #(dispatch [:sheet/select :selection/attachment id])
                :start-pos [x y]}
         class (when selected "selected")]
     (case (:attachment/type attachment)
@@ -37,14 +37,14 @@
                             :value value}
         [:span value]]])))
 
-(defn component [{:keys [bar selected] :as props}]
+(defn component [{:keys [bar selection] :as props}]
   [:div.bar
 
    ;; Attachments
    ;; =======
    (for [{:keys [db/id] :as att} (:bar/attachments bar)]
      ^{:key id}
-     [attachment {:attachment att :bar bar :selected (= id selected)}])
+     [attachment {:attachment att :bar bar :selected (= id (:selection/id selection))}])
 
    ;; Chords
    ;; ======
@@ -54,7 +54,7 @@
        [:div {:style {:display "inline-block"
                       :width (str width "%")
                       :margin-right "5px"}}
-        (if (= selected (:db/id chord))
+        (if (= (:selection/id selection) (:db/id chord))
           [editable-chord {:chord chord}]
           [displayed-chord {:chord (parse (:chord/value chord))
-                            :on-click #(dispatch [:sheet/select (:db/id chord)])}])]))])
+                            :on-click #(dispatch [:sheet/select :selection/chord (:db/id chord)])}])]))])

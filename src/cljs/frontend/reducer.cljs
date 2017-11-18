@@ -22,15 +22,17 @@
     (update state (:sheet-id arg1) sutil/replace-temp-ids (:temp-ids arg1))
     state))
 
-(defn selection [state [type arg]]
+(defn selection [state [type arg1 arg2]]
   (case type
     :app/init nil
     :sheet/deselect nil
-    :sheet/select arg
-    :sheet/replace-zip (:db/id (zip/node arg))
-    :response/create-sheet (:db/id (sheet/first-chord arg))
-    :response/sync-sheet (if-let [new-id (get-in arg [:temp-ids state])]
-                           new-id
+    :sheet/select {:selection/type arg1 :selection/id arg2}
+    :sheet/replace-zip {:selection/type :selection/chord
+                        :selection/id (:db/id (zip/node arg1))}
+    :response/create-sheet {:selection/type :selection/chord
+                            :selection/id (:db/id (sheet/first-chord arg1))}
+    :response/sync-sheet (if-let [new-id (get-in arg1 [:temp-ids (:selection/id state)])]
+                           (assoc state :selection/id new-id)
                            state)
     state))
 

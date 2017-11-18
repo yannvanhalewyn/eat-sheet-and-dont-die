@@ -16,7 +16,7 @@
 ;; Re-frame subscriptions
 ;; ======================
 
-(reg-sub :sub/selected sel/selected)
+(reg-sub :sub/selection sel/selection)
 (reg-sub :sub/active-route sel/active-route)
 (reg-sub :sub/current-user sel/current-user)
 

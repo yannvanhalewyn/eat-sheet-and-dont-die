@@ -24,7 +24,7 @@
      :reagent-render
      (fn []
        (let [sheet @(subscribe [:sub/sheet sheet-id])
-             selected @(subscribe [:sub/selected])]
+             selection @(subscribe [:sub/selection])]
          [:div.u-max-height {:on-click #(dispatch [:sheet/deselect])}
           (let [title (or (presence (:sheet/title sheet)) "(title)")
                 artist (or (presence (:sheet/artist sheet)) "(artist)")]
@@ -38,5 +38,5 @@
           [:div.u-margin-top.sections
            (for [section (sort-by :coll/position (:sheet/sections sheet))]
              ^{:key (:db/id section)}
-             [section/component {:section section :selected selected}])]
-          [sheet-tools/component]]))}))
+             [section/component {:section section :selection selection}])]
+          [sheet-tools/component {:selection selection}]]))}))
