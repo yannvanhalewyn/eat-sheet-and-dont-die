@@ -118,4 +118,15 @@
            :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/many
            :db/isComponent true
-           :db/doc "The collection of symbols linked to a bar"}]]}}
+           :db/doc "The collection of symbols linked to a bar"}]]}
+
+ :sheet-bucket/bar-attachments-and-texboxes
+ {:txes [[{:db/id :bar/symbols
+           :db/ident :bar/attachments}
+          {:db/id :symbol/type
+           :db/ident :attachment/type}
+          {:db/ident :attachment/textbox}
+          {:db/ident :textbox/value
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one
+           :db/doc "The text value of a texbox"}]]}}

@@ -26,7 +26,7 @@
 (defn show [{:keys [db-conn params]}]
   (let [db (d/db db-conn)]
     (response (postwalk
-                (comp sort-children (resolve-enums #{:symbol/type} db))
+                (comp sort-children (resolve-enums #{:attachment/type} db))
                 (d/pull db '[*] (Long. (:eid params)))))))
 
 (defn create [{:keys [db-conn params]}]

@@ -18,7 +18,7 @@
         (get-in [:sheet/sections 0 :section/rows 0 :row/bars 0 :bar/end-repeat])))
   (is (-> (sut/add sheet-loc :bar/start-repeat) zip/root
         (get-in [:sheet/sections 0 :section/rows 0 :row/bars 0 :bar/start-repeat])))
-  (is (submap? {:symbol/type :symbol/segno}
-        (-> (sut/add sheet-loc :bar/segno) zip/node :bar/symbols first)))
-  (is (submap? {:symbol/type :symbol/coda}
-        (-> (sut/add sheet-loc :bar/coda) zip/node :bar/symbols first))))
+  (is (submap? {:attachment/type :symbol/segno}
+        (-> (sut/add sheet-loc :bar/segno) zip/node :bar/attachments first)))
+  (is (submap? {:attachment/type :symbol/coda}
+        (-> (sut/add sheet-loc :bar/coda) zip/node :bar/attachments first))))

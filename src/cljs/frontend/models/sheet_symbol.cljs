@@ -15,16 +15,16 @@
 (defn make [type]
   (case type
     :bar/coda {:db/id (sutil/gen-temp-id)
-               :symbol/type :symbol/coda
+               :attachment/type :symbol/coda
                :coord/x (floor (/ coda-width 2))
                :coord/y (floor (- -4 height))}
     :bar/segno {:db/id (sutil/gen-temp-id)
-                :symbol/type :symbol/segno
+                :attachment/type :symbol/segno
                 :coord/x (floor (/ (- segno-width) 2))
                 :coord/y (floor (- -4 height))}
     :bar/textbox {:db/id (sutil/gen-temp-id)
-                  :symbol/type :symbol/textbox
-                  :text/value "My Text"
+                  :attachment/type :attachment/textbox
+                  :textbox/value "My Text"
                   :coord/x 0
                   :coord/y 30}
     nil))
@@ -32,11 +32,11 @@
 (defn add [loc type]
   (case type
     (:bar/start-repeat :bar/end-repeat) (zip/edit (up loc) update type not)
-    (zip/edit (up loc) update :bar/symbols #(conj % (make type)))))
+    (zip/edit (up loc) update :bar/attachments #(conj % (make type)))))
 
 (defn move [sheet bar-id symbol-id [x y]]
   (-> (sheet/navigate-to (sheet/zipper sheet) bar-id)
-    (zip/edit update :bar/symbols
+    (zip/edit update :bar/attachments
       (fn [symbols] (map
                       #(if (= (:db/id %) symbol-id)
                          (assoc % :coord/x (floor x) :coord/y (floor y))
@@ -46,7 +46,7 @@
 
 (defn edit [sheet bar-id symbol-id value]
   (-> (sheet/navigate-to (sheet/zipper sheet) bar-id)
-    (zip/edit update :bar/symbols
+    (zip/edit update :bar/attachments
       (fn [symbols] (map
                       #(if (= (:db/id %) symbol-id)
                          (assoc % :text/value value)

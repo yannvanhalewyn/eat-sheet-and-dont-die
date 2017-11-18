@@ -10,7 +10,8 @@
 (def width (* height svg-ratio))
 
 (defn component [{:keys [bar selected] :as props}]
-  (let [symbols (group-by :symbol/type (:bar/symbols bar))]
+  (let [symbols (group-by :attachment/type (:bar/attachments bar))]
+    (.log js/console symbols)
     [:div.bar
      ;; Segno's
      ;; =======
@@ -39,7 +40,7 @@
 
      ;; Texboxes
      ;; ========
-     (for [{:keys [db/id coord/x coord/y text/value] :as texbox} (:symbol/textbox symbols)]
+     (for [{:keys [db/id coord/x coord/y textbox/value] :as texbox} (:attachment/textbox symbols)]
        ^{:key id}
        [draggable/component {:start-pos [x y]
                              :class "draggable--textbox"
