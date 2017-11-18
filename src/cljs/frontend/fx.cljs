@@ -2,11 +2,22 @@
   (:require [frontend.http :as http]
             [frontend.selectors :as sel]
             [frontend.router :as router]
+            [frontend.specs :as specs]
             [shared.diffp :refer [diffp]]
+            [cljs.spec.alpha :as s]
             [re-frame.core :as rf]
             [goog.string :refer [format]]))
 
 (rf/reg-fx :remote http/request-fx)
+
+;; Development interceptors
+;; ========================
+
+(def spec-checker
+  (rf/after
+    (fn [db]
+      (when-not (s/valid? ::specs/app-db db)
+        (.error js/console "SPEC FAILED" (::s/problems (s/explain-data ::specs/app-db db)))))))
 
 (def debug-logger
   (rf/->interceptor
@@ -28,6 +39,9 @@
           (.info js/console "No db changes"))
         (.groupEnd js/console group-name "color: grey"))
       context)))
+
+;; App interceptors
+;; ================
 
 (def sync-browser-url
   (rf/->interceptor
@@ -59,11 +73,13 @@
                  :method :patch
                  :params {:tx (diffp old-sheet new-sheet :db/id)}}))))))))
 
-(def EVENT_MIDDLEWARE
-  [sync-browser-url sheet-tx-sync (when ^boolen goog.DEBUG debug-logger)])
+(def APP_MIDDLEWARE [sync-browser-url sheet-tx-sync])
+(def DEV_MIDDLEWARE [debug-logger spec-checker])
+(def MIDDLEWARE
+  (into APP_MIDDLEWARE (when ^boolen goog.DEBUG DEV_MIDDLEWARE)))
 
 (defn reg-event-fx [id & args]
-  (apply rf/reg-event-fx id EVENT_MIDDLEWARE args))
+  (apply rf/reg-event-fx id MIDDLEWARE args))
 
 (defn reg-event-db [id handler]
-  (rf/reg-event-db id EVENT_MIDDLEWARE handler))
+  (rf/reg-event-db id MIDDLEWARE handler))

@@ -9,16 +9,16 @@
 ;; Routes and matchers
 ;; ===================
 
-(def ROUTES [{:name :route/index
+(def ROUTES [{:handler :route/index
               :path ""}
-             {:name :route/sheets
+             {:handler :route/sheets
               :path "sheets/"}
-             {:name :route/sheet
+             {:handler :route/sheet
               :path ["sheets/" :sheet/id]} ])
 
 (def BIDI_ROUTES
   ["" (reduce
-        (fn [out {:keys [path name]}] (assoc out path name))
+        (fn [out {:keys [path handler]}] (assoc out path handler))
         {} ROUTES)])
 
 (def strip-hash #(str/replace % #"^#" ""))

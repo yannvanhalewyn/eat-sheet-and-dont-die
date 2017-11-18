@@ -1,5 +1,5 @@
 (ns shared.specs
-  (:require [shared.utils :refer [gen-temp-id]]
+  (:require [shared.utils :refer [gen-temp-id presence]]
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]))
 
@@ -76,3 +76,14 @@
 (s/def :sheet/artist (s/spec string? :gen #(s/gen #{"Led Zeppelin" "Pink Floyd" "Bill Withers"})))
 (s/def :sheet/sections (s/coll-of ::section :min-count 1 :gen-max 3))
 (s/def ::sheet (s/keys :req [:db/id :sheet/title :sheet/artist :sheet/sections]))
+
+;; User
+;; ====
+
+(def email-regex
+  #"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$")
+
+(s/def :user/email (s/and string? #(re-matches email-regex %)))
+(s/def :user/first-name presence)
+(s/def :user/last-name presence)
+(s/def ::user (s/keys :req [:db/id :user/email :user/first-name :user/last-name]))
