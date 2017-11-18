@@ -9,16 +9,24 @@
 ;; Routes and matchers
 ;; ===================
 
-(def ROUTES ["" {"" :route/index
-                 "sheets" {"/"          :route/sheets
-                           ["/" :sheet/id] :route/sheet}}])
+(def ROUTES [{:name :route/index
+              :path ""}
+             {:name :route/sheets
+              :path "sheets/"}
+             {:name :route/sheet
+              :path ["sheets/" :sheet/id]} ])
+
+(def BIDI_ROUTES
+  ["" (reduce
+        (fn [out {:keys [path name]}] (assoc out path name))
+        {} ROUTES)])
 
 (def strip-hash #(str/replace % #"^#" ""))
 (def prepend-hash #(str "#" %))
 
 (defn match-route [path]
   (if-let [{:keys [route-params handler]}
-           (bidi/match-route ROUTES (strip-hash path))]
+           (bidi/match-route BIDI_ROUTES (strip-hash path))]
     {:route/handler handler
      :route/params route-params}))
 
@@ -27,7 +35,7 @@
   representing the path for that route."
   [{:keys [:route/handler :route/params]}]
   (prepend-hash
-    (apply bidi/path-for ROUTES handler (flatten (into [] params)))))
+    (apply bidi/path-for BIDI_ROUTES handler (flatten (into [] params)))))
 
 ;; Browser sync
 ;; ============
