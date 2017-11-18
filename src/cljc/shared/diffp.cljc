@@ -65,7 +65,7 @@
        (map? in1)
        (let [keys-in1 (set (keys in1))
              keys-in2 (set (keys in2))]
-         (mapcat #(diffp (% in1) (% in2) ident-fn (conj path %) ret) (into keys-in1 keys-in2)))
+         (mapcat #(diffp (get in1 %) (get in2 %) ident-fn (conj path %) ret) (into keys-in1 keys-in2)))
 
        ;; Sequence case
        (sequential? in1)

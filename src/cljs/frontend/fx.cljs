@@ -4,7 +4,6 @@
             [frontend.router :as router]
             [shared.diffp :refer [diffp]]
             [re-frame.core :as rf]
-            [clojure.data :refer [diff]]
             [goog.string :refer [format]]))
 
 (rf/reg-fx :remote http/request-fx)
@@ -25,9 +24,7 @@
         (if new-db
           (do
             (.info js/console "%c New DB" "color: #9E9E9E; font-weight: bold" (sort new-db))
-            (let [diff (diff old-db new-db)]
-              (.info js/console "%c removed" "color: #FF6259; font-weight: bold" (first diff))
-              (.info js/console "%c added" "color: #29D042; font-weight: bold" (second diff))))
+            (.info js/console "%c changes" "color: #FF6259; font-weight: bold" (diffp old-db new-db :db/id)))
           (.info js/console "No db changes"))
         (.groupEnd js/console group-name "color: grey"))
       context)))
