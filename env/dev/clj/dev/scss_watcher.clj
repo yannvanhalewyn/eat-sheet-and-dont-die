@@ -1,14 +1,19 @@
 (ns dev.scss-watcher
+  (:import java.io.File)
   (:require [dev.background-process :as bp]
-            [com.stuartsierra.component :as component]))
+            [com.stuartsierra.component :as c]))
 
 (def DEFAULTS
-  {:executable-path "scss"
-   :input-file "scss/application.scss"
+  {:input-file "scss/application.scss"
    :output-file "resources/public/css/application.css"})
 
 (defn watcher
   ([] (watcher DEFAULTS))
-  ([{cmd :executable-path in :input-file out :output-file}]
-   (bp/->BackgroundProcess "SCSS watcher"
-     [cmd "-r sass-globbing --watch" (str in ":" out)])))
+  ([{in :input-file out :output-file}]
+   (let [tmp-file (java.io.File/createTempFile "application" ".css")
+         tmp-path (.getAbsolutePath tmp-file)]
+     (c/system-map
+       :scss-watcher (bp/->BackgroundProcess "SCSS watcher"
+                       ["sass" "-r sass-globbing --watch" (str in ":" tmp-path)])
+       :auto-prefixer (bp/->BackgroundProcess "CSS Auto Prefixer"
+                        ["postcss" tmp-path "--use autoprefixer" "--watch" "-o" out])))))

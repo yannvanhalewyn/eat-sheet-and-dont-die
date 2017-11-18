@@ -6,8 +6,6 @@
 }
 
 @mixin background-svg($url, $xpos:center, $ypos:center) {
-  -webkit-mask:  url($url) no-repeat $xpos $ypos;
-  -webkit-mask-size: contain;
   mask: url($url) no-repeat $xpos $ypos;
   mask-size: contain;
 }
