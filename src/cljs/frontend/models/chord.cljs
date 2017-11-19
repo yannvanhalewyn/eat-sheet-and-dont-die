@@ -1,52 +1,67 @@
 (ns frontend.models.chord
-  (:require [shared.specs :as specs]
+  (:require [frontend.util.regex :as rx]
+            [shared.specs :as specs]
             [clojure.core.match :refer-macros [match]]
             [clojure.spec.alpha :as s]
             [goog.string :refer [format contains]]
             [goog.string.format]
             [clojure.string :as str]))
 
-;; Negative lookahead for ending accidental that are part of "b5" or "b9"
-;; like Eb5 -> root = E
-(def root-regx (str "([#b]?[0-7])|([a-gA-G][#b]?)(?!5)"))
-;; Negative lookahead for 'm' that is not part of 'maj'
-(def triad-regx (str "min|m(?!aj)|-|aug|\\+|#5|b5"))
-(def extension-regx (str "(7|maj|Maj|dim)?7?([#b]?9)?([#b]5)?"))
-(def sus-regex (str "sus([24])"))
-(def bass-regx (str "([#b]?[0-7]|[a-gA-G][#b]?)"))
-(def chord-regex (re-pattern (format "(%s)(%s)?(%s)(%s)?(\\/%s)?"
-                               root-regx triad-regx extension-regx
-                               sus-regex bass-regx)))
+(def chord-rx
+  (let [accidental? (rx/maybe "[#b]")
+        root-note (rx/or (rx/non-capturing-group accidental? "[0-7]")
+                    (rx/non-capturing-group "[a-gA-G]" accidental?))]
+    (rx/build
+      ;; Root
+      (rx/group root-note)
+      ;; Triad, negative lookahead for 'm' that is not part of 'maj'
+      (rx/maybe-group (rx/or "min" (str "m" (rx/neg-lookahead "aj")) "-" "aug" "\\+" "dim"))
+      ;; Seventh
+      (rx/maybe-group
+        (rx/maybe-group-non-capturing (rx/or "maj" "Maj"))
+        (rx/maybe "7"))
+      ;; Extensions
+      (rx/group (rx/multi
+                  (rx/non-capturing-group
+                    accidental?
+                    (rx/non-capturing-group (rx/or "4" "5" "6" "9" "11" "13")))))
+      ;; Sus
+      (rx/maybe-group-non-capturing "sus" (rx/group "[24]"))
+      ;; Bass
+      (rx/maybe-group-non-capturing "\\/" (rx/group root-note)))))
 
 (defn- parse-note [note-str]
   (when note-str
     (let [[_ acc1 note acc2] (re-find #"([#b])?([0-7a-gA-G])([#b])?" note-str)]
-      [note (case (or acc1 acc2) "#" :sharp "b" :flat :natural)])))
+      [(str/upper-case note) (case (or acc1 acc2) "#" :sharp "b" :flat :natural)])))
+
+(defn- parse-extension [ext-str]
+  (let [[first & rest] ext-str
+        rest (apply str rest)]
+    (case first
+      "#" [rest :sharp]
+      "b" [rest :flat]
+      [ext-str :natural])))
 
 (defn parse
   "Parses a raw chord string to chord data"
   [s]
-  (let [[_ root _ _ triad extension seventh ninth fifth _ sus _ bass]
-        (re-find chord-regex s)]
+  (let [[_ root triad seventh extensions sus bass] (re-find chord-rx s)]
     {:chord/root (parse-note root)
-     :chord/sus sus
-     :chord/triad (or (case fifth "b5" :diminished "#5" :augmented nil)
-                    (match triad
-                      (:or "m" "min" "-") :minor
-                      (:or "aug" "+" "#5") :augmented
-                      "b5" :diminished
-                      :else :major))
-     :chord/seventh (let [e (str/lower-case (or extension ""))]
+     :chord/triad (match triad
+                    (:or "m" "min" "-") :minor
+                    (:or "aug" "+") :augmented
+                    "dim" :diminished
+                    :else :major)
+     :chord/seventh (let [e (str/lower-case (or seventh ""))]
                       (cond
                         (contains e "maj") :natural
                         (contains e "7") :flat
-                        (contains e "dim") :diminished
                         :else nil))
-     :chord/ninth (match ninth
-                    "9" :natural
-                    "b9" :flat
-                    "#9" :sharp
-                    :else nil)
+     :chord/extensions (->> (str/split extensions #"([#b]?(?:4|5|6|9|11|13))")
+                         (remove empty?)
+                         (map parse-extension))
+     :chord/sus sus
      :chord/bass (parse-note bass)}))
 
 (s/fdef parse

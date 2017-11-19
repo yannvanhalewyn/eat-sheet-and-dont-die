@@ -17,13 +17,15 @@
 
 (defn unparse-chord
   "Takes a parsed chord and returns a possible raw input value for that chord."
-  [{:keys [:chord/root :chord/sus :chord/triad :chord/seventh :chord/ninth :chord/bass]}]
+  [{:keys [:chord/root :chord/sus :chord/triad :chord/seventh :chord/extensions :chord/bass]}]
   (str
     (root->str root)
-    (case triad :minor "-" :augmented "+" :diminished "b5" "")
-    (when-not (= :natural ninth)
-      (case seventh :natural "Maj7" :flat "7" :diminished "dim" ""))
-    (case ninth :natural "9" :flat "b9" :sharp "#9" "")
+    (case triad :minor "-" :augmented "+" :diminished "dim" "")
+    (case seventh :natural "Maj" "")
+    (when (and seventh (empty? extensions)) "7")
+    (apply str
+      (for [[ext acc] extensions]
+        (case acc :natural ext :flat (str "b" ext) :sharp (str "#" ext))))
     (when sus (str "sus" sus))
     (when bass (str "/" (root->str bass)))))
 
@@ -37,7 +39,7 @@
 ;; =====
 (def root? #{"A" "B" "C" "D" "E" "F" "G" "1" "2" "3" "4" "5" "6" "7"})
 (def accidental? #{:flat :sharp :natural})
-(def extension? #{9 13})
+(def extension? (s/tuple #{"4" "5" "6" "9" "11" "13"} accidental?))
 
 (s/def :db/id (s/spec (s/or :datomic pos-int? :tmp-id string?) :gen gen-id))
 (s/def :coll/position nat-int?)
@@ -47,15 +49,15 @@
 ;; Parsed chord
 (s/def :chord/root (s/tuple root? accidental?))
 (s/def :chord/triad #{:minor :major :augmented :diminished})
-(s/def :chord/seventh (s/nilable #{:natural :flat :diminished}))
-(s/def :chord/ninth (s/nilable accidental?))
+(s/def :chord/seventh (s/nilable #{:natural :flat}))
+(s/def :chord/extensions (s/coll-of extension? :gen-max 2))
 (s/def :chord/bass (s/nilable :chord/root))
 (s/def :chord/sus (s/nilable #{"2" "4"}))
 (s/def :chord/parsed (s/keys :req [:chord/root
                                    :chord/sus
                                    :chord/triad
                                    :chord/seventh
-                                   :chord/ninth
+                                   :chord/extensions
                                    :chord/bass]))
 
 ;; Sheet
