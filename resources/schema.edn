@@ -129,4 +129,10 @@
           {:db/ident :textbox/value
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one
-           :db/doc "The text value of a texbox"}]]}}
+           :db/doc "The text value of a texbox"}]]}
+
+ :sheet-bucket/bar-repeat-cycles
+ {:txes [[{:db/ident :bar/repeat-cycle
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one
+           :db/doc "The playthrough cycle this bar should be played on repeat."}]]}}

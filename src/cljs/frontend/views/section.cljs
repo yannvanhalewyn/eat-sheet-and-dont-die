@@ -15,15 +15,25 @@
       (when next [:i.barline]))
     {:key (str "barline" (:db/id prev) "-" (:db/id next))}))
 
+(defn- slurs [{:keys [bars]}]
+  [:div.l-flex-row
+   (for [bar bars]
+     ^{:key (str "SLURS-" (:db/id bar))}
+     [:div.flex-bar
+      (when-let [cycle (:bar/repeat-cycle bar)]
+        [:div.repeat-cycle cycle])])])
+
 (defn row-component [{:keys [row selection]}]
   (let [bars (:row/bars row)]
-    [:div.row {:style {:margin-bottom "10px" :white-space :nowrap}}
-     (when (:bar/start-repeat (first bars)) [:i.barline--start-repeat])
-     (interleave
-       (for [bar (sort-by :coll/position bars)]
-         ^{:key (:db/id bar)}
-         [bar/component {:bar bar :selection selection}])
-       (mappad nil barline bars (drop 1 bars)))]))
+    [:div
+     [slurs {:bars (:row/bars row)}]
+     [:div.row
+      (when (:bar/start-repeat (first bars)) [:i.barline--start-repeat])
+      (interleave
+        (for [bar (sort-by :coll/position bars)]
+          ^{:key (:db/id bar)}
+          [bar/component {:bar bar :selection selection}])
+        (mappad nil barline bars (drop 1 bars)))]]))
 
 (defn component [{:keys [section selection]}]
   [:div.section

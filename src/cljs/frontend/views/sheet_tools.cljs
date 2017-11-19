@@ -15,6 +15,6 @@
   (when (= :selection/chord (:selection/type selection))
     [:div.sheet-tools
      (for [type [:bar/start-repeat :bar/end-repeat :attachment/segno :attachment/coda
-                 :attachment/textbox]]
+                 :attachment/textbox :bar/repeat-cycle]]
        ^{:key type}
        [tool {:type type}])]))

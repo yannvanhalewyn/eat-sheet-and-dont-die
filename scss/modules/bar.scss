@@ -1,7 +1,10 @@
-.bar {
+.flex-bar {
   display: flex;
-  position: relative; // For position: absolute music symbols
   width: 20%;
   max-width: 300px;
+}
+
+.bar {
+  position: relative; // For position: absolute music symbols
   padding: 0 20px;
 }

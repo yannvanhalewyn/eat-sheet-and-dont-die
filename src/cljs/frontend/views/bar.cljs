@@ -39,8 +39,7 @@
         [:span (or (presence value) "Enter text")]]])))
 
 (defn component [{:keys [bar selection] :as props}]
-  [:div.bar
-
+  [:div.flex-bar.bar
    ;; Attachments
    ;; =======
    (for [{:keys [db/id] :as att} (:bar/attachments bar)]

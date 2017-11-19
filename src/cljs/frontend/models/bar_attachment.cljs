@@ -44,6 +44,7 @@
   [loc type]
   (case type
     (:bar/start-repeat :bar/end-repeat) (zip/edit (up loc) update type not)
+    :bar/repeat-cycle (zip/edit (up loc) assoc :bar/repeat-cycle "1")
     (zip/edit (up loc) update :bar/attachments #(conj % (make type)))))
 
 (defn move
