@@ -27,9 +27,14 @@
            :value cycle}
           cycle]])])])
 
+(defn spacer []
+  [:div.spacer {:style {:height 25}}])
+
 (defn row-component [{:keys [row selection]}]
   (let [bars (:row/bars row)]
     [:div
+     (when (and (some (complement empty?) (map :bar/attachments bars))
+             (not (some seq (map :bar/repeat-cycle bars)))) [spacer])
      [slurs {:bars (:row/bars row)}]
      [:div.row
       (when (:bar/start-repeat (first bars)) [:i.barline--start-repeat])
