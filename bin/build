@@ -1,4 +1,5 @@
 #!/bin/sh
 
-sass -r sass-globbing scss/application.scss resources/public/css/application.css
+sass -r sass-globbing scss/application.scss:target/application.css
+postcss target/application.css --use autoprefixer -o resources/public/css/application.css
 lein uberjar
