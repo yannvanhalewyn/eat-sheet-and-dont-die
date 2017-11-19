@@ -37,20 +37,18 @@
 (defn- extension
   "Returns a string suitable for our chord symbols font for the
   extension"
-  [{:keys [:chord/root :chord/triad :chord/seventh :chord/ninth]}]
+  [{:keys [:chord/triad :chord/seventh :chord/extensions]}]
   [:span
-   (match [triad seventh ninth]
-     [:diminished :flat _] [half-diminished]
-     [_ :natural NINTH] [:span [major-seventh] [Ninth NINTH]]
-     [_ :flat NINTH] [:span [:span (if (= :natural NINTH) "9" [:span "7" [Ninth NINTH]])]]
-     [_ :diminished NINTH] [:span [diminished] [Ninth NINTH]]
-     [_ :diminished _] [diminished]
-     [:diminished _ _] [:span [flat] "5"]
-     [:augmented _ _] "+"
-     [_ _ :natural] "9"
-     [_ _ :sharp] [:span [sharp] "9"]
-     [_ _ :flat] [:span [flat] "9"]
-     :else nil)])
+   (when (= :augmented triad) "+")
+   (when (= :diminished triad)
+     (if (= :flat seventh) [half-diminished] [diminished]))
+   (when (= :natural seventh) [major-seventh])
+   (when (and (= :flat seventh) (not= :diminished triad)
+           (not (some #(= ["9" :natural] %) extensions)))
+     "7")
+   (for [[ext acc] extensions]
+     ^{:key (str ext acc)}
+     [:span (case acc :flat [flat] :sharp [sharp] "") ext])])
 
 (defn displayed-chord
   "A displayable formatted chord"

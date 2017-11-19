@@ -82,25 +82,30 @@
    [for-all-roots {:chord/triad :minor :chord/seventh :flat} "Minor sevenths"]
    [for-all-roots {:chord/triad :minor :chord/seventh :natural} "Minor major sevenths"]
    [for-all-roots {:chord/triad :diminished :chord/seventh :flat} "Half diminished"]
-   [for-all-roots {:chord/triad :diminished :chord/seventh :diminished} "Diminished"]])
+   [for-all-roots {:chord/triad :diminished} "Diminished"]])
 
 ;; Ninths
 (defcard-rg Ninths
   [:div
-   [for-all-roots {:chord/seventh :flat :chord/ninth :natural} "Dominant ninths"]
-   [for-all-roots {:chord/seventh :natural :chord/ninth :natural} "Major ninths"]
-   [for-all-roots {:chord/triad :minor :chord/seventh :flat :chord/ninth :natural} "Minor ninths"]
-   [for-all-roots {:chord/ninth :sharp} "Sharp ninths"]
-   [for-all-roots {:chord/ninth :flat} "Flat ninths"]])
+   [for-all-roots {:chord/seventh :flat :chord/extensions [["9" :natural]]} "Dominant ninths"]
+   [for-all-roots {:chord/seventh :natural :chord/extensions [["9" :natural]]} "Major ninths"]
+   [for-all-roots {:chord/triad :minor :chord/seventh :flat :chord/extensions [["9" :natural]]} "Minor ninths"]
+   [for-all-roots {:chord/extensions [["9" :sharp]]} "Sharp ninths"]
+   [for-all-roots {:chord/extensions [["9" :flat]]} "Flat ninths"]])
 
 (defcard-rg Altered
   [:div
-   [for-all-roots {:chord/seventh :minor :chord/ninth :flat} "Dominant flat 9"]
-   [for-all-roots {:chord/seventh :minor :chord/ninth :sharp} "Dominant sharp 9"]])
+   [for-all-roots {:chord/seventh :flat :chord/extensions [["9" :flat]]} "Dominant flat 9"]
+   [for-all-roots {:chord/seventh :flat :chord/extensions [["9" :sharp]]} "Dominant sharp 9"]])
+
+(defcard-rg Other-extensions
+  [:div
+   [for-all-roots {:chord/seventh :natural :chord/extensions [["11" :sharp]]} "Major #11"]
+   [for-all-roots {:chord/seventh :flat :chord/extensions [["9" :natural] ["11" :sharp] ["5" :flat]]}
+    "Dominant 9 #11 b5"]])
 
 (defcard-props No-root
   "Should not display anything"
   [displayed-chord {:chord {:chord/root nil
                             :chord/triad :major
-                            :chord/seventh :minor
-                            :chord/ninth :major}}])
+                            :chord/seventh :flat}}])
