@@ -68,6 +68,16 @@
   (fn [db event] (reducer/app db event)))
 
 (reg-event-db
+  :sheet/set-repeat-cycle
+  (fn [db [_ bar-id value]]
+    (let [bar-loc (sheet/navigate-to (sheet/zipper (selectors/sheet db)) bar-id)]
+      (reducer/app db
+        [:sheet/replace
+         (if (empty? value)
+           (zip/root (zip/edit bar-loc dissoc :bar/repeat-cycle))
+           (zip/root (zip/edit bar-loc assoc :bar/repeat-cycle value)))]))))
+
+(reg-event-db
   :sheet/edit-textbox
   (fn [db [_ bar-id textbox-id value]]
     (reducer/app db

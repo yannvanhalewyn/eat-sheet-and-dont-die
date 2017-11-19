@@ -21,7 +21,11 @@
      ^{:key (str "SLURS-" (:db/id bar))}
      [:div.flex-bar
       (when-let [cycle (:bar/repeat-cycle bar)]
-        [:div.repeat-cycle cycle])])])
+        [:div.repeat-cycle
+         [editable/component
+          {:on-change #(dispatch [:sheet/set-repeat-cycle (:db/id bar) %])
+           :value cycle}
+          cycle]])])])
 
 (defn row-component [{:keys [row selection]}]
   (let [bars (:row/bars row)]

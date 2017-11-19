@@ -21,11 +21,11 @@
        :reagent-render
        (fn [{:keys [on-change value edit-trigger]} children]
          (if @editing
-           [:input.editable
+           [:input.editable--editing
             {:type "text"
              :default-value value
              :on-blur (fn [e]
                         (reset! editing false)
                         (on-change (.. e -target -value)))}]
-           [:span {(or edit-trigger :on-click) #(reset! editing true)}
+           [:span.editable {(or edit-trigger :on-click) #(reset! editing true)}
             children]))})))

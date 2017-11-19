@@ -1,4 +1,8 @@
 .editable {
+  cursor: pointer;
+}
+
+.editable--editing {
   background: none;
   border: none;
   font-size: 1.3em;
