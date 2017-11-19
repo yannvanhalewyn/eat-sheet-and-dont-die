@@ -19,7 +19,6 @@
                  [com.stuartsierra/component "0.3.2"]
                  [compojure "1.6.0"]
                  [http-kit "2.2.0"]
-                 [ring/ring-devel "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
                  [metosin/muuntaja "0.3.2"]
                  [com.datomic/datomic-pro "0.9.5561.62"
@@ -37,7 +36,8 @@
                                   [reloaded.repl "0.2.4"]
                                   [figwheel-sidecar "0.5.14"]
                                   [org.clojure/test.check "0.9.0"] ;; For cljs.spec
-                                  [com.cemerick/piggieback "0.2.2"]]
+                                  [com.cemerick/piggieback "0.2.2"]
+                                  [ring/ring-devel "1.6.3"]]
                    :source-paths ["env/dev/clj"]
                    :repl-options {:init (set! *print-length* 50)
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
@@ -45,7 +45,8 @@
                        :aot :all
                        :main sheet-bucket.main
                        :omit-source true
-                       :dependencies [[com.amazonaws/aws-java-sdk-dynamodb "1.11.228"]]
+                       :dependencies [[com.amazonaws/aws-java-sdk-dynamodb "1.11.228"]
+                                      [bk/ring-gzip "0.2.1"]]
                        :prep-tasks ["compile" ["cljsbuild" "once" "prod"]]
                        :source-paths ["src/clj" "src/cljc" "env/production/clj"]}}
 

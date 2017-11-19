@@ -2,11 +2,11 @@
   (:use [org.httpkit.server :only [run-server]])
   (:require [sheet-bucket.routes :as routes]
             [sheet-bucket.utils :refer [parse-int]]
+            [sheet-bucket.env-middleware :refer [wrap-env-middleware]]
             [com.stuartsierra.component :as c]
             [muuntaja.core :as m]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
-            [ring.middleware.defaults :refer [api-defaults wrap-defaults]]
-            [ring.middleware.reload :refer [wrap-reload]]))
+            [ring.middleware.defaults :refer [api-defaults wrap-defaults]]))
 
 (defn- wrap-db [handler db]
   (fn [req] (handler (assoc req :db-conn (:conn db)))))
@@ -28,7 +28,7 @@
     (wrap-params)
     (wrap-format muuntaja-options)
     (wrap-defaults app-defaults)
-    wrap-reload))
+    wrap-env-middleware))
 
 (defrecord Web [port db]
   c/Lifecycle
