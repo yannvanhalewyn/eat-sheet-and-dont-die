@@ -90,7 +90,7 @@
 (s/def :sheet/title (s/spec string? :gen #(s/gen #{"Whole lotta love" "Breathe" "Lean on me"})))
 (s/def :sheet/artist (s/spec string? :gen #(s/gen #{"Led Zeppelin" "Pink Floyd" "Bill Withers"})))
 (s/def :sheet/sections (s/coll-of ::section :min-count 1 :gen-max 3))
-(s/def ::sheet (s/keys :req [:db/id :sheet/title :sheet/artist :sheet/sections]))
+(s/def ::sheet (s/keys :req [:db/id :sheet/title :sheet/artist] :opt [:sheet/sections]))
 
 ;; User
 ;; ====
