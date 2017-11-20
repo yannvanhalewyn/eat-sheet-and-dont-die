@@ -1,5 +1,6 @@
 (ns frontend.fx
   (:require [frontend.http :as http]
+            [frontend.socket :as sock]
             [frontend.selectors :as sel]
             [frontend.router :as router]
             [frontend.specs :as specs]
@@ -9,6 +10,7 @@
             [goog.string :refer [format]]))
 
 (rf/reg-fx :remote http/request-fx)
+(rf/reg-fx :sock sock/sock-fx)
 
 ;; Development interceptors
 ;; ========================
