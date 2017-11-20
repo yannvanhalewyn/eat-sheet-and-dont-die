@@ -24,6 +24,7 @@
                  [com.datomic/datomic-pro "0.9.5561.62"
                   :exclusions [com.google.guava/guava]]
                  [io.rkn/conformity "0.5.1"] ;; Datomic migrations
+                 [com.taoensso/sente "1.11.0"] ;; Sockets and realtime comms
 
                  ;; CLJS
                  [reagent "0.7.0"]

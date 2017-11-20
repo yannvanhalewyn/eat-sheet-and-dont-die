@@ -2,7 +2,7 @@
   (:require [sheet-bucket.controllers.sheets :as sheets]
             [sheet-bucket.controllers.session :as session]
             [clojure.java.io :as io]
-            [compojure.core :refer [defroutes GET PATCH POST DELETE]]
+            [compojure.core :as comp :refer [defroutes GET PATCH POST DELETE]]
             [compojure.route :as route]))
 
 (def index-view
@@ -20,3 +20,9 @@
   (PATCH "/api/sheets/:eid" [] sheets/update)
   (DELETE "/api/sheets/:eid" [] sheets/destroy)
   (route/not-found "<h1>NOT FOUND</h1>"))
+
+(defn wrap-chsk-routes [routes chsk]
+  (comp/routes
+    (GET "/chsk" [] (:ajax-get-or-ws-handshake-fn chsk))
+    (POST "/chsk" [] (:ajax-post-fn chsk))
+    routes))
