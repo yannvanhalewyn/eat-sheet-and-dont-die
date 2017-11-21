@@ -17,6 +17,6 @@
 (defn sock-fx [messages]
   (doseq [[key msg] messages]
     (dispatch [(keyword "request" key) msg])
-    (send! msg #(if (= :chsk/timeout %)
-                  (dispatch [(keyword "response.failure" key) %])
-                  (dispatch [(keyword "response" key) %])))))
+    (send! msg #(if (and (sente/cb-success? %) (not (:error %)))
+                  (dispatch [(keyword "response" key) %])
+                  (dispatch [(keyword "response.failure" key) %])))))
