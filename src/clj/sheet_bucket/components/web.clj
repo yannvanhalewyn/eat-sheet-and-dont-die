@@ -22,30 +22,30 @@
 (def muuntaja-options
   (m/create (assoc m/default-options :default-format "application/transit+json")))
 
-(defn make-handler [db]
+(defn make-handler [db channel-sockets]
   (-> #'routes/app-routes
+    (routes/wrap-chsk-routes channel-sockets)
     (wrap-db db)
     (wrap-params)
     (wrap-format muuntaja-options)
     (wrap-defaults app-defaults)
     wrap-env-middleware))
 
-(defrecord Web [port db]
+(defrecord Web [port db channel-sockets]
   c/Lifecycle
   (start [this]
     (if (:server this)
       this
-      (let [server (run-server (make-handler db) {:port (parse-int port)})
-            options {:port (parse-int port)}]
+      (let [port (parse-int port)]
         (println (format "Starting web server on port %s..." port))
-        (assoc this :stop-server-fn server))))
+        (assoc this :stop-server-fn
+               (run-server (make-handler db channel-sockets) {:port port})))))
   (stop [this]
-    (if (:stop-server-fn this)
-      (do
-        (println "Stopping web server...")
-        ((:stop-server-fn this))
-        (dissoc this :stop-server-fn))
-      this)))
+    (println "Stopping web server...")
+    (if-let [stop (:stop-server-fn this)]
+      (stop)
+      (println "No stop-fn found for Web component. Doing nothing."))
+    (dissoc this :stop-server-fn)))
 
 (defn component [port]
   (map->Web {:port port}))

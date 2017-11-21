@@ -1,63 +1,29 @@
 (ns sheet-bucket.controllers.sheets
   (:require [sheet-bucket.models.sheet :as sheet]
+            [sheet-bucket.models.user :as user]
+            [sheet-bucket.socket-handler :refer [socket-handler]]
             [datomic.api :as d]
-            [clojure.walk :refer [postwalk]]
-            [ring.util.response :refer [response status]]))
+            [clojure.walk :refer [postwalk]]))
 
-(defn index [{:keys [db-conn params]}]
-  (response
-    (flatten (d/q '[:find (pull ?sheet [:db/id :sheet/artist :sheet/title])
-                    :in $ ?user
-                    :where [?user :playlist/sheets ?sheet]]
-               (d/db db-conn)
-               (Long. (:user-id params))))))
+(defmethod socket-handler :sheets/index
+  [{:keys [?data ring-req]}]
+  (user/sheets (:db-conn ring-req) (:user-id ?data)))
 
-(defn- sort-children [node]
-  (if (and (sequential? node) (map? (first node)))
-    (sort-by :coll/position node)
-    node))
+(defmethod socket-handler :sheets/show
+  [{:keys [?data ring-req]}]
+  (sheet/find (:db-conn ring-req) ?data))
 
-(defn- resolve-enums [keys db]
-  (fn [node]
-    (if (and (coll? node) (keys (first node)))
-      (update node 1 #(:db/ident (d/entity db (:db/id %))))
-      node)))
+(defmethod socket-handler :sheets/create
+  [{:keys [?data ring-req]}]
+  (sheet/create! (:db-conn ring-req) ?data))
 
-(defn show [{:keys [db-conn params]}]
-  (let [db (d/db db-conn)]
-    (response (postwalk
-                (comp sort-children (resolve-enums #{:attachment/type} db))
-                (d/pull db '[*] (Long. (:eid params)))))))
+(defmethod socket-handler :sheets/update
+  [{:keys [?data ring-req]}]
+  (let [{:keys [diff sheet-id]} ?data
+        result (d/transact (:db-conn ring-req) (sheet/diff->tx diff sheet-id))]
+    {:temp-ids (:tempids @result) :sheet-id sheet-id}))
 
-(defn create [{:keys [db-conn params]}]
-  (let [res (d/transact db-conn
-              [{:db/id "new-sheet"
-                :sheet/title "Title"
-                :sheet/artist "Artist"
-                :sheet/sections {:section/title "Intro"
-                                 :coll/position 0
-                                 :section/rows {:coll/position 0
-                                                :row/bars {:coll/position 0
-                                                           :bar/chords {:coll/position 0
-                                                                        :chord/value ""}}}}}
-               {:db/id (:owner-id params) :playlist/sheets "new-sheet"}])]
-    (try
-      (response
-        (d/pull (:db-after @res) '[*] (get-in @res [:tempids "new-sheet"])))
-      (catch Exception e
-        (status (response {:error (.getMessage e)}) 500)))))
-
-(defn update [{:keys [db-conn params] :as req}]
-  (let [result (d/transact db-conn (sheet/diff->tx (:tx params) (Long. (:eid params))))]
-    (try
-      (response {:temp-ids (:tempids @result)
-                 :sheet-id (Long. (:eid params))})
-      (catch Exception e
-        (status (response {:error (.getMessage e)}) 500)))))
-
-(defn destroy [{:keys [db-conn params] :as req}]
-  (let [result (d/transact db-conn [[:db.fn/retractEntity (Long. (:eid params))]])]
-    (try
-      (response {:success true :removed-id (Long. (:eid params))})
-      (catch Exception e
-        (status (response {:error (.getMessage e)}) 500)))))
+(defmethod socket-handler :sheets/destroy
+  [{:keys [?data ring-req]}]
+  (let [result (d/transact (:db-conn ring-req) [[:db.fn/retractEntity ?data]])]
+    {:success true :removed-id ?data}))

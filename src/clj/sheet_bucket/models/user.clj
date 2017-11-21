@@ -1,5 +1,6 @@
 (ns sheet-bucket.models.user
-  (:require [sheet-bucket.components.db :as db]))
+  (:require [datomic.api :as d]
+            [sheet-bucket.components.db :as db]))
 
 (defn create! [conn {:keys [first-name last-name email password]}]
   (db/transact! conn [{:user/first-name first-name
@@ -13,3 +14,12 @@
 (defn sheets-for-user [db user]
   (:playlist/sheets
    (db/pull db user '[{:playlist/sheets [*]}])))
+
+(defn sheets
+  "Returns all the sheets (basic info) for given user."
+  [db-conn user-id]
+  (flatten (d/q '[:find (pull ?sheet [:db/id :sheet/artist :sheet/title])
+                  :in $ ?user
+                  :where [?user :playlist/sheets ?sheet]]
+             (d/db db-conn)
+             user-id)))

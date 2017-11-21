@@ -1,5 +1,6 @@
 (ns frontend.core
   (:require [frontend.router :as router]
+            [frontend.socket :as sock]
             [reagent.core :as reagent]
             [re-frame.core :as rf]
             [goog.dom :as gdom]
@@ -14,4 +15,5 @@
 (defn init! []
   (rf/dispatch-sync [:app/init])
   (router/listen)
+  (sock/start)
   (render!))

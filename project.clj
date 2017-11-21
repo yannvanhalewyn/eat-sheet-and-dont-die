@@ -24,12 +24,12 @@
                  [com.datomic/datomic-pro "0.9.5561.62"
                   :exclusions [com.google.guava/guava]]
                  [io.rkn/conformity "0.5.1"] ;; Datomic migrations
+                 [com.taoensso/sente "1.11.0"] ;; Sockets and realtime comms
 
                  ;; CLJS
                  [reagent "0.7.0"]
                  [re-frame "0.10.2"]
-                 [bidi "2.1.2"]
-                 [cljs-ajax "0.7.3"]]
+                 [bidi "2.1.2"]]
 
   :profiles {:dev {:dependencies [[devcards "0.2.4" :exclusions [cljsjs/react]]
                                   [binaryage/devtools "0.9.7"]
