@@ -1,9 +1,8 @@
 (ns sheet-bucket.controllers.sheets
-  (:require [sheet-bucket.models.sheet :as sheet]
+  (:require [datomic.api :as d]
+            [sheet-bucket.models.sheet :as sheet]
             [sheet-bucket.models.user :as user]
-            [sheet-bucket.socket-handler :refer [socket-handler]]
-            [datomic.api :as d]
-            [clojure.walk :refer [postwalk]]))
+            [sheet-bucket.socket-handler :refer [socket-handler]]))
 
 (defmethod socket-handler :sheets/index
   [{:keys [?data ring-req]}]

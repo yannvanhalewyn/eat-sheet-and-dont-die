@@ -1,8 +1,7 @@
 (ns sheet-bucket.config
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [clojure.string :as str]
-            [sheet-bucket.utils :refer [keywordize parse-int]]))
+            [sheet-bucket.utils :refer [keywordize]]))
 
 (defn read-system-env []
   (->> (System/getenv)

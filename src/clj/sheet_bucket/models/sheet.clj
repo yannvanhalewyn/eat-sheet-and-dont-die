@@ -1,6 +1,6 @@
 (ns sheet-bucket.models.sheet
-  (:require [datomic.api :as d]
-            [clojure.walk :refer [postwalk]]))
+  (:require [clojure.walk :refer [postwalk]]
+            [datomic.api :as d]))
 
 (def BLANK_SHEET
   {:db/id "new-sheet"

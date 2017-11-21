@@ -1,13 +1,14 @@
 (ns sheet-bucket.components.web
-  (:use [org.httpkit.server :only [run-server]])
-  (:require [sheet-bucket.routes :as routes]
-            [sheet-bucket.utils :refer [parse-int]]
-            [sheet-bucket.env-middleware :refer [wrap-env-middleware]]
-            [com.stuartsierra.component :as c]
-            [taoensso.timbre :as timbre]
+  (:require [com.stuartsierra.component :as c]
             [muuntaja.core :as m]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
-            [ring.middleware.defaults :refer [api-defaults wrap-defaults]]))
+            [org.httpkit.server :refer [run-server]]
+            [ring.middleware.defaults :refer [api-defaults
+                                              wrap-defaults]]
+            [sheet-bucket.env-middleware :refer [wrap-env-middleware]]
+            [sheet-bucket.routes :as routes]
+            [sheet-bucket.utils :refer [parse-int]]
+            [taoensso.timbre :as timbre]))
 
 (defn- wrap-db [handler db]
   (fn [req] (handler (assoc req :db-conn (:conn db)))))

@@ -1,7 +1,7 @@
 (ns sheet-bucket.core
   (:require [com.stuartsierra.component :as c]
-            [sheet-bucket.components.db :as db]
             [sheet-bucket.components.channel-sockets :as chsk]
+            [sheet-bucket.components.db :as db]
             [sheet-bucket.components.web :as web]))
 
 (defn new-system [config]

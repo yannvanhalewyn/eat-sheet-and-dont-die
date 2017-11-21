@@ -1,11 +1,11 @@
 (ns sheet-bucket.components.channel-sockets
-  (:require [sheet-bucket.socket-handler :as sh]
+  (:require [com.stuartsierra.component :as c]
+            [sheet-bucket.socket-handler :as sh]
             [sheet-bucket.controllers.session]
             [sheet-bucket.controllers.sheets]
-            [com.stuartsierra.component :as c]
-            [taoensso.timbre :as timbre]
             [taoensso.sente :as sente]
-            [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]))
+            [taoensso.sente.server-adapters.http-kit :refer [get-sch-adapter]]
+            [taoensso.timbre :as timbre]))
 
 (defn broadcast [chsk msg]
   (doseq [uid (:any @(:connected-uids chsk))]

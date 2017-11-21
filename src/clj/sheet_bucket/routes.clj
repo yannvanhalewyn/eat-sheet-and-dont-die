@@ -1,8 +1,6 @@
 (ns sheet-bucket.routes
-  (:require [sheet-bucket.controllers.sheets :as sheets]
-            [sheet-bucket.controllers.session :as session]
-            [clojure.java.io :as io]
-            [compojure.core :as comp :refer [defroutes GET PATCH POST DELETE]]
+  (:require [clojure.java.io :as io]
+            [compojure.core :as comp :refer [GET POST defroutes]]
             [compojure.route :as route]))
 
 (def index-view
