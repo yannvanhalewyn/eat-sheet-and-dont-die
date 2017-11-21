@@ -1,6 +1,5 @@
 (ns frontend.fx
-  (:require [frontend.http :as http]
-            [frontend.socket :as sock]
+  (:require [frontend.socket :as sock]
             [frontend.selectors :as sel]
             [frontend.router :as router]
             [frontend.specs :as specs]
@@ -9,8 +8,7 @@
             [re-frame.core :as rf]
             [goog.string :refer [format]]))
 
-(rf/reg-fx :remote http/request-fx)
-(rf/reg-fx :sock sock/sock-fx)
+(rf/reg-fx :socket sock/sock-fx)
 
 ;; Development interceptors
 ;; ========================
@@ -70,10 +68,9 @@
                 old-sheet (sel/sheet (:db coeffects))]
             (if (= new-sheet old-sheet)
               context
-              (assoc-in context [:effects :remote :sync-sheet]
-                {:path (format "/api/sheets/%s" (:db/id new-sheet))
-                 :method :patch
-                 :params {:tx (diffp old-sheet new-sheet :db/id)}}))))))))
+              (assoc-in context [:effects :socket :sync-sheet]
+                [:sheets/update {:sheet-id (:db/id new-sheet)
+                                 :diff (diffp old-sheet new-sheet :db/id)}]))))))))
 
 (def APP_MIDDLEWARE [sync-browser-url sheet-tx-sync])
 (def DEV_MIDDLEWARE [debug-logger spec-checker])

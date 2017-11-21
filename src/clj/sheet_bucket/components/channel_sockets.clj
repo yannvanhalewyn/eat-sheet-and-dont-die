@@ -1,10 +1,8 @@
 (ns sheet-bucket.components.channel-sockets
-  (:require [com.stuartsierra.component :as c]
+  (:require [sheet-bucket.socket-handler :as sh]
+            [com.stuartsierra.component :as c]
             [taoensso.sente :as sente]
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]))
-
-(defn- event-handler [{:as msg :keys [connected-uids uid send-fn event ring-req client-id]}]
-  (println event uid))
 
 (defn broadcast [chsk msg]
   (doseq [uid (:any @(:connected-uids chsk))]
@@ -18,7 +16,7 @@
   (start [this]
     (println "Starting Channel Sockets listener...")
     (let [chsk (sente/make-channel-socket! (get-sch-adapter) {})
-          stop-fn (sente/start-chsk-router! (:ch-recv chsk) #'event-handler)]
+          stop-fn (sente/start-chsk-router! (:ch-recv chsk) #'sh/event-handler)]
       (assoc (select-keys chsk SENTE_KEYS)
         :stop-fn stop-fn)))
   (stop [this]

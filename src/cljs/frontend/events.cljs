@@ -8,11 +8,10 @@
             [shared.utils :as sutil :refer [gen-temp-id key-by dissoc-in]]
             [clojure.zip :as zip]))
 
-(reg-event-fx
+(reg-event-db
   :app/init
   (fn [_ event]
-    {:remote {:get-current-user {:path "/api/me"}}
-     :db (reducer/app nil event)}))
+    (reducer/app nil event)))
 
 ;; Editor operations
 ;; =================
@@ -124,15 +123,12 @@
 (reg-event-fx
   :playlist/create-sheet
   (fn [db [_ owner-id]]
-    {:remote {:create-sheet {:path "/api/sheets"
-                             :method :post
-                             :params {:owner-id owner-id}}}}))
+    {:socket {:create-sheet [:sheets/create owner-id]}}))
 
 (reg-event-fx
   :playlist/destroy-sheet
   (fn [db [_ sheet-id]]
-    {:remote {:destroy-sheet {:path (str "/api/sheets/" sheet-id)
-                              :method :delete}}}))
+    {:socket {:destroy-sheet [:sheets/destroy sheet-id]}}))
 
 ;; Remote actions
 ;; ==============
@@ -148,6 +144,12 @@
 (reg-events-remote :get-current-user)
 (reg-events-remote :create-sheet)
 (reg-events-remote :destroy-sheet)
+
+(reg-event-fx :chsk/state (fn [_ _] {}))
+
+(reg-event-fx
+  :chsk/handshake
+  (fn [_ _] {:socket {:get-current-user [:users/me]}}))
 
 (reg-event-db
   :route/browser-url

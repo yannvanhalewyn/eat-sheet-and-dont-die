@@ -13,12 +13,6 @@
 
 (defroutes app-routes
   (GET "/" [] index-view)
-  (GET "/api/me" [] session/show)
-  (GET "/api/users/:user-id/sheets" [] sheets/index)
-  (GET "/api/sheets/:eid" [] sheets/show)
-  (POST "/api/sheets" [] sheets/create)
-  (PATCH "/api/sheets/:eid" [] sheets/update)
-  (DELETE "/api/sheets/:eid" [] sheets/destroy)
   (route/not-found "<h1>NOT FOUND</h1>"))
 
 (defn wrap-chsk-routes [routes chsk]

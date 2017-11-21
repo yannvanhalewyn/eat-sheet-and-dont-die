@@ -8,7 +8,7 @@
     (let [route @(subscribe [:sub/active-route])]
       (case (:route/handler route)
         (:route/index :route/sheets) [sheet-list/component {:user current-user}]
-        :route/sheet [sheet/component {:sheet-id (get-in route [:route/params :sheet/id])}]))
+        :route/sheet [sheet/component {:sheet-id (js/parseInt (get-in route [:route/params :sheet/id]))}]))
     [:h1 "Login panel"]))
 
 (defn component [props]
