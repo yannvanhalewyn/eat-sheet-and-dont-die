@@ -1,5 +1,5 @@
 (ns sheet-bucket.socket-handler
-  (:require [clj-stacktrace.repl :refer [pst-str]]
+  (:require [clojure.stacktrace :as st]
             [taoensso.timbre :as timbre]))
 
 (defmulti socket-handler "Multimethod for handling socket messages" :id)
@@ -17,7 +17,7 @@
     (try
       (handler msg)
       (catch Exception e
-        (let [res {:error (pst-str e)}
+        (let [res {:error (with-out-str (st/print-stack-trace e))}
               reply (or (:?reply-fn msg) #'timbre/error)]
           (reply res))))))
 
