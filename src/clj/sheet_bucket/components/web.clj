@@ -36,7 +36,7 @@
   (start [this]
     (if (:server this)
       this
-      (let [options {:port (parse-int port)}]
+      (let [port (parse-int port)]
         (println (format "Starting web server on port %s..." port))
         (assoc this :stop-server-fn
                (run-server (make-handler db channel-sockets) {:port port})))))
