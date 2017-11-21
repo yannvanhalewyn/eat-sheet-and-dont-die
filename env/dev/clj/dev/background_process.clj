@@ -1,5 +1,6 @@
 (ns dev.background-process
   (:require [clojure.string :as str]
+            [taoensso.timbre :as timbre]
             [com.stuartsierra.component :as c]))
 
 (defn exec
@@ -12,12 +13,12 @@
   (start [component]
     (if-not (:process component)
       (do
-        (println (format "Starting %s..." name))
+        (timbre/infof "Starting %s..." name)
         (assoc component
           :process (exec args)))
       component))
   (stop [component]
     (when-let [process (:process component)]
-      (println (format "Stopping %s..." name))
+      (timbre/infof "Stopping %s..." name)
       (.destroy process))
     component))

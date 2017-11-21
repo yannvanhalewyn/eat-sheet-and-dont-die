@@ -3,7 +3,7 @@
             [sheet-bucket.controllers.session]
             [sheet-bucket.controllers.sheets]
             [com.stuartsierra.component :as c]
-            [clj-stacktrace.repl :refer [pst-str]]
+            [taoensso.timbre :as timbre]
             [taoensso.sente :as sente]
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]))
 
@@ -17,16 +17,16 @@
 (defrecord ChannelSockets []
   c/Lifecycle
   (start [this]
-    (println "Starting Channel Sockets listener...")
+    (timbre/info "Starting Channel Sockets listener...")
     (let [chsk (sente/make-channel-socket! (get-sch-adapter) {})
           stop-fn (sente/start-chsk-router! (:ch-recv chsk) #'sh/handler)]
       (assoc (select-keys chsk SENTE_KEYS)
         :stop-fn stop-fn)))
   (stop [this]
-    (println "Stopping Channel Sockets listener...")
+    (timbre/info "Stopping Channel Sockets listener...")
     (if-let [stop (:stop-fn this)]
       (stop)
-      (println "No stop-fn found for Channel Sockets listener. Doing nothing."))
+      (timbre/error "No stop-fn found for Channel Sockets listener. Doing nothing."))
     (apply dissoc this SENTE_KEYS :stop-fn)))
 
 (defn component [] (ChannelSockets.))

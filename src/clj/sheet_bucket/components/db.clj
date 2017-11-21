@@ -1,7 +1,8 @@
 (ns sheet-bucket.components.db
   (:require [com.stuartsierra.component :as c]
             [datomic.api :as d]
-            [io.rkn.conformity :as conform]))
+            [io.rkn.conformity :as conform]
+            [taoensso.timbre :as timbre]))
 
 ;; Helper fns
 ;; ==========
@@ -23,13 +24,13 @@
     (d/create-database uri)
     (d/connect uri)
     (catch Exception e
-      (println "Could not connect to database with url: " uri (.getMessage e)))))
+      (timbre/error e "Could not connect to database with url: " uri))))
 
 (defrecord Db [uri]
   c/Lifecycle
   (start [this]
     (when-let [conn (connect uri)]
-      (println "Migrating schema...")
+      (timbre/info "Migrating schema...")
       (conform/ensure-conforms conn (conform/read-resource "schema.edn"))
       (assoc this :conn (connect uri))))
   (stop [this]

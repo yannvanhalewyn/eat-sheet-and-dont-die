@@ -1,10 +1,11 @@
 (ns sheet-bucket.socket-handler
-  (:require [clj-stacktrace.repl :refer [pst-str]]))
+  (:require [clj-stacktrace.repl :refer [pst-str]]
+            [taoensso.timbre :as timbre]))
 
 (defmulti socket-handler "Multimethod for handling socket messages" :id)
 
 (defmethod socket-handler :default [{:keys [event ?reply-fn]}]
-  (println "Unhandled event" event)
+  (timbre/debug "Unhandled event" event)
   (when-let [reply ?reply-fn]
     (reply {:unmatched-event-echo event})))
 
@@ -17,7 +18,7 @@
       (handler msg)
       (catch Exception e
         (let [res {:error (pst-str e)}
-              reply (or (:?reply-fn msg) println)]
+              reply (or (:?reply-fn msg) #'timbre/error)]
           (reply res))))))
 
 (defn- wrap-reply

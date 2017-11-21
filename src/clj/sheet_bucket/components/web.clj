@@ -4,6 +4,7 @@
             [sheet-bucket.utils :refer [parse-int]]
             [sheet-bucket.env-middleware :refer [wrap-env-middleware]]
             [com.stuartsierra.component :as c]
+            [taoensso.timbre :as timbre]
             [muuntaja.core :as m]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
             [ring.middleware.defaults :refer [api-defaults wrap-defaults]]))
@@ -37,14 +38,14 @@
     (if (:server this)
       this
       (let [port (parse-int port)]
-        (println (format "Starting web server on port %s..." port))
+        (timbre/infof "Starting web server on port %s..." port)
         (assoc this :stop-server-fn
                (run-server (make-handler db channel-sockets) {:port port})))))
   (stop [this]
-    (println "Stopping web server...")
+    (timbre/info "Stopping web server...")
     (if-let [stop (:stop-server-fn this)]
       (stop)
-      (println "No stop-fn found for Web component. Doing nothing."))
+      (timbre/error "No stop-fn found for Web component. Doing nothing."))
     (dissoc this :stop-server-fn)))
 
 (defn component [port]
