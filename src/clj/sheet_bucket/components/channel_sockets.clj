@@ -1,6 +1,9 @@
 (ns sheet-bucket.components.channel-sockets
   (:require [sheet-bucket.socket-handler :as sh]
+            [sheet-bucket.controllers.session]
+            [sheet-bucket.controllers.sheets]
             [com.stuartsierra.component :as c]
+            [clj-stacktrace.repl :refer [pst-str]]
             [taoensso.sente :as sente]
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]))
 
@@ -16,7 +19,7 @@
   (start [this]
     (println "Starting Channel Sockets listener...")
     (let [chsk (sente/make-channel-socket! (get-sch-adapter) {})
-          stop-fn (sente/start-chsk-router! (:ch-recv chsk) #'sh/event-handler)]
+          stop-fn (sente/start-chsk-router! (:ch-recv chsk) #'sh/handler)]
       (assoc (select-keys chsk SENTE_KEYS)
         :stop-fn stop-fn)))
   (stop [this]

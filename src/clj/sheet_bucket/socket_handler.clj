@@ -1,22 +1,12 @@
 (ns sheet-bucket.socket-handler
-  (:require [sheet-bucket.controllers.session :as session]
-            [sheet-bucket.models.user :as user]
-            [sheet-bucket.models.sheet :as sheet]
-            [sheet-bucket.controllers.sheets :as sheets]
-            [clj-stacktrace.repl :refer [pst-str]]))
+  (:require [clj-stacktrace.repl :refer [pst-str]]))
 
-(defn- event-handler* [{:as msg :keys [connected-uids uid send-fn
-                                       ring-req client-id id ?data ring-req]}]
-  (let [db-conn (:db-conn ring-req)
-        reply (:?reply-fn msg)]
-    (case id
-      :users/me (reply (session/show db-conn))
-      :sheets/index (reply (user/sheets db-conn (:user-id ?data)))
-      :sheets/show (reply (sheet/find db-conn ?data))
-      :sheets/create (reply (sheet/create! db-conn ?data))
-      :sheets/update (reply (sheets/update db-conn ?data))
-      :sheets/destroy (reply (sheets/destroy db-conn ?data))
-      (println id ?data uid client-id))))
+(defmulti socket-handler "Multimethod for handling socket messages" :id)
+
+(defmethod socket-handler :default [{:keys [event ?reply-fn]}]
+  (println "Unhandled event" event)
+  (when-let [reply ?reply-fn]
+    (reply {:unmatched-event-echo event})))
 
 (defn- wrap-stacktrace
   "Wrap a handler such that exceptions are caught and a helpful debugging
@@ -30,4 +20,12 @@
               reply (or (:?reply-fn msg) println)]
           (reply res))))))
 
-(def event-handler (wrap-stacktrace event-handler*))
+(defn- wrap-reply
+  "Wraps a handler and calls the reply fn if any"
+  [handler]
+  (fn [msg]
+    (if-let [reply (:?reply-fn msg)]
+      (reply (handler msg))
+      (handler msg))))
+
+(def handler (-> socket-handler wrap-reply wrap-stacktrace))
