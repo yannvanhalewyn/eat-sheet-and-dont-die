@@ -60,47 +60,15 @@
 
   :test-paths ["test/clj" "test/cljc"]
 
-  :clean-targets ^{:protect false} ["target"]
+  :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
-  :cljsbuild {:builds [{:id "cards"
-                        :source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-                        :figwheel {:devcards true}
-                        :compiler {:main cards.core
-                                   :asset-path "js/compiled/cards-out"
-                                   :output-to "target/public/js/cards.js"
-                                   :output-dir "target/public/js/compiled/cards-out"}}
-
-                       {:id "dev"
-                        :source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-                        :figwheel {:on-jsload "dev.user/on-js-load"}
-                        :compiler {:main dev.user
-                                   ;; Figwheel injects script tags for
-                                   ;; development. This is the location
-                                   ;; for the compiled resources
-                                   :asset-path "js/compiled/out"
-                                   ;; The outputted main bundle
-                                   :output-to "target/public/js/app.js"
-                                   ;; Where to compile assets needed for
-                                   ;; the development bundle, required by
-                                   ;; :asset-path
-                                   :output-dir "target/public/js/compiled/out"}}
-
-                       {:id "test"
-                        :source-paths ["src/cljs" "src/cljc" "test/cljs" "test/cljc" "env/test"]
-                        :figwheel true
-                        :compiler {:main frontend.test-runner
-                                   :asset-path "js/compiled/test-out"
-                                   :output-to "target/public/js/test.js"
-                                   :output-dir "target/public/js/compiled/test-out"
-                                   :optimizations :none}}
-
-                       {:id "prod"
+  :cljsbuild {:builds [{:id "prod"
                         :source-paths ["src/cljs" "src/cljc" "env/production/cljs"]
-                        :compiler {:output-to "target/public/js/app.js"
+                        :compiler {:output-to "resources/public/js/app.js"
                                    :main frontend.main
                                    :optimizations :advanced
                                    :pretty-print false
                                    :parallel-build true
                                    :closure-defines {"goog.DEBUG" false}}}]}
 
-  :figwheel {:css-dirs ["target/public/css"]})
+  :figwheel {:css-dirs ["resources/public/css"]})
