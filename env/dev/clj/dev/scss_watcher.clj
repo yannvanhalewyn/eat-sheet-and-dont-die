@@ -5,7 +5,7 @@
 
 (def DEFAULTS
   {:input-file "scss/application.scss"
-   :output-file "resources/public/css/application.css"})
+   :output-file "target/public/css/application.css"})
 
 (defn watcher
   ([] (watcher DEFAULTS))

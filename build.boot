@@ -1,5 +1,6 @@
 (set-env!
   :resource-paths #{"resources"}
+  :target-path "target"
   :source-paths #{"src/clj" "src/cljc"}
   :dependencies '[[org.clojure/clojure "1.9.0-RC1"]
                   [org.clojure/clojurescript "1.9.946"]
@@ -30,6 +31,7 @@
   []
   (System/setProperty "CLJ_ENV" "development")
   (merge-env!
+    :resource-paths #{"target"}
     :source-paths #{"env/dev/clj" "test/cljc"}
     :dependencies '[[devcards "0.2.4" :exclusions [cljsjs/react]]
                     [binaryage/devtools "0.9.7"]
