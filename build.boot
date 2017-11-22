@@ -24,7 +24,10 @@
                   ;; CLJS
                   [reagent "0.7.0"]
                   [re-frame "0.10.2"]
-                  [bidi "2.1.2"]])
+                  [bidi "2.1.2"]
+
+                  ;; Boot
+                  [adzerk/boot-cljs "2.1.4"]])
 
 (deftask dev
   "Profile setup for development mode"
@@ -45,6 +48,10 @@
                                 ~(get-env :directories))})
   identity)
 
-(deftask prod
+(require '[adzerk.boot-cljs :refer [cljs]])
+
+(deftask build
   []
-  (set-env!))
+  (merge-env! :dependencies '[]
+    :source-paths #{"src/cljs" "src/cljc" "env/production/cljs"})
+  (cljs))

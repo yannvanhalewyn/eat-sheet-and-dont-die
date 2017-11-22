@@ -1,0 +1,6 @@
+{:require [frontend.core]
+ :init-fns [frontend.core/init!]
+ :output-to "target/public/js/app.js"
+ :compiler-options {:closure-defines {"goog.DEBUG" false}
+                    :pretty-print false
+                    :optimizations :advanced}}
