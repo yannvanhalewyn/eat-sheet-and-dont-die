@@ -3,7 +3,8 @@
             [shared.utils :as sutil :refer [key-by]]
             [clojure.zip :as zip]
             [frontend.router :as router]
-            [frontend.models.sheet :as sheet]))
+            [frontend.models.sheet :as sheet]
+            [datascript.core :as d]))
 
 (defn- handle-response [state])
 
@@ -49,9 +50,17 @@
     :response/create-sheet (router/sheet (:db/id arg1))
     state))
 
+(defn sheets-datascript [db [type arg1]]
+  (case type
+    :app/init (d/create-conn sheet/schema)
+    :response/get-sheet (do (d/transact! db [arg1])
+                            db)
+    db))
+
 (def app
   (combine-reducers
     {:db/sheets.by-id sheets-by-id
+     :db/sheets-datascript sheets-datascript
      :db/selection selection
      :db/current-user current-user
      :db/active-route active-route}))

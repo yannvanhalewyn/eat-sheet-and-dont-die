@@ -6,6 +6,19 @@
             [frontend.util.zipper :as uzip :refer [nth-child next-leaf prev-leaf
                                                    locate locate-left]]))
 
+(def ref-many {:db/type :db.type/ref
+               :db/cardinality :db.cardinality/many})
+
+(def schema
+  {:sheet/sections ref-many
+   :section/rows ref-many
+   :row/bars ref-many
+   :bar/chords ref-many})
+
+(def pull-selector
+  '[* {:sheet/sections
+       [* {:section/rows [* {:row/bars [* {:bar/chords [*]}]}]}]}])
+
 ;; Initializing nodes
 ;; ==================
 

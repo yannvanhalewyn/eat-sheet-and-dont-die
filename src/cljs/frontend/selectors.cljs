@@ -1,5 +1,6 @@
 (ns frontend.selectors
-  (:require [frontend.models.sheet :as sheet]
+  (:require [datascript.core :as d]
+            [frontend.models.sheet :as sheet]
             [frontend.util.util :refer-macros [defselector]]))
 
 (def current-user :db/current-user)
@@ -10,7 +11,9 @@
   (-> db params :sheet/id js/parseInt))
 
 (defn sheet [db]
-  (get-in db [:db/sheets.by-id (current-sheet-id db)]))
+  (d/pull @(:db/sheets-datascript db)
+    sheet/pull-selector
+    (current-sheet-id db)))
 
 (def selection :db/selection)
 
