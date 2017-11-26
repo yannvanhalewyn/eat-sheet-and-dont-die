@@ -23,7 +23,8 @@
           @conn))
 
 (defn- tx-apply [db tx-fn & args]
-  (:db-after (d/with db (apply tx-fn db args))))
+  (:db-after (d/with db (binding [sut/*string-tmp-ids* false]
+                          (apply tx-fn db args)))))
 
 (deftest update-chord
   (is (= "Ab" (:chord/value (d/entity (tx-apply db sut/update-chord 5 "Ab") 5)))))
@@ -51,4 +52,11 @@
     (is (= [[:db/add 3 :row/bars "new-bar"]
             {:db/id "new-bar" :coll/position 1 :bar/chords "new-chord"}
             {:db/id "new-chord" :chord/value "" :coll/position 0}]
-          (sut/append db :bar 5)))))
+          (sut/append db :bar 5))))
+
+  (testing "Append bar in between"
+    (let [db (-> db
+               (tx-apply sut/append :bar 5)
+               (tx-apply sut/append :bar 5))]
+      (is (= [[4 0] [6 2] [8 1]]
+            (map #(vector (:db/id %) (:coll/position %)) (:row/bars (d/entity db 3))))))))

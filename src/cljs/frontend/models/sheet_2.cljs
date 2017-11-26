@@ -11,6 +11,12 @@
    :row/bars children-type
    :bar/chords children-type})
 
+;; Hack - Datomic can handle string temp ids, datascript can't. Use
+;; the useful string temp ids for transactions send to the backend,
+;; but test them in cljs with neg-numbers so we can transact them to
+;; datascript.
+(def ^:dynamic *string-tmp-ids* true)
+
 (defn- transact!
   "An immutable version of transact, will return transaction data with
   :db-after that can be used to replace the previous db. "
@@ -50,7 +56,7 @@
                           :where [?bar :bar/chords ?chord]]
                    db cur-chord-id)]
     (let [pos (inc (:coll/position (d/entity db cur-chord-id)))
-          tempid (str (d/tempid db))
+          tempid (if *string-tmp-ids* "new-chord" -1)
           chord-pos-txes (map (fn [{:keys [db/id coll/position]}]
                                 [:db/add id :coll/position
                                  (if (< position pos) (or position 0) (inc position))])
@@ -65,10 +71,25 @@
                                  :in $ ?chord
                                  :where
                                  [?bar :bar/chords ?chord]
-                                 [?row :row/bars ?bar]
-                                 [?row :row/bars ?next-bars]]
+                                 [?row :row/bars ?bar]]
                             db cur-chord-id)]
-    (let [pos (inc (:coll/position bar))]
-      [[:db/add row-id :row/bars "new-bar"]
-       {:db/id "new-bar" :coll/position pos :bar/chords "new-chord"}
-       {:db/id "new-chord" :coll/position 0 :chord/value ""}])))
+    (let [next-bars (d/q '[:find ?bar ?pos
+                           :in $ ?row ?cur-bar
+                           :where
+                           [?cur-bar :coll/position ?cur-pos]
+                           [?row :row/bars ?bar]
+                           [?bar :coll/position ?pos]
+                           [(> ?pos ?cur-pos)]]
+                      db row-id (:db/id bar))
+          bar-pos-txes
+          (map (fn [[id position]]
+                 [:db/add id :coll/position (inc position)])
+            next-bars)
+          pos (inc (:coll/position bar))
+          new-bar-id (if *string-tmp-ids* "new-bar" -1)
+          new-chord-id (if *string-tmp-ids* "new-chord" -2)]
+      (into
+        [[:db/add row-id :row/bars new-bar-id]
+         {:db/id new-bar-id :coll/position pos :bar/chords new-chord-id}
+         {:db/id new-chord-id :coll/position 0 :chord/value ""}]
+        bar-pos-txes))))
