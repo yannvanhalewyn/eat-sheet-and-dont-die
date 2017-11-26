@@ -21,7 +21,8 @@
 (defmethod socket-handler :tx/sync
   [{:keys [?data ring-req ?reply-fn]}]
   (let [result (d/transact (:db-conn ring-req) ?data)]
-    {:tx-data (map (partial datsync/datom->vec (:db-after @result))
+    {:tempids (:tempids @result)
+     :tx-data (map (partial datsync/datom->vec (:db-after @result))
                 (:tx-data @result))}))
 
 (defn- wrap-stacktrace
