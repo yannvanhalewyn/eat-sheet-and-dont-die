@@ -97,3 +97,23 @@
          {:db/id new-bar-id :coll/position pos :bar/chords new-chord-id}
          {:db/id new-chord-id :coll/position 0 :chord/value ""}]
         (move-next-children-right db row-id (:db/id bar) :row/bars)))))
+
+(defmethod append* :row
+  [db _ cur-chord-id]
+  (when-let [[row section-id] (d/q '[:find [(pull ?row [*]) ?section]
+                                     :in $ ?chord
+                                     :where
+                                     [?section :section/rows ?row]
+                                     [?row :row/bars ?bar]
+                                     [?bar :bar/chords ?chord]]
+                                db cur-chord-id)]
+    (let [pos (inc (:coll/position row))
+          new-row-id (if *string-tmp-ids* "new-row" -1)
+          new-bar-id (if *string-tmp-ids* "new-bar" -2)
+          new-chord-id (if *string-tmp-ids* "new-chord" -3)]
+      (concat
+        [[:db/add section-id :section/rows new-row-id]
+         {:db/id new-row-id :coll/position pos :row/bars new-bar-id}
+         {:db/id new-bar-id :coll/position pos :bar/chords new-chord-id}
+         {:db/id new-chord-id :coll/position 0 :chord/value ""}]
+        (move-next-children-right db section-id (:db/id row) :section/rows)))))

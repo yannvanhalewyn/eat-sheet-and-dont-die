@@ -57,6 +57,15 @@
   (testing "Append bar in between"
     (let [db (-> db
                (tx-apply sut/append :bar 5)
-               (tx-apply sut/append :bar 5))]
-      (is (= [[4 0] [6 2] [8 1]]
-            (map #(vector (:db/id %) (:coll/position %)) (:row/bars (d/entity db 3))))))))
+               (tx-apply sut/append :bar 5))
+          bars (:row/bars (d/entity db 3))]
+      (is (= 3 (count bars)))
+      (is (= [0 2 1] (map :coll/position bars)))))
+
+  (testing "Append row in between"
+    (let [db (-> db
+               (tx-apply sut/append :row 5)
+               (tx-apply sut/append :row 5))
+          rows (:section/rows (d/entity db 2))]
+      (is (= 3 (count rows)))
+      (is (= [0 2 1] (map :coll/position rows))))))
