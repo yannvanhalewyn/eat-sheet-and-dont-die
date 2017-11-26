@@ -79,7 +79,7 @@
       (is (= [0 2 1] (map :coll/position sections)))
       (is (= ["Intro" "Section" "Section"] (map :section/title sections))))))
 
-(deftest remove-
+(deftest delete
   (let [db (-> db
              (tx-apply sut/append :chord 5)
              (tx-apply sut/append :row 5)
@@ -102,3 +102,17 @@
             sections (:sheet/sections (d/entity db 1))]
         (is (= 1 (count sections)))
         (is (= 2 (:db/id (first sections))))))))
+
+(deftest move
+  (let [db (-> db
+             (tx-apply sut/append :chord 5)
+             (tx-apply sut/append :bar 5)
+             (tx-apply sut/append :row 5)
+             (tx-apply sut/append :section 5))]
+
+    (testing "move right"
+      (is (= 6 (sut/move db :right 5)))    ;; Next chord
+      (is (= 8 (sut/move db :right 6)))    ;; Next bar
+      (is (= 11 (sut/move db :right 8)))   ;; Next row
+      (is (= 15 (sut/move db :right 11)))) ;; Next section
+    ))
