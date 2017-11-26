@@ -16,7 +16,30 @@
      [?bar :bar/chords ?chord]
      [?row :row/bars ?bar]
      [?section :section/rows ?row]
-     [?sheet :sheet/sections ?section]]])
+     [?sheet :sheet/sections ?section]]
+
+    [(inc-pos ?child ?pos)
+     [?child :coll/position ?child-pos]
+     [(inc ?child-pos) ?pos]]
+
+    [(chord-in-bar ?bar ?chord-pos ?chord)
+     [?bar :bar/chords ?chord]
+     [?chord :coll/position ?chord-pos]]
+
+    [(chord-in-row ?row ?bar-pos ?chord-pos ?chord)
+     [?row :row/bars ?bar]
+     [?bar :coll/position ?bar-pos]
+     [chord-in-bar ?bar ?chord-pos ?chord]]
+
+    [(chord-in-section ?section ?row-pos ?bar-pos ?chord-pos ?chord)
+     [?section :section/rows ?row]
+     [?row :coll/position ?row-pos]
+     [chord-in-row ?row ?bar-pos ?chord-pos ?chord]]
+
+    [(chord-in-sheet ?sheet ?section-pos ?row-pos ?bar-pos ?chord-pos ?chord)
+     [?sheet :sheet/sections ?section]
+     [?section :coll/position ?section-pos]
+     [chord-in-section ?section ?row-pos ?bar-pos ?chord-pos ?chord]]])
 
 ;; Hack - Datomic can handle string temp ids, datascript can't. Use
 ;; the useful string temp ids for transactions send to the backend,
@@ -135,6 +158,7 @@
 ;; Removing
 ;; ========
 
+;; TODO reset coll/pos after removal
 (defmulti remove*
   "Takes in an entity type to remove from the sheet #{:sheet :row
   :section :bar :chord} and removes it."
@@ -176,76 +200,41 @@
 (defmulti move* (fn [_ dir] dir))
 (def move move*)
 
-#_(let [pos (inc (:coll/position (d/entity db cur-chord)))]
-    (d/q '[:find ?chord .
-           :in $ ?cur ?pos
-           :where
-           [?bar :bar/chords ?cur]
-           [?chord :coll/position ?pos]]
-      db cur-chord pos))
-
 (defmethod move* :right
   [db _ cur-chord]
   (or
     ;; Same bar
     (d/q '[:find ?chord .
-           :in $ ?cur
+           :in $ % ?cur
            :where
-           [?bar :bar/chords ?cur]
-           [?cur :coll/position ?pos]
-           [(inc ?pos) ?next]
-
-           [?bar :bar/chords ?chord]
-           [?chord :coll/position ?next]]
-      db cur-chord)
+           [get-parents ?cur ?bar]
+           [inc-pos ?cur ?next-chord-pos]
+           [chord-in-bar ?bar ?next-chord-pos ?chord]]
+      db RULES cur-chord)
 
     ;; Next bar
     (d/q '[:find ?chord .
-           :in $ ?cur-chord
+           :in $ % ?cur
            :where
-           [?cur-bar :bar/chords ?cur-chord]
-           [?cur-row :row/bars ?cur-bar]
-           [?cur-bar :coll/position ?cur-bar-pos]
-           [(inc ?cur-bar-pos) ?next-bar-pos]
-
-           [?cur-row :row/bars ?bar]
-           [?bar :coll/position ?next-bar-pos]
-           [?bar :bar/chords ?chord]
-           [?chord :coll/position 0]]
-      db cur-chord)
+           [get-parents ?cur ?bar ?row]
+           [inc-pos ?bar ?next-bar-pos]
+           [chord-in-row ?row ?next-bar-pos 0 ?chord]]
+      db RULES cur-chord)
 
     ;; Next row
     (d/q '[:find ?chord .
-           :in $ ?cur-chord
+           :in $ % ?cur
            :where
-           [?cur-bar :bar/chords ?cur-chord]
-           [?cur-row :row/bars ?cur-bar]
-           [?cur-section :section/rows ?cur-row]
-           [?cur-row :coll/position ?cur-row-pos]
-           [(inc ?cur-row-pos) ?next-row-pos]
-
-           [?cur-section :section/rows ?row]
-           [?row :coll/position ?next-row-pos]
-           [?row :row/bars ?bar]
-           [?bar :bar/chords ?chord]
-           [?chord :coll/position 0]]
-      db cur-chord)
+           [get-parents ?cur ?bar ?row ?section]
+           [inc-pos ?row ?next-row-pos]
+           [chord-in-section ?section ?next-row-pos 0 0 ?chord]]
+      db RULES cur-chord)
 
     ;; Next section
     (d/q '[:find ?chord .
-           :in $ ?cur-chord
+           :in $ % ?cur
            :where
-           [?cur-bar :bar/chords ?cur-chord]
-           [?cur-row :row/bars ?cur-bar]
-           [?cur-section :section/rows ?cur-row]
-           [?cur-sheet :sheet/sections ?cur-section]
-           [?cur-section :coll/position ?cur-section-pos]
-           [(inc ?cur-section-pos) ?next-section-pos]
-
-           [?cur-sheet :sheet/sections ?section]
-           [?section :coll/position ?next-section-pos]
-           [?section :section/rows ?row]
-           [?row :row/bars ?bar]
-           [?bar :bar/chords ?chord]
-           [?chord :coll/position 0]]
-      db cur-chord)))
+           [get-parents ?cur ?bar ?row ?section ?sheet]
+           [inc-pos ?section ?next-section-pos]
+           [chord-in-sheet ?sheet ?next-section-pos 0 0 0 ?chord]]
+      db RULES cur-chord)))
