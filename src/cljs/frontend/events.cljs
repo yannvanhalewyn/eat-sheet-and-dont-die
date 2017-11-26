@@ -4,6 +4,7 @@
             [frontend.router :as router]
             [frontend.reducer :as reducer]
             [frontend.models.sheet :as sheet]
+            [frontend.models.sheet-2 :as sheet-2]
             [frontend.models.bar-attachment :as attachment]
             [shared.utils :as sutil :refer [gen-temp-id key-by dissoc-in]]
             [clojure.zip :as zip]))
@@ -28,19 +29,16 @@
 (reg-event-fx
   :sheet/update-chord
   (fn [{:keys [db]} [_ id value next]]
-    (let [new-sheet (-> (sheet/zipper (selectors/sheet db))
-                      (sheet/navigate-to id)
-                      (zip/edit assoc :chord/value value)
-                      zip/root)
-          new-db (reducer/app db [:sheet/replace new-sheet])]
-      (if next {:db new-db :dispatch next} {:db new-db}))))
+    (let [report (sheet-2/update-chord (:db/sheets-datascript db) id value)
+          db (reducer/app db [:tx/apply report])]
+      (if next
+        {:db db :datsync report :dispatch next}
+        {:db db :datsync report}))))
 
 (reg-event-db
   :sheet/append
   (fn [db [_ type]]
-    (reducer/app db
-      [:sheet/replace-zip
-       (sheet/append (selectors/current-loc db) type (repeatedly gen-temp-id))])))
+    (reducer/app db [:sheet/append type (:selection/id (selectors/selection db))])))
 
 (reg-event-db
   :sheet/move
@@ -144,6 +142,7 @@
 (reg-events-remote :get-current-user)
 (reg-events-remote :create-sheet)
 (reg-events-remote :destroy-sheet)
+(reg-events-remote :datsync)
 
 (reg-event-fx :chsk/state (fn [_ _] {}))
 

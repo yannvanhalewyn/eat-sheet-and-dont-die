@@ -23,22 +23,22 @@
           @conn))
 
 (deftest update-chord
-  (is (= "Ab" (:chord/value (d/entity (sut/update-chord db 5 "Ab") 5)))))
+  (is (= "Ab" (:chord/value (d/entity (:db-after (sut/update-chord db 5 "Ab")) 5)))))
 
 (deftest append
   (testing "Append chords at the end"
-    (let [db (sut/append db :chord 5)]
+    (let [db (:db-after (sut/append db :chord 5))]
       (is (= [{:chord/value "" :coll/position 0}
               {:chord/value "" :coll/position 1}]
             (map #(into {} %) (:bar/chords (d/entity db 4)))))))
 
   (testing "Append chord in between"
     (let [db (-> db
-               (sut/update-chord 5 "first")
-               (sut/append :chord 5)
-               (sut/update-chord 6 "last")
-               (sut/append :chord 5)
-               (sut/update-chord 7 "middle"))]
+               (sut/update-chord 5 "first") :db-after
+               (sut/append :chord 5) :db-after
+               (sut/update-chord 6 "last") :db-after
+               (sut/append :chord 5) :db-after
+               (sut/update-chord 7 "middle") :db-after)]
       (is (= [{:chord/value "first" :coll/position 0}
               {:chord/value "last" :coll/position 2}
               {:chord/value "middle" :coll/position 1}]

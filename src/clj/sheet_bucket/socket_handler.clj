@@ -1,6 +1,7 @@
 (ns sheet-bucket.socket-handler
   (:require [clojure.stacktrace :as st]
-            [taoensso.timbre :as timbre]))
+            [taoensso.timbre :as timbre]
+            [datomic.api :as d]))
 
 (defmulti socket-handler "Multimethod for handling socket messages" :id)
 
@@ -8,6 +9,15 @@
   (timbre/debug "Unhandled event" event)
   (when-let [reply ?reply-fn]
     (reply {:unmatched-event-echo event})))
+
+(defn- ->tx [[e a v t added]]
+  [({true :db/add false :db/retract} added) e a v])
+
+(defmethod socket-handler :tx/sync
+  [{:keys [?data ring-req ?reply-fn]}]
+  (let [tx (map ->tx ?data)
+        result (d/transact (:db-conn ring-req) tx)]
+    (?reply-fn (:tempids @result))))
 
 (defn- wrap-stacktrace
   "Wrap a handler such that exceptions are caught and a helpful debugging

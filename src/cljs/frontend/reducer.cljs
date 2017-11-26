@@ -50,11 +50,15 @@
     :response/create-sheet (router/sheet (:db/id arg1))
     state))
 
-(defn sheets-datascript [db [type arg1]]
+(defn- transact! [db tx-data]
+  (:db-after (d/with db tx-data)))
+
+(defn sheets-datascript [db [type arg1 arg2]]
   (case type
-    :app/init (d/create-conn sheet/schema)
-    :response/get-sheet (do (d/transact! db [arg1])
-                            db)
+    :app/init @(d/create-conn sheet-2/schema)
+    :response/get-sheet (transact! db [arg1])
+    :sheet/append (sheet-2/append db arg1 arg2)
+    :tx/apply (:db-after arg1)
     db))
 
 (def app

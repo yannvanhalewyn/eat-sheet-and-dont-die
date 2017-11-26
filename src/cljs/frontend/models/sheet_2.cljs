@@ -12,10 +12,10 @@
    :bar/chords children-type})
 
 (defn- transact!
-  "An immutable version of transact, will return a new db value with
-  the transacted datoms."
+  "An immutable version of transact, will return transaction data with
+  :db-after that can be used to replace the previous db. "
   [db tx-data]
-  (:db-after (d/with db tx-data)))
+  (d/with db tx-data))
 
 (def q-one (comp ffirst d/q))
 
@@ -23,6 +23,10 @@
   "Returns a new db where chord `chord-id` has the new `value`"
   [db chord-id value]
   (transact! db [[:db/add chord-id :chord/value value]]) )
+
+(defn pull-all [db]
+  (d/q '[:find [(pull ?sheet [*])]
+         :where [?sheet :sheet/title]] db))
 
 ;; Append
 ;; ======

@@ -6,9 +6,15 @@
             [shared.diffp :refer [diffp]]
             [cljs.spec.alpha :as s]
             [re-frame.core :as rf]
-            [goog.string :refer [format]]))
+            [goog.string :refer [format]]
+            [datascript.core :as d]
+            [frontend.models.sheet-2 :as sheet-2]))
 
 (rf/reg-fx :socket sock/sock-fx)
+
+(rf/reg-fx :datsync
+  (fn [report]
+    (sock/sock-fx {:datsync [:tx/sync (map vec (:tx-data report))]})))
 
 ;; Development interceptors
 ;; ========================
@@ -24,18 +30,19 @@
     :id :debug-logger
     :after
     (fn [{:keys [effects coeffects] :as context}]
-      (let [new-db (:db effects)
+      (let [sheet-id (sel/current-sheet-id (:db effects))
+            new-db (:db effects)
             old-db (:db coeffects)
             event (:event coeffects)
-            group-name (str "Dispatch: " (first event)
-                         (if (= "remote" (namespace (first event)))
-                           (str " (" (second event) ")")))]
+            group-name (str "Dispatch: " (first event))]
         (.groupCollapsed js/console group-name)
         (.info js/console "%c Event" "color: #03A9F4; font-weight: bold" event)
         (if new-db
           (do
             (.info js/console "%c New DB" "color: #9E9E9E; font-weight: bold" (sort new-db))
-            (.info js/console "%c changes" "color: #FF6259; font-weight: bold" (diffp old-db new-db :db/id)))
+            (.info js/console "%c changes" "color: #FF6259; font-weight: bold"
+              (diffp (update old-db :db/sheets-datascript sheet-2/pull-all)
+                (update new-db :db/sheets-datascript sheet-2/pull-all) :db/id)))
           (.info js/console "No db changes"))
         (.groupEnd js/console group-name "color: grey"))
       context)))
@@ -72,7 +79,7 @@
                 [:sheets/update {:sheet-id (:db/id new-sheet)
                                  :diff (diffp old-sheet new-sheet :db/id)}]))))))))
 
-(def APP_MIDDLEWARE [sync-browser-url sheet-tx-sync])
+(def APP_MIDDLEWARE [sync-browser-url])
 (def DEV_MIDDLEWARE [debug-logger spec-checker])
 (def MIDDLEWARE
   (into APP_MIDDLEWARE (when ^boolen goog.DEBUG DEV_MIDDLEWARE)))
