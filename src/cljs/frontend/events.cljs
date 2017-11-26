@@ -48,11 +48,12 @@
       (reducer/app db [:sheet/replace-zip new-sheet])
       db)))
 
-(reg-event-db
+(reg-event-fx
   :sheet/remove
-  (fn [db [_ element]]
-    (reducer/app db [:sheet/replace-zip
-                     (sheet/delete (selectors/current-loc db) element)])))
+  (fn [{:keys [db]} [_ element]]
+    (let [chord-id (:selection/id (selectors/selection db))
+          tx (sheet-2/delete (:db/sheets-datascript db) element chord-id)]
+      {:datsync tx})))
 
 (reg-event-db
   :sheet/remove-selection

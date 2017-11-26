@@ -30,12 +30,7 @@
 ;; ======
 
 (defmulti append* (fn [_ t _] t))
-
-(defn append [db type chord-id]
-  (if-let [new-db (append* db type chord-id)]
-    new-db
-    (do (.error js/console "Could not append" type "after" chord-id)
-        db)))
+(def append append*)
 
 (defmethod append* :default [db t _]
   (.error js/console "No append fn defined for" t)
@@ -135,3 +130,44 @@
          {:db/id new-bar-id :coll/position 0 :bar/chords new-chord-id}
          {:db/id new-chord-id :coll/position 0 :chord/value ""}]
         (move-next-children-right db sheet-id (:db/id section) :sheet/sections)))))
+
+
+;; Removing
+;; ========
+
+(defmulti remove*
+  "Takes in an entity type to remove from the sheet #{:sheet :row
+  :section :bar :chord} and removes it."
+  (fn [_ t _] t))
+(def delete remove*)
+
+(defmethod remove* :default [db t _]
+  (.error js/console "No remove fn defined for" t)
+  db)
+
+(defn- count-children [db eid children-key]
+  (d/q '[:find (count ?children) .
+         :in $ ?parent ?children-key
+         :where [?parent ?children-key ?children]]
+    db eid children-key))
+
+(defmethod remove* :chord
+  [db _ cur-chord-id]
+  (let [chain
+        (d/q '[:find [?section ?row ?bar]
+               :in $ ?chord
+               :where
+               [?bar :bar/chords ?chord]
+               [?row :row/bars ?bar]
+               [?section :section/rows ?row]]
+          db cur-chord-id)
+
+        parents-to-retract
+        (loop [[[eid key] & rest] (reverse (map vector chain
+                                             [:section/rows :row/bars :bar/chords]))
+               ret []]
+          (if (= 1 (count-children db eid key))
+            (recur rest (conj ret eid))
+            ret))]
+    (map #(vector :db.fn/retractEntity %)
+      (conj parents-to-retract cur-chord-id))))

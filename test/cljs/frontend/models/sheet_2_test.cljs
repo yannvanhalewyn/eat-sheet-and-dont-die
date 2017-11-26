@@ -78,3 +78,27 @@
       (is (= 3 (count sections)))
       (is (= [0 2 1] (map :coll/position sections)))
       (is (= ["Intro" "Section" "Section"] (map :section/title sections))))))
+
+(deftest remove-
+  (let [db (-> db
+             (tx-apply sut/append :chord 5)
+             (tx-apply sut/append :row 5)
+             (tx-apply sut/append :section 5))]
+
+    (testing "remove chord"
+      (let [db (tx-apply db sut/remove* :chord 5)
+            chords (:bar/chords (d/entity db 4))]
+        (is (= 1 (count chords)))
+        (is (= 6 (:db/id (first chords))))))
+
+    (testing "remove last chord in row"
+      (let [db (tx-apply db sut/remove* :chord 9)
+            rows (:section/rows (d/entity db 2))]
+        (is (= 1 (count rows)))
+        (is (= 3 (:db/id (first rows))))))
+
+    (testing "remove last chord in section"
+      (let [db (tx-apply db sut/remove* :chord 13)
+            sections (:sheet/sections (d/entity db 1))]
+        (is (= 1 (count sections)))
+        (is (= 2 (:db/id (first sections))))))))
