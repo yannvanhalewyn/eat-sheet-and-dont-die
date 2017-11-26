@@ -49,6 +49,25 @@
   (.error js/console "No append fn defined for" t)
   db)
 
+(defn- move-next-children-right
+  "Takes a db, parent and current child, and returns the txes to
+  increment the :coll/position of every child to the right from
+  current child."
+  [db parent-id current-child-id children-key]
+  (let [next-children (d/q '[:find ?child ?pos
+                             :in $ ?parent ?cur-child ?children-key
+                             :where
+                             ;; Find position of current child
+                             [?cur-child :coll/position ?cur-pos]
+                             ;; Find all children to the right of that position
+                             [?parent ?children-key ?child]
+                             [?child :coll/position ?pos]
+                             [(> ?pos ?cur-pos)]]
+                        db parent-id current-child-id children-key)]
+    (map (fn [[id position]]
+           [:db/add id :coll/position (inc position)])
+      next-children)))
+
 (defmethod append* :chord
   [db _ cur-chord-id]
   (when-let [bar (q-one '[:find (pull ?bar [*])
@@ -56,14 +75,11 @@
                           :where [?bar :bar/chords ?chord]]
                    db cur-chord-id)]
     (let [pos (inc (:coll/position (d/entity db cur-chord-id)))
-          tempid (if *string-tmp-ids* "new-chord" -1)
-          chord-pos-txes (map (fn [{:keys [db/id coll/position]}]
-                                [:db/add id :coll/position
-                                 (if (< position pos) (or position 0) (inc position))])
-                           (:bar/chords bar))]
-      (into [[:db/add (:db/id bar) :bar/chords tempid]
-             {:db/id tempid :coll/position pos :chord/value ""}]
-        chord-pos-txes))))
+          tempid (if *string-tmp-ids* "new-chord" -1)]
+      (concat
+        [[:db/add (:db/id bar) :bar/chords tempid]
+         {:db/id tempid :coll/position pos :chord/value ""}]
+        (move-next-children-right db (:db/id bar) cur-chord-id :bar/chords)))))
 
 (defmethod append* :bar
   [db _ cur-chord-id]
@@ -73,23 +89,11 @@
                                  [?bar :bar/chords ?chord]
                                  [?row :row/bars ?bar]]
                             db cur-chord-id)]
-    (let [next-bars (d/q '[:find ?bar ?pos
-                           :in $ ?row ?cur-bar
-                           :where
-                           [?cur-bar :coll/position ?cur-pos]
-                           [?row :row/bars ?bar]
-                           [?bar :coll/position ?pos]
-                           [(> ?pos ?cur-pos)]]
-                      db row-id (:db/id bar))
-          bar-pos-txes
-          (map (fn [[id position]]
-                 [:db/add id :coll/position (inc position)])
-            next-bars)
-          pos (inc (:coll/position bar))
+    (let [pos (inc (:coll/position bar))
           new-bar-id (if *string-tmp-ids* "new-bar" -1)
           new-chord-id (if *string-tmp-ids* "new-chord" -2)]
-      (into
+      (concat
         [[:db/add row-id :row/bars new-bar-id]
          {:db/id new-bar-id :coll/position pos :bar/chords new-chord-id}
          {:db/id new-chord-id :coll/position 0 :chord/value ""}]
-        bar-pos-txes))))
+        (move-next-children-right db row-id (:db/id bar) :row/bars)))))
