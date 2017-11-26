@@ -62,10 +62,19 @@
       (is (= 3 (count bars)))
       (is (= [0 2 1] (map :coll/position bars)))))
 
-  (testing "Append row in between"
+  (testing "Append row"
     (let [db (-> db
                (tx-apply sut/append :row 5)
                (tx-apply sut/append :row 5))
           rows (:section/rows (d/entity db 2))]
       (is (= 3 (count rows)))
-      (is (= [0 2 1] (map :coll/position rows))))))
+      (is (= [0 2 1] (map :coll/position rows)))))
+
+  (testing "Append section"
+    (let [db (-> db
+               (tx-apply sut/append :section 5)
+               (tx-apply sut/append :section 5))
+          sections (:sheet/sections (d/entity db 1))]
+      (is (= 3 (count sections)))
+      (is (= [0 2 1] (map :coll/position sections)))
+      (is (= ["Intro" "Section" "Section"] (map :section/title sections))))))

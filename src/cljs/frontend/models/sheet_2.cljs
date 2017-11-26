@@ -17,14 +17,6 @@
 ;; datascript.
 (def ^:dynamic *string-tmp-ids* true)
 
-(defn- transact!
-  "An immutable version of transact, will return transaction data with
-  :db-after that can be used to replace the previous db. "
-  [db tx-data]
-  (d/with db tx-data))
-
-(def q-one (comp ffirst d/q))
-
 (defn update-chord
   "Returns a new db where chord `chord-id` has the new `value`"
   [db chord-id value]
@@ -70,9 +62,9 @@
 
 (defmethod append* :chord
   [db _ cur-chord-id]
-  (when-let [bar (q-one '[:find (pull ?bar [*])
-                          :in $ ?chord
-                          :where [?bar :bar/chords ?chord]]
+  (when-let [bar (d/q '[:find (pull ?bar [*]) .
+                        :in $ ?chord
+                        :where [?bar :bar/chords ?chord]]
                    db cur-chord-id)]
     (let [pos (inc (:coll/position (d/entity db cur-chord-id)))
           tempid (if *string-tmp-ids* "new-chord" -1)]
@@ -114,6 +106,32 @@
       (concat
         [[:db/add section-id :section/rows new-row-id]
          {:db/id new-row-id :coll/position pos :row/bars new-bar-id}
-         {:db/id new-bar-id :coll/position pos :bar/chords new-chord-id}
+         {:db/id new-bar-id :coll/position 0 :bar/chords new-chord-id}
          {:db/id new-chord-id :coll/position 0 :chord/value ""}]
         (move-next-children-right db section-id (:db/id row) :section/rows)))))
+
+(defmethod append* :section
+  [db _ cur-chord-id]
+  (when-let [[section sheet-id] (d/q '[:find [(pull ?section [*]) ?sheet]
+                                       :in $ ?chord
+                                       :where
+                                       [?sheet :sheet/sections ?section]
+                                       [?section :section/rows ?row]
+                                       [?row :row/bars ?bar]
+                                       [?bar :bar/chords ?chord]]
+                                  db cur-chord-id)]
+    (let [pos (inc (:coll/position section))
+          new-section-id (if *string-tmp-ids* "new-section" -1)
+          new-row-id (if *string-tmp-ids* "new-row" -2)
+          new-bar-id (if *string-tmp-ids* "new-bar" -3)
+          new-chord-id (if *string-tmp-ids* "new-chord" -4)]
+      (concat
+        [[:db/add sheet-id :sheet/sections new-section-id]
+         {:db/id new-section-id
+          :coll/position pos
+          :section/title "Section"
+          :section/rows new-row-id}
+         {:db/id new-row-id :coll/position 0 :row/bars new-bar-id}
+         {:db/id new-bar-id :coll/position 0 :bar/chords new-chord-id}
+         {:db/id new-chord-id :coll/position 0 :chord/value ""}]
+        (move-next-children-right db sheet-id (:db/id section) :sheet/sections)))))
