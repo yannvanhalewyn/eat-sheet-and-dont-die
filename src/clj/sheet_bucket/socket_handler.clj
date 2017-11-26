@@ -1,7 +1,17 @@
 (ns sheet-bucket.socket-handler
   (:require [clojure.stacktrace :as st]
-            [taoensso.timbre :as timbre]
-            [datomic.api :as d]))
+            [datomic.api :as d]
+            [shared.datsync :as datsync]
+            [taoensso.timbre :as timbre]))
+
+(defn- translate-tx-form
+  "Takes a transaction and conforms any negative numbers for entity or
+  values as tempids in the user partition."
+  [[op e a v added]]
+  (let [conform-id #(if (and (number? %) (neg? %))
+                      (d/tempid :db.part/user %)
+                      %)]
+    [op (conform-id e) a (conform-id v) added]))
 
 (defmulti socket-handler "Multimethod for handling socket messages" :id)
 
@@ -10,14 +20,12 @@
   (when-let [reply ?reply-fn]
     (reply {:unmatched-event-echo event})))
 
-(defn- ->tx [[e a v t added]]
-  [({true :db/add false :db/retract} added) e a v])
-
 (defmethod socket-handler :tx/sync
   [{:keys [?data ring-req ?reply-fn]}]
-  (let [tx (map ->tx ?data)
-        result (d/transact (:db-conn ring-req) tx)]
-    (?reply-fn (:tempids @result))))
+  (let [result (d/transact (:db-conn ring-req) (mapv translate-tx-form ?data))]
+    {:tempids (:tempids @result)
+     :tx-data (map (partial datsync/datom->vec (:db-after @result))
+                (:tx-data @result))}))
 
 (defn- wrap-stacktrace
   "Wrap a handler such that exceptions are caught and a helpful debugging

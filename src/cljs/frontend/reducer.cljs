@@ -35,6 +35,8 @@
     :response/sync-sheet (if-let [new-id (get-in arg1 [:temp-ids (:selection/id state)])]
                            (assoc state :selection/id new-id)
                            state)
+    :sheet/append {:selection/type :selection/chord
+                   :selection/id 1}
     state))
 
 (defn current-user [state [type arg1]]
@@ -57,8 +59,8 @@
   (case type
     :app/init @(d/create-conn sheet-2/schema)
     :response/get-sheet (transact! db [arg1])
-    :sheet/append (sheet-2/append db arg1 arg2)
-    :tx/apply (:db-after arg1)
+    :tx/apply (:db-after (d/with db arg1))
+    :response/datsync (transact! db (datsync/datoms->tx (:tx-data arg1)))
     db))
 
 (def app

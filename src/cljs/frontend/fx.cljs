@@ -4,6 +4,7 @@
             [frontend.router :as router]
             [frontend.specs :as specs]
             [shared.diffp :refer [diffp]]
+            [shared.datsync :as sync]
             [cljs.spec.alpha :as s]
             [re-frame.core :as rf]
             [goog.string :refer [format]]
@@ -13,8 +14,7 @@
 (rf/reg-fx :socket sock/sock-fx)
 
 (rf/reg-fx :datsync
-  (fn [report]
-    (sock/sock-fx {:datsync [:tx/sync (map vec (:tx-data report))]})))
+  (fn [tx] (sock/sock-fx {:datsync [:tx/sync (sync/normalize-tx tx)]})))
 
 ;; Development interceptors
 ;; ========================

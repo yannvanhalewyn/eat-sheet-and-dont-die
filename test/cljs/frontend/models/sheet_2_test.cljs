@@ -22,23 +22,26 @@
           (d/transact! conn [BLANK_SHEET])
           @conn))
 
+(defn- tx-apply [db tx-fn & args]
+  (:db-after (d/with db (apply tx-fn db args))))
+
 (deftest update-chord
-  (is (= "Ab" (:chord/value (d/entity (:db-after (sut/update-chord db 5 "Ab")) 5)))))
+  (is (= "Ab" (:chord/value (d/entity (tx-apply db sut/update-chord 5 "Ab") 5)))))
 
 (deftest append
   (testing "Append chords at the end"
-    (let [db (:db-after (sut/append db :chord 5))]
+    (let [db (tx-apply db sut/append :chord 5)]
       (is (= [{:chord/value "" :coll/position 0}
               {:chord/value "" :coll/position 1}]
             (map #(into {} %) (:bar/chords (d/entity db 4)))))))
 
   (testing "Append chord in between"
     (let [db (-> db
-               (sut/update-chord 5 "first") :db-after
-               (sut/append :chord 5) :db-after
-               (sut/update-chord 6 "last") :db-after
-               (sut/append :chord 5) :db-after
-               (sut/update-chord 7 "middle") :db-after)]
+               (tx-apply sut/update-chord 5 "first")
+               (tx-apply sut/append :chord 5)
+               (tx-apply sut/update-chord 6 "last")
+               (tx-apply sut/append :chord 5)
+               (tx-apply sut/update-chord 7 "middle"))]
       (is (= [{:chord/value "first" :coll/position 0}
               {:chord/value "last" :coll/position 2}
               {:chord/value "middle" :coll/position 1}]

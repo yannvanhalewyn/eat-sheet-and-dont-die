@@ -22,7 +22,7 @@
 (defn update-chord
   "Returns a new db where chord `chord-id` has the new `value`"
   [db chord-id value]
-  (transact! db [[:db/add chord-id :chord/value value]]) )
+  [[:db/add chord-id :chord/value value]] )
 
 (defn pull-all [db]
   (d/q '[:find [(pull ?sheet [*])]
@@ -50,11 +50,11 @@
                           :where [?bar :bar/chords ?chord]]
                    db cur-chord-id)]
     (let [pos (inc (:coll/position (d/entity db cur-chord-id)))
+          tempid (d/tempid db)
           chord-pos-txes (map (fn [{:keys [db/id coll/position]}]
                                 [:db/add id :coll/position
                                  (if (< position pos) position (inc position))])
                            (:bar/chords bar))]
-      (transact! db
-        (into [[:db/add (:db/id bar) :bar/chords -1]
-               {:db/id -1 :coll/position pos :chord/value ""}]
-          chord-pos-txes)))))
+      (into [[:db/add (:db/id bar) :bar/chords tempid]
+             {:db/id tempid :coll/position pos :chord/value ""}]
+        chord-pos-txes))))
