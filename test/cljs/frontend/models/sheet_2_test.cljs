@@ -45,4 +45,10 @@
       (is (= [{:chord/value "first" :coll/position 0}
               {:chord/value "last" :coll/position 2}
               {:chord/value "middle" :coll/position 1}]
-            (map #(into {} %) (:bar/chords (d/entity db 4))))))))
+            (map #(into {} %) (:bar/chords (d/entity db 4)))))))
+
+  (testing "Append bar"
+    (is (= [[:db/add 3 :row/bars "new-bar"]
+            {:db/id "new-bar" :coll/position 1 :bar/chords "new-chord"}
+            {:db/id "new-chord" :chord/value "" :coll/position 0}]
+          (sut/append db :bar 5)))))

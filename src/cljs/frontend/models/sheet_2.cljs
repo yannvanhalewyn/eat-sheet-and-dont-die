@@ -58,3 +58,17 @@
       (into [[:db/add (:db/id bar) :bar/chords tempid]
              {:db/id tempid :coll/position pos :chord/value ""}]
         chord-pos-txes))))
+
+(defmethod append* :bar
+  [db _ cur-chord-id]
+  (when-let [[bar row-id] (d/q '[:find [(pull ?bar [*]) ?row]
+                                 :in $ ?chord
+                                 :where
+                                 [?bar :bar/chords ?chord]
+                                 [?row :row/bars ?bar]
+                                 [?row :row/bars ?next-bars]]
+                            db cur-chord-id)]
+    (let [pos (inc (:coll/position bar))]
+      [[:db/add row-id :row/bars "new-bar"]
+       {:db/id "new-bar" :coll/position pos :bar/chords "new-chord"}
+       {:db/id "new-chord" :coll/position 0 :chord/value ""}])))
