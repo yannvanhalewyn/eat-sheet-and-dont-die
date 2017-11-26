@@ -11,6 +11,13 @@
    :row/bars children-type
    :bar/chords children-type})
 
+(def RULES
+  '[[(get-parents ?chord ?bar ?row ?section ?sheet)
+     [?bar :bar/chords ?chord]
+     [?row :row/bars ?bar]
+     [?section :section/rows ?row]
+     [?sheet :sheet/sections ?section]]])
+
 ;; Hack - Datomic can handle string temp ids, datascript can't. Use
 ;; the useful string temp ids for transactions send to the backend,
 ;; but test them in cljs with neg-numbers so we can transact them to
@@ -88,12 +95,9 @@
 (defmethod append* :row
   [db _ cur-chord-id]
   (when-let [[row section-id] (d/q '[:find [(pull ?row [*]) ?section]
-                                     :in $ ?chord
-                                     :where
-                                     [?section :section/rows ?row]
-                                     [?row :row/bars ?bar]
-                                     [?bar :bar/chords ?chord]]
-                                db cur-chord-id)]
+                                     :in $ % ?chord
+                                     :where [get-parents ?chord _ ?row ?section]]
+                                db RULES cur-chord-id)]
     (let [pos (inc (:coll/position row))
           new-row-id (if *string-tmp-ids* "new-row" -1)
           new-bar-id (if *string-tmp-ids* "new-bar" -2)
@@ -108,13 +112,9 @@
 (defmethod append* :section
   [db _ cur-chord-id]
   (when-let [[section sheet-id] (d/q '[:find [(pull ?section [*]) ?sheet]
-                                       :in $ ?chord
-                                       :where
-                                       [?sheet :sheet/sections ?section]
-                                       [?section :section/rows ?row]
-                                       [?row :row/bars ?bar]
-                                       [?bar :bar/chords ?chord]]
-                                  db cur-chord-id)]
+                                       :in $ % ?chord
+                                       :where [get-parents ?chord _ _ ?section ?sheet]]
+                                  db RULES cur-chord-id)]
     (let [pos (inc (:coll/position section))
           new-section-id (if *string-tmp-ids* "new-section" -1)
           new-row-id (if *string-tmp-ids* "new-row" -2)
@@ -155,12 +155,9 @@
   [db _ cur-chord-id]
   (let [chain
         (d/q '[:find [?section ?row ?bar]
-               :in $ ?chord
-               :where
-               [?bar :bar/chords ?chord]
-               [?row :row/bars ?bar]
-               [?section :section/rows ?row]]
-          db cur-chord-id)
+               :in $ % ?chord
+               :where [get-parents ?chord ?bar ?row ?section]]
+          db RULES cur-chord-id)
 
         parents-to-retract
         (loop [[[eid key] & rest] (reverse (map vector chain

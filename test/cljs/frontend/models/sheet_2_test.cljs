@@ -68,7 +68,7 @@
                (tx-apply sut/append :row 5))
           rows (:section/rows (d/entity db 2))]
       (is (= 3 (count rows)))
-      (is (= [0 2 1] (map :coll/position rows)))))
+      (is (= [0 1 2] (map :coll/position rows)))))
 
   (testing "Append section"
     (let [db (-> db
