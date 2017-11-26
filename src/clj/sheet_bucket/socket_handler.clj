@@ -6,11 +6,9 @@
 
 (defn- translate-tx-form
   "Takes a transaction and conforms any negative numbers for entity or
-  values as tempids in the user partition."
+  values as string tempids"
   [[op e a v added]]
-  (let [conform-id #(if (and (number? %) (neg? %))
-                      (d/tempid :db.part/user %)
-                      %)]
+  (let [conform-id #(if (and (number? %) (neg? %)) (str %) %)]
     [op (conform-id e) a (conform-id v) added]))
 
 (defmulti socket-handler "Multimethod for handling socket messages" :id)
@@ -22,9 +20,8 @@
 
 (defmethod socket-handler :tx/sync
   [{:keys [?data ring-req ?reply-fn]}]
-  (let [result (d/transact (:db-conn ring-req) (mapv translate-tx-form ?data))]
-    {:tempids (:tempids @result)
-     :tx-data (map (partial datsync/datom->vec (:db-after @result))
+  (let [result (d/transact (:db-conn ring-req) ?data)]
+    {:tx-data (map (partial datsync/datom->vec (:db-after @result))
                 (:tx-data @result))}))
 
 (defn- wrap-stacktrace

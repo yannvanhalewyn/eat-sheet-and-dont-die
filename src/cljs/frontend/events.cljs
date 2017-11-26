@@ -29,19 +29,17 @@
 (reg-event-fx
   :sheet/update-chord
   (fn [{:keys [db]} [_ id value next]]
-    (let [tx (sheet-2/update-chord (:db/sheets-datascript db) id value)
-          db (reducer/app db [:tx/apply tx])]
+    (let [tx (sheet-2/update-chord (:db/sheets-datascript db) id value)]
       (if next
-        {:db db :datsync tx :dispatch next}
-        {:db db :datsync tx}))))
+        {:datsync tx :dispatch next}
+        {:datsync tx}))))
 
 (reg-event-fx
   :sheet/append
   (fn [{:keys [db]} [_ type]]
     (let [chord-id (:selection/id (selectors/selection db))
           tx (sheet-2/append (:db/sheets-datascript db) type chord-id)]
-      {:db (reducer/app db [:tx/apply tx])
-       :datsync tx})))
+      {:datsync tx})))
 
 (reg-event-db
   :sheet/move

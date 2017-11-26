@@ -14,7 +14,8 @@
 (rf/reg-fx :socket sock/sock-fx)
 
 (rf/reg-fx :datsync
-  (fn [tx] (sock/sock-fx {:datsync [:tx/sync (sync/normalize-tx tx)]})))
+  (fn [tx]
+    (sock/sock-fx {:datsync [:tx/sync tx]})))
 
 ;; Development interceptors
 ;; ========================

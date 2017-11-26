@@ -50,10 +50,10 @@
                           :where [?bar :bar/chords ?chord]]
                    db cur-chord-id)]
     (let [pos (inc (:coll/position (d/entity db cur-chord-id)))
-          tempid (d/tempid db)
+          tempid (str (d/tempid db))
           chord-pos-txes (map (fn [{:keys [db/id coll/position]}]
                                 [:db/add id :coll/position
-                                 (if (< position pos) position (inc position))])
+                                 (if (< position pos) (or position 0) (inc position))])
                            (:bar/chords bar))]
       (into [[:db/add (:db/id bar) :bar/chords tempid]
              {:db/id tempid :coll/position pos :chord/value ""}]
