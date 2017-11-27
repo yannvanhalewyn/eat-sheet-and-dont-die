@@ -3,7 +3,7 @@
             [frontend.fx :refer [reg-event-db reg-event-fx]]
             [frontend.router :as router]
             [frontend.reducer :as reducer]
-            [frontend.models.sheet :as sheet]
+            [frontend.models.sheet-zip :as sheet-zip]
             [frontend.models.sheet-2 :as sheet-2]
             [frontend.models.bar-attachment :as attachment]
             [shared.utils :as sutil]
@@ -44,7 +44,7 @@
 (reg-event-db
   :sheet/move
   (fn [db [_ dir]]
-    (if-let [loc (sheet/move (selectors/current-loc db) dir)]
+    (if-let [loc (sheet-zip/move (selectors/current-loc db) dir)]
       (reducer/app db [:sheet/move (:db/id (zip/node loc))])
       db)))
 
@@ -53,7 +53,7 @@
   (fn [{:keys [db]} [_ element]]
     (let [chord-id (:selection/id (selectors/selection db))
           tx (sheet-2/delete (:db/sheets-datascript db) element chord-id)
-          loc (sheet/nearest-chord (selectors/current-loc db))]
+          loc (sheet-zip/nearest-chord (selectors/current-loc db))]
       {:db (reducer/app db [:sheet/move (:db/id (zip/node loc))])
        :datsync tx})))
 
@@ -71,7 +71,7 @@
 (reg-event-db
   :sheet/set-repeat-cycle
   (fn [db [_ bar-id value]]
-    (let [bar-loc (sheet/navigate-to (sheet/zipper (selectors/sheet db)) bar-id)]
+    (let [bar-loc (sheet-zip/navigate-to (sheet-zip/zipper (selectors/sheet db)) bar-id)]
       (reducer/app db
         [:sheet/replace
          (if (empty? value)
@@ -83,8 +83,8 @@
   (fn [db [_ bar-id textbox-id value]]
     (reducer/app db
       [:sheet/replace
-       (-> (sheet/zipper (selectors/sheet db))
-         (sheet/navigate-to bar-id)
+       (-> (sheet-zip/zipper (selectors/sheet db))
+         (sheet-zip/navigate-to bar-id)
          (attachment/set-value textbox-id value)
          zip/root)])))
 
@@ -95,8 +95,8 @@
 (reg-event-db
   :sheet/set-section-title
   (fn [db [_ section title]]
-    (if-let [new-sheet (-> (selectors/sheet db) sheet/zipper
-                         (sheet/navigate-to (:db/id section))
+    (if-let [new-sheet (-> (selectors/sheet db) sheet-zip/zipper
+                         (sheet-zip/navigate-to (:db/id section))
                          (zip/edit assoc :section/title title)
                          zip/root)]
       (reducer/app db [:sheet/replace new-sheet])
@@ -114,8 +114,8 @@
   :sheet/move-symbol
   (fn [db [_ bar-id symbol-id pos]]
     (reducer/app db [:sheet/replace
-                     (-> (sheet/zipper (selectors/sheet db))
-                       (sheet/navigate-to bar-id)
+                     (-> (sheet-zip/zipper (selectors/sheet db))
+                       (sheet-zip/navigate-to bar-id)
                        (attachment/move symbol-id pos)
                        zip/root)])))
 

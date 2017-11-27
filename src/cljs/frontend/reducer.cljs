@@ -1,7 +1,6 @@
 (ns frontend.reducer
   (:require [clojure.zip :as zip]
             [datascript.core :as d]
-            [frontend.models.sheet :as sheet]
             [frontend.models.sheet-2 :as sheet-2]
             [frontend.router :as router]
             [frontend.util.util :refer [combine-reducers]]
@@ -13,8 +12,6 @@
     :app/init nil
     :sheet/deselect nil
     :sheet/select {:selection/type arg1 :selection/id arg2}
-    ;; :response/create-sheet {:selection/type :selection/chord
-    ;;                         :selection/id (:db/id (sheet/first-chord arg1))}
     :sheet/move {:selection/type :selection/chord :selection/id arg1}
     :response/datsync (if-let [chord-id (get (:tempids arg1) "new-chord")]
                         {:selection/type :selection/chord :selection/id chord-id}

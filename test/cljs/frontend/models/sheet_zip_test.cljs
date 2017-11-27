@@ -1,8 +1,8 @@
-(ns frontend.models.sheet-test
+(ns frontend.models.sheet-zip-test
   (:require [cljs.test :refer-macros [deftest is testing]]
             [clojure.zip :refer [children down left node rights up]]
             [datascript.core :as d]
-            [frontend.models.sheet :as sheet]
+            [frontend.models.sheet-zip :as sheet-zip]
             [frontend.models.sheet-2 :as sut]
             [goog.string :refer [format]]
             [shared.utils :as sutils]
@@ -38,10 +38,10 @@
                 (tx-apply sut/append :section 19)
                 (tx-apply sut/append :section 28) (tx-apply sut/append :bar 32)
                 (d/pull '[*] 1)
-                sheet/zipper (sheet/navigate-to 5))
+                sheet-zip/zipper (sheet-zip/navigate-to 5))
         check (fn [moves expected]
                 (let [land (reduce
-                             #(let [move (if (number? %2) sheet/navigate-to sheet/move)]
+                             #(let [move (if (number? %2) sheet-zip/navigate-to sheet-zip/move)]
                                 (move %1 %2))
                              sheet moves)]
                   (is land (str "Couldn't find element for moves: " moves))
@@ -106,7 +106,7 @@
     ;; Out of bounds
     ;; =============
     (testing "Will return nil when leaving sheet edges"
-      (let [is-nil #(is (= nil (-> sheet (sheet/navigate-to %1) (sheet/move %2))))]
+      (let [is-nil #(is (= nil (-> sheet (sheet-zip/navigate-to %1) (sheet-zip/move %2))))]
         (is-nil 34 :right)
         (is-nil 34 :bar-right)
         (is-nil 5 :left)

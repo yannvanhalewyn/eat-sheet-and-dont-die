@@ -1,6 +1,6 @@
 (ns frontend.selectors
   (:require [datascript.core :as d]
-            [frontend.models.sheet :as sheet]
+            [frontend.models.sheet-zip :as sheet-zip]
             [frontend.util.util :refer-macros [defselector]]))
 
 (def current-user :db/current-user)
@@ -15,7 +15,7 @@
 
 (def selection :db/selection)
 
-(defselector sheet-loc [sheet] (sheet/zipper sheet))
+(defselector sheet-loc [sheet] (sheet-zip/zipper sheet))
 
 (defselector current-loc [sheet-loc selection]
-  (sheet/navigate-to sheet-loc (:selection/id selection)))
+  (sheet-zip/navigate-to sheet-loc (:selection/id selection)))

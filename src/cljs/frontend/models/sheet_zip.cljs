@@ -1,8 +1,7 @@
-(ns frontend.models.sheet
+(ns frontend.models.sheet-zip
   (:require [shared.utils :as util]
-            [clojure.zip
-             :as zip
-             :refer [up down right left end? next node insert-right lefts branch? children]]
+            [clojure.zip :as zip :refer [up down right left end? next node insert-right
+                                         lefts branch? children]]
             [frontend.util.zipper :as uzip :refer [nth-child next-leaf prev-leaf
                                                    locate locate-left]]))
 

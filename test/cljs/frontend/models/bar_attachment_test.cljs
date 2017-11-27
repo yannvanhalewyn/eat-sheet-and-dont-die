@@ -1,6 +1,6 @@
 (ns frontend.models.bar-attachment-test
   (:require [frontend.models.bar-attachment :as sut]
-            [frontend.models.sheet :as sheet]
+            [frontend.models.sheet-zip :as sheet-zip]
             [frontend.models.sheet-2 :as sheet-2]
             [datascript.core :as d]
             [clojure.zip :as zip]
@@ -23,7 +23,7 @@
           (d/transact! conn [BLANK_SHEET])
           @conn))
 
-(def sheet-loc (-> (d/pull db '[*] 1) sheet/zipper (sheet/navigate-to 5)))
+(def sheet-loc (-> (d/pull db '[*] 1) sheet-zip/zipper (sheet-zip/navigate-to 5)))
 
 (defn submap? [x y]
   "Returns true iff x is a submap of y"

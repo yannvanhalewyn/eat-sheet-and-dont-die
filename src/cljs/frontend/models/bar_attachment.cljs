@@ -1,6 +1,5 @@
 (ns frontend.models.bar-attachment
-  (:require [frontend.models.sheet :as sheet]
-            [clojure.zip :as zip :refer [up]]
+  (:require [clojure.zip :as zip :refer [up]]
             [shared.utils :as sutil]))
 
 ;; Constants
