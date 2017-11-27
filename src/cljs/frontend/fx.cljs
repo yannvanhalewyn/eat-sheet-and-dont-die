@@ -46,10 +46,10 @@
         (.groupCollapsed js/console group-name)
         (.info js/console "%c Event" "color: #03A9F4; font-weight: bold" event)
         (if new-db
-          (do
-            (.info js/console "%c New DB" "color: #9E9E9E; font-weight: bold" (sort new-db))
+          (let [db (read-db new-db)]
+            (.info js/console "%c New DB" "color: #9E9E9E; font-weight: bold" (sort db))
             (.info js/console "%c changes" "color: #FF6259; font-weight: bold"
-              (diffp (read-db old-db) (read-db new-db) :db/id)))
+              (diffp (read-db old-db) db :db/id)))
           (.info js/console "No db changes"))
         (.groupEnd js/console group-name "color: grey"))
       context)))
