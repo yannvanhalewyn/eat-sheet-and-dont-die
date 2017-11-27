@@ -23,32 +23,48 @@
           (d/transact! conn [BLANK_SHEET])
           @conn))
 
-(def sheet-loc (-> (d/pull db '[*] 1) sheet-zip/zipper (sheet-zip/navigate-to 5)))
+(defn- tx-apply [db tx-fn & args]
+  (:db-after (d/with db (binding [sheet/*string-tmp-ids* false]
+                          (apply tx-fn db args)))))
 
 (defn submap? [x y]
   "Returns true iff x is a submap of y"
   (set/subset? (set x) (set y)))
 
 (deftest add
-  (is (-> (sut/add sheet-loc :bar/end-repeat) zip/root
-        (get-in [:sheet/sections 0 :section/rows 0 :row/bars 0 :bar/end-repeat])))
-  (is (-> (sut/add sheet-loc :bar/start-repeat) zip/root
-        (get-in [:sheet/sections 0 :section/rows 0 :row/bars 0 :bar/start-repeat])))
+  (is (-> (tx-apply db sut/add 4 :bar/end-repeat) (d/entity 4) :bar/end-repeat))
+  (is (-> (tx-apply db sut/add 4 :bar/start-repeat) (d/entity 4) :bar/start-repeat))
+
+  (is (not (-> db
+             (tx-apply sut/add 4 :bar/start-repeat)
+             (tx-apply sut/add 4 :bar/start-repeat)
+             (d/entity 4) :bar/start-repeat)))
+
+  (is (not (-> db
+             (tx-apply sut/add 4 :bar/start-repeat)
+             (tx-apply sut/add 4 :bar/start-repeat)
+             (d/entity 4) :bar/start-repeat)))
+
+  (is (= "1" (-> (tx-apply db sut/add 4 :bar/repeat-cycle) (d/entity 4) :bar/repeat-cycle)))
+
   (is (submap? {:attachment/type :symbol/segno}
-        (-> (sut/add sheet-loc :attachment/segno) zip/node :bar/attachments first)))
+        (-> (tx-apply db sut/add 4 :attachment/segno)
+          (d/entity 4) :bar/attachments first)))
+
   (is (submap? {:attachment/type :symbol/coda}
-        (-> (sut/add sheet-loc :attachment/coda) zip/node :bar/attachments first))))
+        (-> (tx-apply db sut/add 4 :attachment/coda)
+          (d/entity 4) :bar/attachments first))))
 
 (deftest move
-  (let [bar-loc (sut/add sheet-loc :attachment/segno)
-        segno-id (-> bar-loc zip/node :bar/attachments first :db/id)]
+  (let [db (-> (tx-apply db sut/add 4 :attachment/segno))
+        att-id (:db/id (first (:bar/attachments (d/entity db 4))))]
     (is (submap? {:coord/x 10 :coord/y 20}
-          (-> (sut/move bar-loc segno-id [10 20])
-            zip/node :bar/attachments first)))))
+          (-> (tx-apply db sut/move att-id [10 20])
+            (d/entity 4) :bar/attachments first)))))
 
 (deftest set-value
-  (let [bar-loc (sut/add sheet-loc :attachment/textbox)
-        textbox-id (-> bar-loc zip/node :bar/attachments first :db/id)]
+  (let [db (tx-apply db sut/add 4 :attachment/textbox)
+        textbox-id (:db/id (first (:bar/attachments (d/entity db 4))))]
     (is (= "New value"
-          (-> (sut/set-value bar-loc textbox-id "New value")
-            zip/node :bar/attachments first :textbox/value)))))
+          (-> (tx-apply db sut/set-value textbox-id "New value")
+            (d/entity 4) :bar/attachments first :textbox/value)))))

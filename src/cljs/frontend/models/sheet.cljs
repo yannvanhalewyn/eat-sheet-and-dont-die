@@ -1,15 +1,16 @@
 (ns frontend.models.sheet
   (:require [datascript.core :as d]))
 
-(def children-type {:db/valueType :db.type/ref
-                    :db/cardinality :db.cardinality/many
-                    :db/isComponent true})
+(def ref-many-component {:db/valueType :db.type/ref
+                         :db/cardinality :db.cardinality/many
+                         :db/isComponent true})
 
 (def schema
-  {:sheet/sections children-type
-   :section/rows children-type
-   :row/bars children-type
-   :bar/chords children-type})
+  {:sheet/sections ref-many-component
+   :section/rows ref-many-component
+   :row/bars ref-many-component
+   :bar/chords ref-many-component
+   :bar/attachments ref-many-component})
 
 ;; Hack to make query chaining easier.
 (set! datascript.query/built-ins
