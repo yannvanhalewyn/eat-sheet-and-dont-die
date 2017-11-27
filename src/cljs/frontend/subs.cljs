@@ -24,7 +24,7 @@
   :sub/sheets
   (fn [db [_ user]]
     (get-user-sheets user)
-    (reaction (vals (:db/sheets.by-id @db)))))
+    (reaction (sel/sheets @db))))
 
 (reg-sub-raw
   :sub/sheet

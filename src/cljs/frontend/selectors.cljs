@@ -1,5 +1,6 @@
 (ns frontend.selectors
   (:require [datascript.core :as d]
+            [frontend.models.sheet :as sheet]
             [frontend.models.sheet-zip :as sheet-zip]
             [frontend.util.util :refer-macros [defselector]]))
 
@@ -12,6 +13,9 @@
 
 (defn sheet [db]
   (d/pull (:db/sheets db) '[*] (current-sheet-id db)))
+
+(defn sheets [db]
+  (sheet/pull-all (:db/sheets db)))
 
 (def selection :db/selection)
 

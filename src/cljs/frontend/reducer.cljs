@@ -40,6 +40,7 @@
     :response/get-sheet (transact! db [arg1])
     :tx/apply (:db-after arg1)
     :response/datsync (transact! db (datsync/datoms->tx (:tx-data arg1)))
+    :response/get-sheets (transact! db arg1)
     db))
 
 (def app
