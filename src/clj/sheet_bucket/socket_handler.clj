@@ -20,10 +20,9 @@
 
 (defmethod socket-handler :tx/sync
   [{:keys [?data ring-req ?reply-fn]}]
-  (let [result (d/transact (:db-conn ring-req) ?data)]
-    {:tempids (:tempids @result)
-     :tx-data (map (partial datsync/datom->vec (:db-after @result))
-                (:tx-data @result))}))
+  (let [report @(d/transact (:db-conn ring-req) ?data)]
+    {:tempids (:tempids report)
+     :tx-data (datsync/report->datom-vecs report #{:attachment/type})}))
 
 (defn- wrap-stacktrace
   "Wrap a handler such that exceptions are caught and a helpful debugging

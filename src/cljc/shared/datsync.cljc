@@ -41,5 +41,16 @@
     datoms))
 
 #?(:clj
-   (defn datom->vec [db d]
-     [(.e d) (:db/ident (d/entity db (.a d))) (.v d) (.tx d) (.added d)]))
+   (defn datom->vec
+     ([db d] (datom->vec db d #{}))
+     ([db d enum?]
+      (let [e (.e d)
+            a (:db/ident (d/entity db (.a d)))
+            v (if (enum? a) (:db/ident (d/entity db (.v d))) (.v d))
+            t (.tx d)
+            added (.added d)]
+        [e a v t added]))))
+
+#?(:clj
+   (defn report->datom-vecs [{:keys [db-after tx-data]} enum?]
+     (map #(datom->vec db-after % enum?) tx-data)))
