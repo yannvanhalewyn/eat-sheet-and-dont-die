@@ -34,7 +34,7 @@
 (defn- transact! [db tx-data]
   (:db-after (d/with db tx-data)))
 
-(defn sheets-datascript [db [type arg1 arg2]]
+(defn sheets [db [type arg1 arg2]]
   (case type
     :app/init @(d/create-conn sheet/schema)
     :response/get-sheet (transact! db [arg1])
@@ -44,7 +44,7 @@
 
 (def app
   (combine-reducers
-    {:db/sheets-datascript sheets-datascript
+    {:db/sheets sheets
      :db/selection selection
      :db/current-user current-user
      :db/active-route active-route}))

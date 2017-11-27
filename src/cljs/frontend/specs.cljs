@@ -25,7 +25,9 @@
 (s/def :db/current-user (s/nilable ::specs/user))
 (s/def :db/active-route ::route)
 (s/def :db/selection (s/nilable ::selection))
+(s/def :db/sheets (s/coll-of ::specs/sheet))
 
 (s/def ::app-db (s/keys :req [:db/active-route
                               :db/current-user
-                              :db/selection]))
+                              :db/selection
+                              :db/sheets]))

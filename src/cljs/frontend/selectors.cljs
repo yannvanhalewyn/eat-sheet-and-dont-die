@@ -11,7 +11,7 @@
   (-> db params :sheet/id js/parseInt))
 
 (defn sheet [db]
-  (d/pull (:db/sheets-datascript db) '[*] (current-sheet-id db)))
+  (d/pull (:db/sheets db) '[*] (current-sheet-id db)))
 
 (def selection :db/selection)
 

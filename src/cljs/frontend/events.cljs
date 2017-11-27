@@ -29,7 +29,7 @@
 (reg-event-fx
   :sheet/update-chord
   (fn [{:keys [db]} [_ id value next]]
-    (let [tx (sheet/update-chord (:db/sheets-datascript db) id value)]
+    (let [tx (sheet/update-chord (:db/sheets db) id value)]
       (if next
         {:datsync tx :dispatch next}
         {:datsync tx}))))
@@ -38,7 +38,7 @@
   :sheet/append
   (fn [{:keys [db]} [_ type]]
     (let [chord-id (:selection/id (selectors/selection db))
-          tx (sheet/append (:db/sheets-datascript db) type chord-id)]
+          tx (sheet/append (:db/sheets db) type chord-id)]
       {:datsync tx})))
 
 (reg-event-db
@@ -52,7 +52,7 @@
   :sheet/remove
   (fn [{:keys [db]} [_ element]]
     (let [chord-id (:selection/id (selectors/selection db))
-          tx (sheet/delete (:db/sheets-datascript db) element chord-id)
+          tx (sheet/delete (:db/sheets db) element chord-id)
           loc (sheet-zip/nearest-chord (selectors/current-loc db))]
       {:db (reducer/app db [:sheet/move (:db/id (zip/node loc))])
        :datsync tx})))

@@ -4,7 +4,6 @@
             [frontend.router :as router]
             [frontend.specs :as specs]
             [shared.diffp :refer [diffp]]
-            [shared.datsync :as sync]
             [cljs.spec.alpha :as s]
             [re-frame.core :as rf]
             [goog.string :refer [format]]
@@ -20,11 +19,19 @@
 ;; Development interceptors
 ;; ========================
 
+(defn- read-db
+  "Since datascript db's are hard to read in development logs or spec
+  checkers, this fn will return an image of what the data in the
+  app-db looks like."
+  [db]
+  (update db :db/sheets sheet/pull-all))
+
 (def spec-checker
   (rf/after
     (fn [db]
-      (when-not (s/valid? ::specs/app-db db)
-        (.error js/console "SPEC FAILED" (::s/problems (s/explain-data ::specs/app-db db)))))))
+      (let [db (read-db db)]
+        (when-not (s/valid? ::specs/app-db db)
+          (.error js/console "SPEC FAILED" (::s/problems (s/explain-data ::specs/app-db db))))))))
 
 (def debug-logger
   (rf/->interceptor
@@ -42,8 +49,7 @@
           (do
             (.info js/console "%c New DB" "color: #9E9E9E; font-weight: bold" (sort new-db))
             (.info js/console "%c changes" "color: #FF6259; font-weight: bold"
-              (diffp (update old-db :db/sheets-datascript sheet/pull-all)
-                (update new-db :db/sheets-datascript sheet/pull-all) :db/id)))
+              (diffp (read-db old-db) (read-db new-db) :db/id)))
           (.info js/console "No db changes"))
         (.groupEnd js/console group-name "color: grey"))
       context)))
