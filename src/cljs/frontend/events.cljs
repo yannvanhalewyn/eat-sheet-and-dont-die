@@ -57,16 +57,30 @@
       {:db (reducer/app db [:sheet/move (:db/id (zip/node loc))])
        :datsync tx})))
 
+(reg-event-fx
+  :sheet/set-artist
+  (fn [{:keys [db]} [_ sheet-id artist]]
+    {:datsync [[:db/add sheet-id :sheet/artist artist]]}))
+
+(reg-event-fx
+  :sheet/set-title
+  (fn [{:keys [db]} [_ sheet-id title]]
+    {:datsync [[:db/add sheet-id :sheet/title title]]}))
+
+(reg-event-fx
+  :sheet/set-section-title
+  (fn [{:keys [db]} [_ section title]]
+    {:datsync [[:db/add (:db/id section) :section/title title]]}))
+
+;; Attachments and symbol operations
+;; =================================
+
 (reg-event-db
   :sheet/remove-selection
   (fn [db _]
     (reducer/app db [:sheet/replace
                      (sutil/delete-by-id (selectors/sheet db)
                        (:selection/id (selectors/selection db)))])))
-
-(reg-event-db
-  :sheet/set-title
-  (fn [db event] (reducer/app db event)))
 
 (reg-event-db
   :sheet/set-repeat-cycle
@@ -87,20 +101,6 @@
          (sheet-zip/navigate-to bar-id)
          (attachment/set-value textbox-id value)
          zip/root)])))
-
-(reg-event-db
-  :sheet/set-artist
-  (fn [db event] (reducer/app db event)))
-
-(reg-event-db
-  :sheet/set-section-title
-  (fn [db [_ section title]]
-    (if-let [new-sheet (-> (selectors/sheet db) sheet-zip/zipper
-                         (sheet-zip/navigate-to (:db/id section))
-                         (zip/edit assoc :section/title title)
-                         zip/root)]
-      (reducer/app db [:sheet/replace new-sheet])
-      db)))
 
 (reg-event-db
   :sheet/add-symbol
