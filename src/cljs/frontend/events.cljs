@@ -44,8 +44,8 @@
 (reg-event-db
   :sheet/move
   (fn [db [_ dir]]
-    (if-let [new-sheet (sheet/move (selectors/current-loc db) dir)]
-      (reducer/app db [:sheet/replace-zip new-sheet])
+    (if-let [loc (sheet/move (selectors/current-loc db) dir)]
+      (reducer/app db [:sheet/move (:db/id (zip/node loc))])
       db)))
 
 (reg-event-fx
@@ -151,6 +151,11 @@
 (reg-event-fx
   :chsk/handshake
   (fn [_ _] {:socket {:get-current-user [:users/me]}}))
+
+(reg-event-fx
+  :chsk/recv
+  (fn [_ d]
+    (.log js/console "recv" d)))
 
 (reg-event-db
   :route/browser-url

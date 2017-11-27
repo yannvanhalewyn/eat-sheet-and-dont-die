@@ -42,7 +42,7 @@
 (def BRANCHING_KEYS #{:sheet/sections :section/rows :row/bars :bar/chords})
 
 (def get-branching-key #(first (filter % BRANCHING_KEYS)))
-(def get-children  #(some % BRANCHING_KEYS))
+(def get-children  #(sort-by :coll/position (some % BRANCHING_KEYS)))
 
 (defn zipper
   "Builds the sheet zipper"

@@ -1,23 +1,24 @@
 (ns frontend.models.sheet-test
-  (:require [frontend.models.sheet
-             :refer [zipper navigate-to append delete]
-             :as sheet]
-            [shared.utils :as sutils]
-            [cljs.test :refer-macros [deftest is testing]]
+  (:require [cljs.test :refer-macros [deftest is testing]]
+            [clojure.zip :refer [children down left node rights up]]
+            [datascript.core :as d]
+            [frontend.models.sheet :as sheet
+             :refer [append delete navigate-to zipper]]
+            [frontend.models.sheet-2 :as sut]
             [goog.string :refer [format]]
-            [clojure.zip :refer [node up left down children rights]]
+            [shared.utils :as sutils]
             [clojure.zip :as zip]))
 
 (def id-pool (repeatedly sutils/gen-temp-id))
-(def new-sheet (sheet/new-sheet ["sheet" "section1" "row1" "bar1" "chord1"]))
+(def new-sheet (sheet/new-sheet ["sheet" "section1" "row1" "bar1" 5]))
 
-(def test-loc (-> new-sheet zipper (navigate-to "chord1")))
+(def test-loc (-> new-sheet zipper (navigate-to 5)))
 
 (deftest navigateTo
-  (is (= "chord1" (-> new-sheet zipper (navigate-to "chord1") node :db/id)))
+  (is (= 5 (-> new-sheet zipper (navigate-to 5) node :db/id)))
   (is (= nil (-> new-sheet zipper (navigate-to 100))))
-  (is (= "chord1" (-> new-sheet zipper (navigate-to "chord1")
-                    (append :chord id-pool) (navigate-to "chord1") node :db/id))))
+  (is (= 5 (-> new-sheet zipper (navigate-to 5)
+             (append :chord id-pool) (navigate-to 5) node :db/id))))
 
 (deftest addChord
   (let [[id1 id2] (take 2 id-pool)
@@ -56,7 +57,7 @@
                 (append :bar ["bar2" "chord3"])
                 (append :row ["row2" "bar3" "chord4"])
                 (append :section ["section2" "row3" "bar4" "chord5"])
-                (navigate-to "chord1"))]
+                (navigate-to 5))]
     ;; |-----+---|
     ;; | 1 2 | 3 |
     ;; | 4   |   |
@@ -67,7 +68,7 @@
     ;; ======
     (is (= ["chord2"] (-> sheet (delete :chord) up children (#(map :db/id %)))))
     (is (= "chord2" (-> sheet (delete :chord) node :db/id)))
-    (is (= "chord1" (-> sheet (navigate-to "chord2") (delete :chord) node :db/id)))
+    (is (= 5 (-> sheet (navigate-to "chord2") (delete :chord) node :db/id)))
     (is (= "chord2" (-> sheet (navigate-to "chord3") (delete :chord) node :db/id)))
     (is (= "chord3" (-> sheet (navigate-to "chord4") (delete :chord) node :db/id)))
     (is (= "chord4" (-> sheet (navigate-to "chord5") (delete :chord) node :db/id)))
@@ -99,19 +100,39 @@
       (let [sheet-with-one-section (delete sheet :section)]
         (is (= sheet-with-one-section (delete sheet-with-one-section :section)))))))
 
+(def BLANK_SHEET
+  {:db/id 1
+   :sheet/sections {:db/id 2
+                    :coll/position 0
+                    :section/rows {:db/id 3
+                                   :coll/position 0
+                                   :row/bars {:db/id 4
+                                              :coll/position 0
+                                              :bar/chords {:db/id 5
+                                                           :coll/position 0
+                                                           :chord/value ""}}}}})
+
+(def db (let [conn (d/create-conn sut/schema)]
+          (d/transact! conn [BLANK_SHEET])
+          @conn))
+
+(defn- tx-apply [db tx-fn & args]
+  (:db-after (d/with db (binding [sut/*string-tmp-ids* false]
+                          (apply tx-fn db args)))))
 (deftest move
-  (let [sheet (-> test-loc
-                (append :chord ["chord2"]) (append :bar ["bar2" "chord3"])
-                (append :row ["row2" "bar3" "chord4"]) (append :bar ["bar4" "chord5"])
-                (append :row ["row3" "bar5" "chord6"])
-                (append :row ["row4" "bar6" "chord7"]) (append :bar ["bar7" "chord8"])
-                (append :bar ["bar8" "chord9"]) (append :chord ["chord10"])
-                (append :section ["section2" "row5" "bar9" "chord11"])
-                (append :section ["section3" "row6" "bar10" "chord12"]) (append :bar ["bar11" "chord13"])
-                (navigate-to "chord1"))
+  (let [sheet (-> db
+                (tx-apply sut/append :chord 5) (tx-apply sut/append :bar 5)
+                (tx-apply sut/append :row 5) (tx-apply sut/append :bar 11)
+                (tx-apply sut/append :row 11)
+                (tx-apply sut/append :row 16) (tx-apply sut/append :bar 19)
+                (tx-apply sut/append :bar 21) (tx-apply sut/append :chord 23)
+                (tx-apply sut/append :section 19)
+                (tx-apply sut/append :section 28) (tx-apply sut/append :bar 32)
+                (d/pull '[*] 1)
+                sheet/zipper (navigate-to 5))
         check (fn [moves expected]
                 (let [land (reduce
-                             #(let [move (if (string? %2) sheet/navigate-to sheet/move)]
+                             #(let [move (if (number? %2) sheet/navigate-to sheet/move)]
                                 (move %1 %2))
                              sheet moves)]
                   (is land (str "Couldn't find element for moves: " moves))
@@ -120,66 +141,66 @@
                       moves expected (-> land node :db/id)))))]
 
     ;; Testing the moves in a sheet.
-    ;; |-----+----+------|
-    ;; | 1 2 | 3  |      |
-    ;; | 4   | 5  |      |
-    ;; | 6   |    |      |
-    ;; | 7   | 8  | 9 10 |
-    ;; |-----+----+------|
-    ;; | 11  |    |      |
-    ;; |-----+----+------|
-    ;; | 12  | 13 |      |
+    ;; |------+-----+-------|
+    ;; | 5  6 | 8   |       |
+    ;; | 11   | 13  |       |
+    ;; | 16   |     |       |
+    ;; | 19   | 21  | 23 24 |
+    ;; |------+-----+-------|
+    ;; | 28   |     |       |
+    ;; |------+-----+-------|
+    ;; | 32   | 34  |       |
 
     ;; Basics
     ;; ======
-    (check [:right] "chord2")
-    (check [:right :left] "chord1")
-    (check [:right :bar-left] "chord1")
-    (check [:bar-right] "chord3")
-    (check [:down :up] "chord1")
-    (check [:bar-right :down] "chord5")
-    (check [:bar-right :left] "chord2")
-    (check ["chord7" :down] "chord11")
-    (check ["chord11" :up] "chord7")
+    (check [:right] 6)
+    (check [:right :left] 5)
+    (check [:right :bar-left] 5)
+    (check [:bar-right] 8)
+    (check [:down :up] 5)
+    (check [:bar-right :down] 13)
+    (check [:bar-right :left] 6)
+    (check [19 :down] 28)
+    (check [28 :up] 19)
 
     ;; Make a little circle for sanity
     ;; ===============================
-    (check [:down] "chord4")
-    (check [:down :bar-right] "chord5")
-    (check [:down :bar-right :up] "chord3")
-    (check [:down :bar-right :up :bar-left] "chord1")
+    (check [:down] 11)
+    (check [:down :bar-right] 13)
+    (check [:down :bar-right :up] 8)
+    (check [:down :bar-right :up :bar-left] 5)
 
     ;; Vertical jumping to latest bar
     ;; ==============================
-    (check ["chord5" :down] "chord6")
-    (check ["chord8" :up] "chord6")
-    (check ["chord9" :up] "chord6")
-    (check ["chord3" :right] "chord4")
-    (check ["chord7" :down] "chord11")
-    (check ["chord11" :up] "chord7")
+    (check [13 :down] 16)
+    (check [21 :up] 16)
+    (check [23 :up] 16)
+    (check [8 :right] 11)
+    (check [19 :down] 28)
+    (check [28 :up] 19)
 
     ;; Wrap arounds
     ;; ============
-    (check ["chord4" :left] "chord3")
-    (check ["chord4" :bar-left] "chord3")
-    (check ["chord3" :bar-right] "chord4")
+    (check [11 :left] 8)
+    (check [11 :bar-left] 8)
+    (check [8 :bar-right] 11)
 
     ;; Section wrap arounds
     ;; ====================
-    (check ["chord9" :bar-right] "chord11")
-    (check ["chord10" :right] "chord11")
-    (check ["chord11" :left] "chord10")
-    (check ["chord11" :bar-left] "chord9")
-    (check ["chord9" :down] "chord11")
-    (check ["chord13" :up] "chord11")
+    (check [23 :bar-right] 28)
+    (check [24 :right] 28)
+    (check [28 :left] 24)
+    (check [28 :bar-left] 23)
+    (check [23 :down] 28)
+    (check [34 :up] 28)
 
     ;; Out of bounds
     ;; =============
     (testing "Will return nil when leaving sheet edges"
       (let [is-nil #(is (= nil (-> sheet (sheet/navigate-to %1) (sheet/move %2))))]
-        (is-nil "chord13" :right)
-        (is-nil "chord13" :bar-right)
-        (is-nil "chord1" :left)
-        (is-nil "chord1" :bar-left)
-        (is-nil "chord1" :up)
-        (is-nil "chord12" :down)))))
+        (is-nil 34 :right)
+        (is-nil 34 :bar-right)
+        (is-nil 5 :left)
+        (is-nil 5 :bar-left)
+        (is-nil 5 :up)
+        (is-nil 32 :down)))))

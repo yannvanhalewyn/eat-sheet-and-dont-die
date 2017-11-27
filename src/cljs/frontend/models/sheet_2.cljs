@@ -11,35 +11,16 @@
    :row/bars children-type
    :bar/chords children-type})
 
+;; Hack to make query chaining easier.
+(set! datascript.query/built-ins
+  (assoc datascript.query/built-ins 'q datascript.core/q))
+
 (def RULES
   '[[(get-parents ?chord ?bar ?row ?section ?sheet)
      [?bar :bar/chords ?chord]
      [?row :row/bars ?bar]
      [?section :section/rows ?row]
-     [?sheet :sheet/sections ?section]]
-
-    [(inc-pos ?child ?pos)
-     [?child :coll/position ?child-pos]
-     [(inc ?child-pos) ?pos]]
-
-    [(chord-in-bar ?bar ?chord-pos ?chord)
-     [?bar :bar/chords ?chord]
-     [?chord :coll/position ?chord-pos]]
-
-    [(chord-in-row ?row ?bar-pos ?chord-pos ?chord)
-     [?row :row/bars ?bar]
-     [?bar :coll/position ?bar-pos]
-     [chord-in-bar ?bar ?chord-pos ?chord]]
-
-    [(chord-in-section ?section ?row-pos ?bar-pos ?chord-pos ?chord)
-     [?section :section/rows ?row]
-     [?row :coll/position ?row-pos]
-     [chord-in-row ?row ?bar-pos ?chord-pos ?chord]]
-
-    [(chord-in-sheet ?sheet ?section-pos ?row-pos ?bar-pos ?chord-pos ?chord)
-     [?sheet :sheet/sections ?section]
-     [?section :coll/position ?section-pos]
-     [chord-in-section ?section ?row-pos ?bar-pos ?chord-pos ?chord]]])
+     [?sheet :sheet/sections ?section]]])
 
 ;; Hack - Datomic can handle string temp ids, datascript can't. Use
 ;; the useful string temp ids for transactions send to the backend,
@@ -119,7 +100,7 @@
   [db _ cur-chord-id]
   (when-let [[row section-id] (d/q '[:find [(pull ?row [*]) ?section]
                                      :in $ % ?chord
-                                     :where [get-parents ?chord _ ?row ?section]]
+                                     :where [get-parents ?chord ?bar ?row ?section]]
                                 db RULES cur-chord-id)]
     (let [pos (inc (:coll/position row))
           new-row-id (if *string-tmp-ids* "new-row" -1)
@@ -136,7 +117,7 @@
   [db _ cur-chord-id]
   (when-let [[section sheet-id] (d/q '[:find [(pull ?section [*]) ?sheet]
                                        :in $ % ?chord
-                                       :where [get-parents ?chord _ _ ?section ?sheet]]
+                                       :where [get-parents ?chord ?bar ?row ?section ?sheet]]
                                   db RULES cur-chord-id)]
     (let [pos (inc (:coll/position section))
           new-section-id (if *string-tmp-ids* "new-section" -1)
@@ -192,49 +173,3 @@
             ret))]
     (map #(vector :db.fn/retractEntity %)
       (conj parents-to-retract cur-chord-id))))
-
-
-;; Moving
-;; ======
-
-(defmulti move* (fn [_ dir] dir))
-(def move move*)
-
-(defmethod move* :right
-  [db _ cur-chord]
-  (or
-    ;; Same bar
-    (d/q '[:find ?chord .
-           :in $ % ?cur
-           :where
-           [get-parents ?cur ?bar]
-           [inc-pos ?cur ?next-chord-pos]
-           [chord-in-bar ?bar ?next-chord-pos ?chord]]
-      db RULES cur-chord)
-
-    ;; Next bar
-    (d/q '[:find ?chord .
-           :in $ % ?cur
-           :where
-           [get-parents ?cur ?bar ?row]
-           [inc-pos ?bar ?next-bar-pos]
-           [chord-in-row ?row ?next-bar-pos 0 ?chord]]
-      db RULES cur-chord)
-
-    ;; Next row
-    (d/q '[:find ?chord .
-           :in $ % ?cur
-           :where
-           [get-parents ?cur ?bar ?row ?section]
-           [inc-pos ?row ?next-row-pos]
-           [chord-in-section ?section ?next-row-pos 0 0 ?chord]]
-      db RULES cur-chord)
-
-    ;; Next section
-    (d/q '[:find ?chord .
-           :in $ % ?cur
-           :where
-           [get-parents ?cur ?bar ?row ?section ?sheet]
-           [inc-pos ?section ?next-section-pos]
-           [chord-in-sheet ?sheet ?next-section-pos 0 0 0 ?chord]]
-      db RULES cur-chord)))
