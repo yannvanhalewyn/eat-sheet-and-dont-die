@@ -114,7 +114,7 @@
 (reg-event-fx
   :playlist/destroy-sheet
   (fn [db [_ sheet-id]]
-    {:socket {:destroy-sheet [:sheets/destroy sheet-id]}}))
+    {:datsync [[:db.fn/retractEntity sheet-id]]}))
 
 ;; Remote actions
 ;; ==============

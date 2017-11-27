@@ -35,7 +35,7 @@
   [[:db/add chord-id :chord/value value]] )
 
 (defn pull-all [db]
-  (d/q '[:find [(pull ?sheet [*])]
+  (d/q '[:find [(pull ?sheet [*]) ...]
          :where [?sheet :sheet/title]] db))
 
 ;; Append
