@@ -92,12 +92,12 @@
 
 (def empty-branch? #(and (zip/branch? %) (empty? (zip/children %))))
 
-(defn- nearest-chord
-  "Returns the location if chord, the previous chord if any or the next chord"
+(defn nearest-chord
+  "Returns the location of the previous chord if any or the next chord"
   [loc]
-  (or (if-not (zip/branch? loc) loc)
-      (prev-leaf loc)
-      (next-leaf loc)))
+  (or
+    (prev-leaf loc)
+    (next-leaf loc)))
 
 (defn- remove-and-clear-empty-parents
   [loc]

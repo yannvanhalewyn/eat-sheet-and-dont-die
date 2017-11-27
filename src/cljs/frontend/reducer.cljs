@@ -40,11 +40,7 @@
                            (assoc state :selection/id new-id)
                            state)
     :sheet/move {:selection/type :selection/chord :selection/id arg1}
-    :response/datsync (if-let [chord-id (or
-                                          (get (:tempids arg1) "new-chord")
-                                          (->> (:tx-data arg1)
-                                            (filter #(= :bar/chords (second %)))
-                                            last v))]
+    :response/datsync (if-let [chord-id (get (:tempids arg1) "new-chord")]
                         {:selection/type :selection/chord :selection/id chord-id}
                         state)
     state))

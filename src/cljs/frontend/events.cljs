@@ -52,8 +52,10 @@
   :sheet/remove
   (fn [{:keys [db]} [_ element]]
     (let [chord-id (:selection/id (selectors/selection db))
-          tx (sheet-2/delete (:db/sheets-datascript db) element chord-id)]
-      {:datsync tx})))
+          tx (sheet-2/delete (:db/sheets-datascript db) element chord-id)
+          loc (sheet/nearest-chord (selectors/current-loc db))]
+      {:db (reducer/app db [:sheet/move (:db/id (zip/node loc))])
+       :datsync tx})))
 
 (reg-event-db
   :sheet/remove-selection
