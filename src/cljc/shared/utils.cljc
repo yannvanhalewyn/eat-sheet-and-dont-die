@@ -41,16 +41,6 @@
   (let [count (atom 0)]
     (fn [] (swap! count dec) (str @count))))
 
-(defn replace-temp-ids
-  "Takes a structure and a replacements map, and replaces and :db/id
-  that has a key in the replacements map with it's value."
-  [coll replacements]
-  (postwalk
-    #(if-let [new-id (get replacements (:db/id %))]
-       (assoc % :db/id new-id)
-       %)
-    coll))
-
 (defn dissoc-in
   "Dissoc's the element at path in coll"
   [coll path]

@@ -64,22 +64,6 @@
           (router/redirect-to (router/path-for next-route))))
       context)))
 
-(def sheet-tx-sync
-  (rf/->interceptor
-    :id :sheet-tx-sync
-    :after
-    (fn [{:keys [effects coeffects] :as context}]
-      (let [event (get-in coeffects [:event 0])]
-        (if-not (= "sheet" (namespace event))
-          context
-          (let [new-sheet (sel/sheet (:db effects))
-                old-sheet (sel/sheet (:db coeffects))]
-            (if (= new-sheet old-sheet)
-              context
-              (assoc-in context [:effects :socket :sync-sheet]
-                [:sheets/update {:sheet-id (:db/id new-sheet)
-                                 :diff (diffp old-sheet new-sheet :db/id)}]))))))))
-
 (def APP_MIDDLEWARE [sync-browser-url])
 (def DEV_MIDDLEWARE [debug-logger spec-checker])
 (def MIDDLEWARE

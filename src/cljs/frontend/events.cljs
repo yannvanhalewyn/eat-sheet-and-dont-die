@@ -6,7 +6,7 @@
             [frontend.models.sheet :as sheet]
             [frontend.models.sheet-2 :as sheet-2]
             [frontend.models.bar-attachment :as attachment]
-            [shared.utils :as sutil :refer [gen-temp-id key-by dissoc-in]]
+            [shared.utils :as sutil]
             [clojure.zip :as zip]))
 
 (reg-event-db

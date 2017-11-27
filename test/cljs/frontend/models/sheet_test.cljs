@@ -2,103 +2,11 @@
   (:require [cljs.test :refer-macros [deftest is testing]]
             [clojure.zip :refer [children down left node rights up]]
             [datascript.core :as d]
-            [frontend.models.sheet :as sheet
-             :refer [append delete navigate-to zipper]]
+            [frontend.models.sheet :as sheet]
             [frontend.models.sheet-2 :as sut]
             [goog.string :refer [format]]
             [shared.utils :as sutils]
             [clojure.zip :as zip]))
-
-(def id-pool (repeatedly sutils/gen-temp-id))
-(def new-sheet (sheet/new-sheet ["sheet" "section1" "row1" "bar1" 5]))
-
-(def test-loc (-> new-sheet zipper (navigate-to 5)))
-
-(deftest navigateTo
-  (is (= 5 (-> new-sheet zipper (navigate-to 5) node :db/id)))
-  (is (= nil (-> new-sheet zipper (navigate-to 100))))
-  (is (= 5 (-> new-sheet zipper (navigate-to 5)
-             (append :chord id-pool) (navigate-to 5) node :db/id))))
-
-(deftest addChord
-  (let [[id1 id2] (take 2 id-pool)
-        new-chord (-> test-loc (append :chord [id1]) left (append :chord [id2]))]
-    (testing  "It correctly assigns the chord positions and returns the zipper at the new chord"
-      (is (= [0 1 2] (map :coll/position (-> new-chord up children))))
-      (is (= id2 (-> new-chord node :db/id))))))
-
-(deftest addBar
-  (let [ids (take 4 id-pool)
-        ids1 (take 2 ids)
-        ids2 (drop 2 ids)
-        new-chord (-> test-loc (append :bar ids1) up left down (append :bar ids2))]
-    (testing "It correctly assigns the bar positions and returns the zipper at the new chord"
-      (is (= [0 1 2] (map :coll/position (-> new-chord up up children))))
-      (is (= (last ids) (-> new-chord node :db/id))))))
-
-(deftest addRow
-  (let [[ids1 ids2] (partition 3 (take 6 id-pool))
-        new-chord (-> test-loc (append :row ids1) up up left down down (append :row ids2))]
-    (testing "It correctly assigns the row positions and returns the zipper at the new chord"
-      (is (= [0 1 2] (map :coll/position (-> new-chord up up up children))))
-      (is (= (last ids2) (-> new-chord node :db/id))))))
-
-(deftest addSection
-  (let [[ids1 ids2] (partition 4 (take 8 id-pool))
-        new-chord (-> test-loc (append :section ids1) up up up left down down down
-                    (append :section ids2))]
-    (testing  "It correctly assigns the section positions and returns the zipper at the new chord"
-      (is (= [0 1 2]  (map :coll/position (-> new-chord up up up up children))))
-      (is (= (last ids2) (-> new-chord node :db/id))))))
-
-(deftest removing
-  (let [sheet (-> test-loc
-                (append :chord ["chord2"])
-                (append :bar ["bar2" "chord3"])
-                (append :row ["row2" "bar3" "chord4"])
-                (append :section ["section2" "row3" "bar4" "chord5"])
-                (navigate-to 5))]
-    ;; |-----+---|
-    ;; | 1 2 | 3 |
-    ;; | 4   |   |
-    ;; |-----+---|
-    ;; | 5   |   |
-
-    ;; Chords
-    ;; ======
-    (is (= ["chord2"] (-> sheet (delete :chord) up children (#(map :db/id %)))))
-    (is (= "chord2" (-> sheet (delete :chord) node :db/id)))
-    (is (= 5 (-> sheet (navigate-to "chord2") (delete :chord) node :db/id)))
-    (is (= "chord2" (-> sheet (navigate-to "chord3") (delete :chord) node :db/id)))
-    (is (= "chord3" (-> sheet (navigate-to "chord4") (delete :chord) node :db/id)))
-    (is (= "chord4" (-> sheet (navigate-to "chord5") (delete :chord) node :db/id)))
-    (is (= 0 (-> sheet (navigate-to "chord3") (delete :chord) up rights count)))
-    (is (= 0 (-> sheet (navigate-to "chord4") (delete :chord) up up rights count)))
-    (is (= 1 (-> sheet (navigate-to "chord5") (delete :chord) up up up up children count)))
-
-    ;; ;; Bars
-    ;; ;; ====
-    (is (= "chord3" (-> sheet (delete :bar) node :db/id)))
-    (is (= "chord3" (-> sheet (navigate-to "chord4") (delete :bar) node :db/id)))
-    (is (= 1 (-> sheet (navigate-to "chord2") (delete :bar) up up children count)))
-    (is (= 1 (-> sheet (navigate-to "chord4") (delete :bar) up up up children count)))
-    (is (= 1 (-> sheet (navigate-to "chord5") (delete :bar) up up up up children count)))
-
-    ;; ;; Rows
-    ;; ;; ====
-    (is (= "chord4" (-> sheet (delete :row) node :db/id)))
-    (is (= 1 (-> sheet (navigate-to "chord4") (delete :row) up up up children count)))
-    (is (= 1 (-> sheet (navigate-to "chord5") (delete :row) up up up up children count)))
-
-    ;; ;; Sections
-    ;; ;; ========
-    (is (= "chord5" (-> sheet (delete :section) node :db/id)))
-    (is (= 1 (-> sheet (delete :section) up up up up children count)))
-    (is (= 1 (-> sheet (navigate-to "chord5") (delete :section) up up up up children count)))
-
-    (testing "Removing last section"
-      (let [sheet-with-one-section (delete sheet :section)]
-        (is (= sheet-with-one-section (delete sheet-with-one-section :section)))))))
 
 (def BLANK_SHEET
   {:db/id 1
@@ -119,6 +27,7 @@
 (defn- tx-apply [db tx-fn & args]
   (:db-after (d/with db (binding [sut/*string-tmp-ids* false]
                           (apply tx-fn db args)))))
+
 (deftest move
   (let [sheet (-> db
                 (tx-apply sut/append :chord 5) (tx-apply sut/append :bar 5)
@@ -129,7 +38,7 @@
                 (tx-apply sut/append :section 19)
                 (tx-apply sut/append :section 28) (tx-apply sut/append :bar 32)
                 (d/pull '[*] 1)
-                sheet/zipper (navigate-to 5))
+                sheet/zipper (sheet/navigate-to 5))
         check (fn [moves expected]
                 (let [land (reduce
                              #(let [move (if (number? %2) sheet/navigate-to sheet/move)]

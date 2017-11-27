@@ -6,36 +6,6 @@
             [frontend.util.zipper :as uzip :refer [nth-child next-leaf prev-leaf
                                                    locate locate-left]]))
 
-;; Initializing nodes
-;; ==================
-
-(defn new-chord
-  [id]
-  {:db/id id :chord/value "" :coll/position 0})
-
-(defn new-bar
-  [[id chord-id]]
-  {:db/id id
-   :coll/position 0
-   :bar/chords [(new-chord chord-id)]})
-
-(defn new-row [[id & ids]]
-  {:db/id id
-   :coll/position 0
-   :row/bars [(new-bar ids)]})
-
-(defn new-section [[id & ids]]
-  {:db/id id
-   :coll/position 0
-   :section/title "Intro"
-   :section/rows [(new-row ids)]})
-
-(defn new-sheet [[id & ids]]
-  {:db/id id
-   :sheet/title "Title"
-   :sheet/artist "Artist"
-   :sheet/sections [(new-section ids)]})
-
 ;; Zipper
 ;; ======
 
@@ -60,69 +30,12 @@
       (= id (:db/id (node loc))) loc
       :else (recur (next loc)))))
 
-(defn first-chord [sheet]
-  (-> sheet zipper next-leaf node))
-
-;; Adding
-;; ======
-
-(defn- reset-positions [parent-loc]
-  (uzip/edit-children parent-loc #(assoc %1 :coll/position %2)))
-
-(defmulti append (fn [_ t _] t))
-
-(defmethod append :chord [chord-loc _ [id]]
-  (-> chord-loc (insert-right (new-chord id)) up reset-positions (navigate-to id)))
-
-(defmethod append :bar [chord-loc _ ids]
-  (-> chord-loc up (insert-right (new-bar ids)) up reset-positions (navigate-to (second ids))))
-
-(defmethod append :row [chord-loc _ ids]
-  (let [new-chord-id (first (drop 2 ids))]
-    (-> chord-loc up up (insert-right (new-row ids))
-      up reset-positions (navigate-to new-chord-id))))
-
-(defmethod append :section [chord-loc _ ids]
-  (let [new-chord-id (first (drop 3 ids))]
-    (-> chord-loc up up up (insert-right (new-section ids))
-      up reset-positions (navigate-to new-chord-id))))
-
-;; Removing
-;; ========
-
-(def empty-branch? #(and (zip/branch? %) (empty? (zip/children %))))
-
 (defn nearest-chord
   "Returns the location of the previous chord if any or the next chord"
   [loc]
   (or
     (prev-leaf loc)
     (next-leaf loc)))
-
-(defn- remove-and-clear-empty-parents
-  [loc]
-  (loop [l loc]
-    (let [prev (zip/remove l)]
-      (if (empty-branch? prev)
-        (recur prev)
-        (nearest-chord prev)))))
-
-(defmulti delete (fn [_ t] t))
-
-(defmethod delete :chord [loc _]
-  (remove-and-clear-empty-parents loc))
-
-(defmethod delete :bar [loc _]
-  (remove-and-clear-empty-parents (up loc)))
-
-(defmethod delete :row [loc _]
-  (remove-and-clear-empty-parents (-> loc up up)))
-
-(defmethod delete :section [loc _]
-  (let [section (-> loc up up up)]
-    (if (= 1 (-> section up children count))
-      loc
-      (remove-and-clear-empty-parents section))))
 
 ;; Movement
 ;; ========
@@ -133,8 +46,8 @@
 (defn- different-row?
   [loc1 loc2]
   (and (chord? loc1)
-       (chord? loc2)
-       (not= (-> loc1 up up) (-> loc2 up up))))
+    (chord? loc2)
+    (not= (-> loc1 up up) (-> loc2 up up))))
 
 (defn- move-vertically
   [loc direction]

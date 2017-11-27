@@ -1,13 +1,29 @@
 (ns frontend.models.bar-attachment-test
   (:require [frontend.models.bar-attachment :as sut]
             [frontend.models.sheet :as sheet]
+            [frontend.models.sheet-2 :as sheet-2]
+            [datascript.core :as d]
             [clojure.zip :as zip]
             [clojure.set :as set]
             [cljs.test :as t :refer-macros [deftest is]]))
 
-(def sheet-loc (-> (sheet/new-sheet ["sheet" "section1" "row1" "bar1" "chord1"])
-                 sheet/zipper
-                 (sheet/navigate-to "chord1")))
+(def BLANK_SHEET
+  {:db/id 1
+   :sheet/sections {:db/id 2
+                    :coll/position 0
+                    :section/rows {:db/id 3
+                                   :coll/position 0
+                                   :row/bars {:db/id 4
+                                              :coll/position 0
+                                              :bar/chords {:db/id 5
+                                                           :coll/position 0
+                                                           :chord/value ""}}}}})
+
+(def db (let [conn (d/create-conn sheet-2/schema)]
+          (d/transact! conn [BLANK_SHEET])
+          @conn))
+
+(def sheet-loc (-> (d/pull db '[*] 1) sheet/zipper (sheet/navigate-to 5)))
 
 (defn submap? [x y]
   "Returns true iff x is a submap of y"
