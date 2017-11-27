@@ -4,7 +4,7 @@
             [frontend.router :as router]
             [frontend.reducer :as reducer]
             [frontend.models.sheet-zip :as sheet-zip]
-            [frontend.models.sheet-2 :as sheet-2]
+            [frontend.models.sheet :as sheet]
             [frontend.models.bar-attachment :as attachment]
             [shared.utils :as sutil]
             [clojure.zip :as zip]))
@@ -29,7 +29,7 @@
 (reg-event-fx
   :sheet/update-chord
   (fn [{:keys [db]} [_ id value next]]
-    (let [tx (sheet-2/update-chord (:db/sheets-datascript db) id value)]
+    (let [tx (sheet/update-chord (:db/sheets-datascript db) id value)]
       (if next
         {:datsync tx :dispatch next}
         {:datsync tx}))))
@@ -38,7 +38,7 @@
   :sheet/append
   (fn [{:keys [db]} [_ type]]
     (let [chord-id (:selection/id (selectors/selection db))
-          tx (sheet-2/append (:db/sheets-datascript db) type chord-id)]
+          tx (sheet/append (:db/sheets-datascript db) type chord-id)]
       {:datsync tx})))
 
 (reg-event-db
@@ -52,7 +52,7 @@
   :sheet/remove
   (fn [{:keys [db]} [_ element]]
     (let [chord-id (:selection/id (selectors/selection db))
-          tx (sheet-2/delete (:db/sheets-datascript db) element chord-id)
+          tx (sheet/delete (:db/sheets-datascript db) element chord-id)
           loc (sheet-zip/nearest-chord (selectors/current-loc db))]
       {:db (reducer/app db [:sheet/move (:db/id (zip/node loc))])
        :datsync tx})))

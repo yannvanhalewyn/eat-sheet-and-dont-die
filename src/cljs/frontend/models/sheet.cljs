@@ -1,4 +1,4 @@
-(ns frontend.models.sheet-2
+(ns frontend.models.sheet
   (:require [datascript.core :as d]))
 
 (def children-type {:db/valueType :db.type/ref

@@ -1,5 +1,5 @@
-(ns frontend.models.sheet-2-test
-  (:require [frontend.models.sheet-2 :as sut]
+(ns frontend.models.sheet-test
+  (:require [frontend.models.sheet :as sut]
             [cljs.test :as t :refer-macros [deftest testing is are]]
             [datascript.core :as d]))
 

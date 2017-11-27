@@ -2,8 +2,8 @@
   (:require [cljs.test :refer-macros [deftest is testing]]
             [clojure.zip :refer [children down left node rights up]]
             [datascript.core :as d]
-            [frontend.models.sheet-zip :as sheet-zip]
-            [frontend.models.sheet-2 :as sut]
+            [frontend.models.sheet-zip :as sut]
+            [frontend.models.sheet :as sheet]
             [goog.string :refer [format]]
             [shared.utils :as sutils]
             [clojure.zip :as zip]))
@@ -20,28 +20,28 @@
                                                            :coll/position 0
                                                            :chord/value ""}}}}})
 
-(def db (let [conn (d/create-conn sut/schema)]
+(def db (let [conn (d/create-conn sheet/schema)]
           (d/transact! conn [BLANK_SHEET])
           @conn))
 
 (defn- tx-apply [db tx-fn & args]
-  (:db-after (d/with db (binding [sut/*string-tmp-ids* false]
+  (:db-after (d/with db (binding [sheet/*string-tmp-ids* false]
                           (apply tx-fn db args)))))
 
 (deftest move
   (let [sheet (-> db
-                (tx-apply sut/append :chord 5) (tx-apply sut/append :bar 5)
-                (tx-apply sut/append :row 5) (tx-apply sut/append :bar 11)
-                (tx-apply sut/append :row 11)
-                (tx-apply sut/append :row 16) (tx-apply sut/append :bar 19)
-                (tx-apply sut/append :bar 21) (tx-apply sut/append :chord 23)
-                (tx-apply sut/append :section 19)
-                (tx-apply sut/append :section 28) (tx-apply sut/append :bar 32)
+                (tx-apply sheet/append :chord 5) (tx-apply sheet/append :bar 5)
+                (tx-apply sheet/append :row 5) (tx-apply sheet/append :bar 11)
+                (tx-apply sheet/append :row 11)
+                (tx-apply sheet/append :row 16) (tx-apply sheet/append :bar 19)
+                (tx-apply sheet/append :bar 21) (tx-apply sheet/append :chord 23)
+                (tx-apply sheet/append :section 19)
+                (tx-apply sheet/append :section 28) (tx-apply sheet/append :bar 32)
                 (d/pull '[*] 1)
-                sheet-zip/zipper (sheet-zip/navigate-to 5))
+                sut/zipper (sut/navigate-to 5))
         check (fn [moves expected]
                 (let [land (reduce
-                             #(let [move (if (number? %2) sheet-zip/navigate-to sheet-zip/move)]
+                             #(let [move (if (number? %2) sut/navigate-to sut/move)]
                                 (move %1 %2))
                              sheet moves)]
                   (is land (str "Couldn't find element for moves: " moves))
@@ -106,7 +106,7 @@
     ;; Out of bounds
     ;; =============
     (testing "Will return nil when leaving sheet edges"
-      (let [is-nil #(is (= nil (-> sheet (sheet-zip/navigate-to %1) (sheet-zip/move %2))))]
+      (let [is-nil #(is (= nil (-> sheet (sut/navigate-to %1) (sut/move %2))))]
         (is-nil 34 :right)
         (is-nil 34 :bar-right)
         (is-nil 5 :left)

@@ -1,7 +1,7 @@
 (ns frontend.models.bar-attachment-test
   (:require [frontend.models.bar-attachment :as sut]
             [frontend.models.sheet-zip :as sheet-zip]
-            [frontend.models.sheet-2 :as sheet-2]
+            [frontend.models.sheet :as sheet]
             [datascript.core :as d]
             [clojure.zip :as zip]
             [clojure.set :as set]
@@ -19,7 +19,7 @@
                                                            :coll/position 0
                                                            :chord/value ""}}}}})
 
-(def db (let [conn (d/create-conn sheet-2/schema)]
+(def db (let [conn (d/create-conn sheet/schema)]
           (d/transact! conn [BLANK_SHEET])
           @conn))
 

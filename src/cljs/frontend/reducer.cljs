@@ -1,7 +1,7 @@
 (ns frontend.reducer
   (:require [clojure.zip :as zip]
             [datascript.core :as d]
-            [frontend.models.sheet-2 :as sheet-2]
+            [frontend.models.sheet :as sheet]
             [frontend.router :as router]
             [frontend.util.util :refer [combine-reducers]]
             [shared.datsync :as datsync]
@@ -36,7 +36,7 @@
 
 (defn sheets-datascript [db [type arg1 arg2]]
   (case type
-    :app/init @(d/create-conn sheet-2/schema)
+    :app/init @(d/create-conn sheet/schema)
     :response/get-sheet (transact! db [arg1])
     :tx/apply (:db-after arg1)
     :response/datsync (transact! db (datsync/datoms->tx (:tx-data arg1)))

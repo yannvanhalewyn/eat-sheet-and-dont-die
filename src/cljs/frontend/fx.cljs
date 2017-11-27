@@ -9,7 +9,7 @@
             [re-frame.core :as rf]
             [goog.string :refer [format]]
             [datascript.core :as d]
-            [frontend.models.sheet-2 :as sheet-2]))
+            [frontend.models.sheet :as sheet]))
 
 (rf/reg-fx :socket sock/sock-fx)
 
@@ -42,8 +42,8 @@
           (do
             (.info js/console "%c New DB" "color: #9E9E9E; font-weight: bold" (sort new-db))
             (.info js/console "%c changes" "color: #FF6259; font-weight: bold"
-              (diffp (update old-db :db/sheets-datascript sheet-2/pull-all)
-                (update new-db :db/sheets-datascript sheet-2/pull-all) :db/id)))
+              (diffp (update old-db :db/sheets-datascript sheet/pull-all)
+                (update new-db :db/sheets-datascript sheet/pull-all) :db/id)))
           (.info js/console "No db changes"))
         (.groupEnd js/console group-name "color: grey"))
       context)))
