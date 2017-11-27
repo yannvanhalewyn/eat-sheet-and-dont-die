@@ -75,49 +75,33 @@
 ;; Attachments and symbol operations
 ;; =================================
 
-(reg-event-db
+(reg-event-fx
   :sheet/remove-selection
-  (fn [db _]
-    (reducer/app db [:sheet/replace
-                     (sutil/delete-by-id (selectors/sheet db)
-                       (:selection/id (selectors/selection db)))])))
+  (fn [{:keys [db]} e]
+    (if-let [{:keys [selection/id]} (selectors/selection db)]
+      {:datsync [[:db.fn/retractEntity id]]})))
 
-(reg-event-db
-  :sheet/set-repeat-cycle
-  (fn [db [_ bar-id value]]
-    (let [bar-loc (sheet-zip/navigate-to (sheet-zip/zipper (selectors/sheet db)) bar-id)]
-      (reducer/app db
-        [:sheet/replace
-         (if (empty? value)
-           (zip/root (zip/edit bar-loc dissoc :bar/repeat-cycle))
-           (zip/root (zip/edit bar-loc assoc :bar/repeat-cycle value)))]))))
-
-(reg-event-db
+(reg-event-fx
   :sheet/edit-textbox
-  (fn [db [_ bar-id textbox-id value]]
-    (reducer/app db
-      [:sheet/replace
-       (-> (sheet-zip/zipper (selectors/sheet db))
-         (sheet-zip/navigate-to bar-id)
-         (attachment/set-value textbox-id value)
-         zip/root)])))
+  (fn [{:keys [db]} [_ textbox-id value]]
+    {:datsync (attachment/set-value (:db/sheets db) textbox-id value)}))
 
-(reg-event-db
+(reg-event-fx
   :sheet/add-symbol
-  (fn [db [_ type]]
+  (fn [{:keys [db]} [_ type]]
     (if-let [loc (selectors/current-loc db)]
-      (let [new-sheet (zip/root (attachment/add loc type))]
-        (reducer/app db [:sheet/replace new-sheet]))
-      db)))
+      (let [bar-id (-> loc zip/up zip/node :db/id)]
+        {:datsync (attachment/add (:db/sheets db) bar-id type)}))))
 
-(reg-event-db
+(reg-event-fx
+  :sheet/set-repeat-cycle
+  (fn [{:keys [db]} [_ bar-id value]]
+    {:datsync (attachment/set-repeat-cycle (:db/sheets db) bar-id value)}))
+
+(reg-event-fx
   :sheet/move-symbol
-  (fn [db [_ bar-id symbol-id pos]]
-    (reducer/app db [:sheet/replace
-                     (-> (sheet-zip/zipper (selectors/sheet db))
-                       (sheet-zip/navigate-to bar-id)
-                       (attachment/move symbol-id pos)
-                       zip/root)])))
+  (fn [{:keys [db]} [_ att-id pos]]
+    {:datsync (attachment/move (:db/sheets db) att-id pos)}))
 
 ;; Playlist actions
 ;; ================

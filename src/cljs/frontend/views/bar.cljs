@@ -10,9 +10,9 @@
 (def height 30)
 (def width (* height svg-ratio))
 
-(defn attachment [{:keys [attachment bar selected]}]
+(defn attachment [{:keys [attachment selected]}]
   (let [{:keys [db/id coord/x coord/y textbox/value]} attachment
-        props {:on-drag-end #(dispatch [:sheet/move-symbol (:db/id bar) id %])
+        props {:on-drag-end #(dispatch [:sheet/move-symbol id %])
                :on-click #(dispatch [:sheet/select :selection/attachment id])
                :start-pos [x y]}
         class (when selected "selected")]
@@ -34,7 +34,7 @@
       [draggable/component
        (assoc props :class (str class " draggable--textbox"))
        [editable/component {:edit-trigger :on-double-click
-                            :on-change #(dispatch [:sheet/edit-textbox (:db/id bar) id %])
+                            :on-change #(dispatch [:sheet/edit-textbox id %])
                             :value value}
         [:span (or (presence value) "Enter text")]]])))
 
@@ -44,7 +44,7 @@
    ;; =======
    (for [{:keys [db/id] :as att} (:bar/attachments bar)]
      ^{:key id}
-     [attachment {:attachment att :bar bar :selected (= id (:selection/id selection))}])
+     [attachment {:attachment att :selected (= id (:selection/id selection))}])
 
    ;; Chords
    ;; ======

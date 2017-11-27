@@ -37,7 +37,6 @@
                                           [[:db/retract bar-id type true]]
                                           [[:db/add bar-id type true]])
     :bar/repeat-cycle [[:db/add bar-id :bar/repeat-cycle "1"]]
-
     (let [tmpid (if sheet/*string-tmp-ids* "new-attachment" -1)]
       [[:db/add bar-id :bar/attachments tmpid]
        (assoc (make type) :db/id tmpid)])))
@@ -52,3 +51,11 @@
   "Sets the text value for symbol with `att-id`"
   [db att-id value]
   [[:db/add att-id :textbox/value value]])
+
+(defn set-repeat-cycle
+  "Sets the repeat cycle number for bar"
+  [db bar-id value]
+  (if (empty? value)
+    [[:db/retract bar-id :bar/repeat-cycle
+      (:bar/repeat-cycle (d/entity db bar-id))]]
+    [[:db/add bar-id :bar/repeat-cycle value]]))
