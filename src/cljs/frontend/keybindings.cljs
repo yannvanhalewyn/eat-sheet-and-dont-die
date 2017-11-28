@@ -1,6 +1,6 @@
 (ns frontend.keybindings
   (:require [goog.events.KeyCodes
-             :refer [TAB SPACE ENTER ESC BACKSPACE LEFT RIGHT UP DOWN]]))
+             :refer [TAB SPACE ENTER ESC BACKSPACE LEFT RIGHT UP DOWN R]]))
 
 (def chord-context
   {[ESC]                               [:sheet/deselect]
@@ -16,13 +16,17 @@
    [:alt :meta :shift BACKSPACE]       [:sheet/remove :row]
    [:ctrl :alt :meta :shift BACKSPACE] [:sheet/remove :section]
    [LEFT]                              [:sheet/move :left]
-   [:meta LEFT]                        [:sheet/move :bar-left]
    [RIGHT]                             [:sheet/move :right]
-   [:meta RIGHT]                       [:sheet/move :bar-right]
    [UP]                                [:sheet/move :up]
-   [:shift UP]                         [:sheet/move :up]
    [DOWN]                              [:sheet/move :down]
-   [:shift DOWN]                       [:sheet/move :down]})
+   [:meta LEFT]                        [:sheet/move :bar-left]
+   [:meta RIGHT]                       [:sheet/move :bar-right]
+   [:meta UP]                          [:sheet/move :up]
+   [:meta DOWN]                        [:sheet/move :down]
+
+   ;; Bar edits
+   [R]                                 [:sheet/add-bar-attachment :bar/end-repeat]
+   [:shift R]                          [:sheet/add-bar-attachment :bar/start-repeat]})
 
 (def global-context
   {[ESC]       [:sheet/deselect]
