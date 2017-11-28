@@ -2,7 +2,7 @@
   (:require [taoensso.sente :as sente]
             [re-frame.core :refer [dispatch]]))
 
-(def TIMEOUT 1000)
+(def TIMEOUT 8000)
 (defonce chsk (atom nil))
 
 (defn- send! [msg cb] ((:send-fn @chsk) msg TIMEOUT cb))

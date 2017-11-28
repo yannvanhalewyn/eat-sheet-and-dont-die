@@ -48,7 +48,10 @@
     :app/init @(d/create-conn sheet/schema)
     :response/get-sheet (transact! db [arg1])
     :response/create-sheet (transact! db [arg1])
-    :response/datsync (transact! db (datsync/datoms->tx (:tx-data arg1)))
+    :response/datsync
+    (transact! db (datsync/datoms->tx (:tx-data arg1)))
+    :chsk/incoming-tx-data
+    (transact! db (datsync/datoms->tx arg1))
     :response/get-sheets (transact! db arg1)
     db))
 

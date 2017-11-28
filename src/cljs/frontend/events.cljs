@@ -7,7 +7,8 @@
             [frontend.models.sheet :as sheet]
             [frontend.models.bar-attachment :as attachment]
             [shared.utils :as sutil]
-            [clojure.zip :as zip]))
+            [clojure.zip :as zip]
+            [shared.datsync :as datsync]))
 
 (reg-event-db
   :app/init
@@ -138,10 +139,12 @@
   :chsk/handshake
   (fn [_ _] {:socket {:get-current-user [:users/me]}}))
 
-(reg-event-fx
+(reg-event-db
   :chsk/recv
-  (fn [_ d]
-    (.log js/console "recv" d)))
+  (fn [db [_ [tx datoms]]]
+    (if (= :sheet/tx-data tx)
+      (reducer/app db [:chsk/incoming-tx-data datoms])
+      db)))
 
 (reg-event-db
   :route/browser-url
