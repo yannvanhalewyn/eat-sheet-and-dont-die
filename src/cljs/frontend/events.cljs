@@ -5,7 +5,7 @@
             [frontend.reducer :as reducer]
             [frontend.models.sheet-zip :as sheet-zip]
             [frontend.models.sheet :as sheet]
-            [frontend.models.bar-attachment :as attachment]
+            [frontend.models.attachment :as attachment]
             [shared.utils :as sutil]
             [clojure.zip :as zip]
             [shared.datsync :as datsync]))

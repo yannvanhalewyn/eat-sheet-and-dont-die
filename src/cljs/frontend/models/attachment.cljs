@@ -1,4 +1,4 @@
-(ns frontend.models.bar-attachment
+(ns frontend.models.attachment
   (:require [frontend.models.sheet :as sheet]
             [datascript.core :as d]))
 
@@ -30,16 +30,16 @@
     nil))
 
 (defn add
-  "Adds an attachment of `type` to the given bar."
-  [db bar-id type]
+  "Adds an attachment of `type` to the given parent."
+  [db parent-id type]
   (case type
     (:bar/start-repeat :bar/end-repeat :chord/fermata)
-    (if (get (d/entity db bar-id) type)
-      [[:db/retract bar-id type true]]
-      [[:db/add bar-id type true]])
-    :bar/repeat-cycle [[:db/add bar-id :bar/repeat-cycle "1"]]
+    (if (get (d/entity db parent-id) type)
+      [[:db/retract parent-id type true]]
+      [[:db/add parent-id type true]])
+    :bar/repeat-cycle [[:db/add parent-id :bar/repeat-cycle "1"]]
     (let [tmpid (if sheet/*string-tmp-ids* "new-attachment" -1)]
-      [[:db/add bar-id :bar/attachments tmpid]
+      [[:db/add parent-id :bar/attachments tmpid]
        (assoc (make type) :db/id tmpid)])))
 
 (defn move

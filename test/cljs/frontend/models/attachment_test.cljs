@@ -1,4 +1,4 @@
-(ns frontend.models.bar-attachment-test
+(ns frontend.models.attachment-test
   (:require [frontend.models.bar-attachment :as sut]
             [frontend.models.sheet-zip :as sheet-zip]
             [frontend.models.sheet :as sheet]
