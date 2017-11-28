@@ -49,7 +49,9 @@
 (s/def :db/id (s/spec (s/or :datomic pos-int? :tmp-id string?) :gen gen-id))
 (s/def :coll/position nat-int?)
 (s/def :chord/value (s/spec string? :gen gen-chord-value))
-(s/def ::chord (s/keys :req [:db/id :coll/position :chord/value]))
+(s/def :chord/fermata boolean?)
+(s/def ::chord (s/keys :req [:db/id :coll/position :chord/value]
+                 :opt [:chord/fermata]))
 
 ;; Parsed chord
 (s/def :chord/root (s/tuple root? accidental?))
@@ -68,6 +70,9 @@
 ;; Sheet
 ;; =====
 
+(s/def :time-signature/beat (s/and number? #(< 0 % 64)))
+(s/def :time-signature/beat-type #{1 2 4 8 16 32 64})
+(s/def :bar/time-signature (s/keys :req [:time-signature/beat :time-signature/beat-type]))
 (s/def :bar/chords (s/coll-of ::chord :min-count 1 :gen-max 4))
 (s/def :bar/start-repeat boolean?)
 (s/def :bar/end-repeat boolean?)
@@ -85,7 +90,8 @@
                           :gen-max 1))
 
 (s/def ::bar (s/keys :req [:db/id :coll/position :bar/chords]
-               :opt [:bar/start-repeat :bar/end-repeat :bar/attachments]))
+               :opt [:bar/start-repeat :bar/end-repeat
+                     :bar/attachments :bar/time-signature]))
 
 (s/def :row/bars (s/coll-of ::bar :min-count 1 :gen-max 3))
 (s/def ::row (s/keys :req [:db/id :coll/position :row/bars]))
