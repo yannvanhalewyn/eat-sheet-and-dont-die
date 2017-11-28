@@ -14,7 +14,8 @@
 
 (rf/reg-fx :datsync
   (fn [tx]
-    (sock/sock-fx {:datsync [:tx/sync tx]})))
+    (when-not (empty? tx)
+      (sock/sock-fx {:datsync [:tx/sync tx]}))))
 
 ;; Development interceptors
 ;; ========================

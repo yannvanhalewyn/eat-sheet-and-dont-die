@@ -30,9 +30,10 @@
 (def ^:dynamic *string-tmp-ids* true)
 
 (defn update-chord
-  "Returns a new db where chord `chord-id` has the new `value`"
+  "Returns transactions for a new db where chord `chord-id` has the new `value`"
   [db chord-id value]
-  [[:db/add chord-id :chord/value value]] )
+  (if-not (= value (:chord/value (d/entity db chord-id)))
+    [[:db/add chord-id :chord/value value]]) )
 
 (defn pull-all [db]
   (d/q '[:find [(pull ?sheet [*]) ...]
