@@ -14,7 +14,8 @@
 (defmulti socket-handler "Multimethod for handling socket messages" :id)
 
 (defmethod socket-handler :default [{:keys [event ?reply-fn]}]
-  (timbre/debug "Unhandled event" event)
+  (when-not (= :chsk/ws-ping event)
+    (timbre/debug "Unhandled event" event))
   (when-let [reply ?reply-fn]
     (reply {:unmatched-event-echo event})))
 

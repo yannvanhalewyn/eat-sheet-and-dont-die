@@ -25,7 +25,6 @@
       ;; Kickoff report monitor broadcasting
       (a/go-loop []
         (when-let [changes (a/<! (:output-ch tx-report-monitor))]
-          (println "CHANGES" changes)
           (try
             (broadcast chsk [:sheet/tx-data changes])
             (catch Exception e
