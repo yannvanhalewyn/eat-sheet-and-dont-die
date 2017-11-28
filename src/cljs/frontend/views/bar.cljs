@@ -14,7 +14,7 @@
   (let [{:keys [db/id coord/x coord/y textbox/value]} attachment
         props {:on-drag-end #(dispatch [:sheet/move-symbol id %])
                :on-click #(dispatch [:sheet/select :selection/attachment id])
-               :start-pos [x y]}
+               :pos [x y]}
         class (when selected "selected")]
     (case (:attachment/type attachment)
       :symbol/segno
