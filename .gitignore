@@ -19,3 +19,7 @@ pom.xml
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# Dev
+.foreman
+Procfile.dev
