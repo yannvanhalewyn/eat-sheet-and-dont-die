@@ -1,5 +1,6 @@
 (ns sheet-bucket.components.channel-sockets
   (:require [com.stuartsierra.component :as c]
+            [clojure.core.async :as a]
             [sheet-bucket.socket-handler :as sh]
             [sheet-bucket.controllers.session]
             [sheet-bucket.controllers.sheets]
@@ -9,17 +10,28 @@
 
 (defn broadcast [chsk msg]
   (doseq [uid (:any @(:connected-uids chsk))]
-    ((:send-fn chsk) uid [:broadcast/msg msg])))
+    ((:send-fn chsk) uid msg)))
 
 (def SENTE_KEYS [:ajax-get-or-ws-handshake-fn
                  :ajax-post-fn :ch-recv :send-fn])
 
-(defrecord ChannelSockets []
+(defrecord ChannelSockets [tx-report-monitor]
   c/Lifecycle
   (start [this]
     (timbre/info "Starting Channel Sockets listener...")
     (let [chsk (sente/make-channel-socket! (get-sch-adapter) {})
           stop-fn (sente/start-chsk-router! (:ch-recv chsk) #'sh/handler)]
+
+      ;; Kickoff report monitor broadcasting
+      (a/go-loop []
+        (when-let [changes (a/<! (:output-ch tx-report-monitor))]
+          (println "CHANGES" changes)
+          (try
+            (broadcast chsk [:sheet/tx-data changes])
+            (catch Exception e
+              (timbre/error e "Broadcast failed")))
+          (recur)))
+
       (assoc (select-keys chsk SENTE_KEYS)
         :stop-fn stop-fn)))
   (stop [this]
@@ -29,4 +41,4 @@
       (timbre/error "No stop-fn found for Channel Sockets listener. Doing nothing."))
     (apply dissoc this SENTE_KEYS :stop-fn)))
 
-(defn component [] (ChannelSockets.))
+(defn component [] (map->ChannelSockets {}))
