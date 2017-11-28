@@ -37,33 +37,9 @@
           ~@body)
         ~coll))))
 
-(def gen-temp-id
-  (let [count (atom 0)]
-    (fn [] (swap! count dec) (str @count))))
-
-(defn replace-temp-ids
-  "Takes a structure and a replacements map, and replaces and :db/id
-  that has a key in the replacements map with it's value."
-  [coll replacements]
-  (postwalk
-    #(if-let [new-id (get replacements (:db/id %))]
-       (assoc % :db/id new-id)
-       %)
-    coll))
-
 (defn dissoc-in
   "Dissoc's the element at path in coll"
   [coll path]
   (update-in coll (butlast path) dissoc (last path)))
-
-(defn delete-by-id
-  "Finds any element with given :db/id and removes it from the tree"
-  [tree id]
-  (postwalk
-    (fn [node]
-      (if (and (sequential? node) (map? (first node)))
-        (remove #(= id (:db/id %)) node)
-        node))
-    tree))
 
 (def presence #(if (empty? %) nil %))

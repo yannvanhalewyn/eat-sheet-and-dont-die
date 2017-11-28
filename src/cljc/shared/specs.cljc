@@ -1,10 +1,15 @@
 (ns shared.specs
-  (:require [shared.utils :refer [gen-temp-id presence]]
+  (:require [shared.utils :refer [presence]]
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]))
 
 ;; Generators
 ;; ==========
+
+(def gen-temp-id
+  (let [count (atom 0)]
+    (fn [] (swap! count dec) (str @count))))
+
 (defn- number-str? [s]
   #?(:cljs
      (not (js/isNaN (js/parseInt s)))))

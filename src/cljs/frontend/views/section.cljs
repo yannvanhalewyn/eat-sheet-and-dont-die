@@ -31,15 +31,15 @@
   [:div.spacer {:style {:height 25}}])
 
 (defn row-component [{:keys [row selection]}]
-  (let [bars (:row/bars row)]
+  (let [bars (sort-by :coll/position (:row/bars row))]
     [:div
      (when (and (some (complement empty?) (map :bar/attachments bars))
              (not (some seq (map :bar/repeat-cycle bars)))) [spacer])
-     [slurs {:bars (:row/bars row)}]
+     [slurs {:bars bars}]
      [:div.row
       (when (:bar/start-repeat (first bars)) [:i.barline--start-repeat])
       (interleave
-        (for [bar (sort-by :coll/position bars)]
+        (for [bar bars]
           ^{:key (:db/id bar)}
           [bar/component {:bar bar :selection selection}])
         (mappad nil barline bars (drop 1 bars)))]]))

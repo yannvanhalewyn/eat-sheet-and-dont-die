@@ -1,39 +1,30 @@
 (ns frontend.reducer
-  (:require [frontend.util.util :refer [combine-reducers]]
-            [shared.utils :as sutil :refer [key-by]]
-            [clojure.zip :as zip]
+  (:require [clojure.zip :as zip]
+            [datascript.core :as d]
+            [frontend.models.sheet :as sheet]
+            [frontend.models.sheet-zip :as sheet-zip]
             [frontend.router :as router]
-            [frontend.models.sheet :as sheet]))
+            [frontend.util.util :refer [combine-reducers]]
+            [shared.datsync :as datsync]
+            [shared.utils :as sutil :refer [key-by]]))
 
-(defn- handle-response [state])
+(defn- make-selection [type id]
+  {:selection/type type :selection/id id})
 
-(defn sheets-by-id [state [type arg1 arg2]]
-  (case type
-    :app/init {}
-    :sheet/set-artist (assoc-in state [arg1 :sheet/artist] arg2)
-    :sheet/set-title (assoc-in state [arg1 :sheet/title] arg2)
-    :sheet/replace (assoc state (:db/id arg1) arg1)
-    :sheet/replace-zip (let [sheet (zip/root arg1)]
-                         (assoc state (:db/id sheet) sheet))
-    (:response/get-sheet :response/create-sheet) (assoc state (:db/id arg1) arg1)
-    :response/get-sheets (key-by :db/id arg1)
-    :response/destroy-sheet (dissoc state (:removed-id arg1))
-    :response/sync-sheet
-    (update state (:sheet-id arg1) sutil/replace-temp-ids (:temp-ids arg1))
-    state))
+(def chord-selection (partial make-selection :selection/chord))
 
 (defn selection [state [type arg1 arg2]]
   (case type
     :app/init nil
     :sheet/deselect nil
-    :sheet/select {:selection/type arg1 :selection/id arg2}
-    :sheet/replace-zip {:selection/type :selection/chord
-                        :selection/id (:db/id (zip/node arg1))}
-    :response/create-sheet {:selection/type :selection/chord
-                            :selection/id (:db/id (sheet/first-chord arg1))}
-    :response/sync-sheet (if-let [new-id (get-in arg1 [:temp-ids (:selection/id state)])]
-                           (assoc state :selection/id new-id)
-                           state)
+    :sheet/select (make-selection arg1 arg2 )
+    :sheet/move (chord-selection arg1)
+    :response/datsync (if-let [chord-id (get (:tempids arg1) "new-chord")]
+                        (chord-selection chord-id)
+                        state)
+    :response/create-sheet (-> arg1 sheet-zip/zipper
+                             sheet-zip/nearest-chord zip/node :db/id
+                             chord-selection)
     state))
 
 (defn current-user [state [type arg1]]
@@ -49,9 +40,21 @@
     :response/create-sheet (router/sheet (:db/id arg1))
     state))
 
+(defn- transact! [db tx-data]
+  (:db-after (d/with db tx-data)))
+
+(defn sheets [db [type arg1 arg2]]
+  (case type
+    :app/init @(d/create-conn sheet/schema)
+    :response/get-sheet (transact! db [arg1])
+    :response/create-sheet (transact! db [arg1])
+    :response/datsync (transact! db (datsync/datoms->tx (:tx-data arg1)))
+    :response/get-sheets (transact! db arg1)
+    db))
+
 (def app
   (combine-reducers
-    {:db/sheets.by-id sheets-by-id
+    {:db/sheets sheets
      :db/selection selection
      :db/current-user current-user
      :db/active-route active-route}))

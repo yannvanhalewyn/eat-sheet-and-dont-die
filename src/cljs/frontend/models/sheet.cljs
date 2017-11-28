@@ -1,154 +1,177 @@
 (ns frontend.models.sheet
-  (:require [shared.utils :as util]
-            [clojure.zip
-             :as zip
-             :refer [up down right left end? next node insert-right lefts branch? children]]
-            [frontend.util.zipper :as uzip :refer [nth-child next-leaf prev-leaf
-                                                   locate locate-left]]))
+  (:require [datascript.core :as d]))
 
-;; Initializing nodes
-;; ==================
+(def ref-many-component {:db/valueType :db.type/ref
+                         :db/cardinality :db.cardinality/many
+                         :db/isComponent true})
 
-(defn new-chord
-  [id]
-  {:db/id id :chord/value "" :coll/position 0})
+(def schema
+  {:sheet/sections ref-many-component
+   :section/rows ref-many-component
+   :row/bars ref-many-component
+   :bar/chords ref-many-component
+   :bar/attachments ref-many-component})
 
-(defn new-bar
-  [[id chord-id]]
-  {:db/id id
-   :coll/position 0
-   :bar/chords [(new-chord chord-id)]})
+;; Hack to make query chaining easier.
+(set! datascript.query/built-ins
+  (assoc datascript.query/built-ins 'q datascript.core/q))
 
-(defn new-row [[id & ids]]
-  {:db/id id
-   :coll/position 0
-   :row/bars [(new-bar ids)]})
+(def RULES
+  '[[(get-parents ?chord ?bar ?row ?section ?sheet)
+     [?bar :bar/chords ?chord]
+     [?row :row/bars ?bar]
+     [?section :section/rows ?row]
+     [?sheet :sheet/sections ?section]]])
 
-(defn new-section [[id & ids]]
-  {:db/id id
-   :coll/position 0
-   :section/title "Intro"
-   :section/rows [(new-row ids)]})
+;; Hack - Datomic can handle string temp ids, datascript can't. Use
+;; the useful string temp ids for transactions send to the backend,
+;; but test them in cljs with neg-numbers so we can transact them to
+;; datascript.
+(def ^:dynamic *string-tmp-ids* true)
 
-(defn new-sheet [[id & ids]]
-  {:db/id id
-   :sheet/title "Title"
-   :sheet/artist "Artist"
-   :sheet/sections [(new-section ids)]})
+(defn update-chord
+  "Returns transactions for a new db where chord `chord-id` has the new `value`"
+  [db chord-id value]
+  (if-not (= value (:chord/value (d/entity db chord-id)))
+    [[:db/add chord-id :chord/value value]]) )
 
-;; Zipper
+(defn pull-all [db]
+  (d/q '[:find [(pull ?sheet [*]) ...]
+         :where [?sheet :sheet/title]] db))
+
+;; Append
 ;; ======
 
-(def BRANCHING_KEYS #{:sheet/sections :section/rows :row/bars :bar/chords})
+(defmulti append* (fn [_ t _] t))
+(def append append*)
 
-(def get-branching-key #(first (filter % BRANCHING_KEYS)))
-(def get-children  #(some % BRANCHING_KEYS))
+(defmethod append* :default [db t _]
+  (.error js/console "No append fn defined for" t)
+  db)
 
-(defn zipper
-  "Builds the sheet zipper"
-  [data]
-  (zip/zipper get-branching-key
-              get-children
-              #(assoc %1 (get-branching-key %1) (vec %2)) data))
+(defn- move-next-children-right
+  "Takes a db, parent and current child, and returns the txes to
+  increment the :coll/position of every child to the right from
+  current child."
+  [db parent-id current-child-id children-key]
+  (let [next-children (d/q '[:find ?child ?pos
+                             :in $ ?parent ?cur-child ?children-key
+                             :where
+                             ;; Find position of current child
+                             [?cur-child :coll/position ?cur-pos]
+                             ;; Find all children to the right of that position
+                             [?parent ?children-key ?child]
+                             [?child :coll/position ?pos]
+                             [(> ?pos ?cur-pos)]]
+                        db parent-id current-child-id children-key)]
+    (map (fn [[id position]]
+           [:db/add id :coll/position (inc position)])
+      next-children)))
 
-(defn navigate-to
-  "Moves the zipper to the child with given id"
-  [sheet id]
-  (loop [loc (zipper (zip/root sheet))]
-    (cond
-      (end? loc) nil
-      (= id (:db/id (node loc))) loc
-      :else (recur (next loc)))))
+(defmethod append* :chord
+  [db _ cur-chord-id]
+  (when-let [bar (d/q '[:find (pull ?bar [*]) .
+                        :in $ ?chord
+                        :where [?bar :bar/chords ?chord]]
+                   db cur-chord-id)]
+    (let [pos (inc (:coll/position (d/entity db cur-chord-id)))
+          tempid (if *string-tmp-ids* "new-chord" -1)]
+      (concat
+        [[:db/add (:db/id bar) :bar/chords tempid]
+         {:db/id tempid :coll/position pos :chord/value ""}]
+        (move-next-children-right db (:db/id bar) cur-chord-id :bar/chords)))))
 
-(defn first-chord [sheet]
-  (-> sheet zipper next-leaf node))
+(defmethod append* :bar
+  [db _ cur-chord-id]
+  (when-let [[bar row-id] (d/q '[:find [(pull ?bar [*]) ?row]
+                                 :in $ ?chord
+                                 :where
+                                 [?bar :bar/chords ?chord]
+                                 [?row :row/bars ?bar]]
+                            db cur-chord-id)]
+    (let [pos (inc (:coll/position bar))
+          new-bar-id (if *string-tmp-ids* "new-bar" -1)
+          new-chord-id (if *string-tmp-ids* "new-chord" -2)]
+      (concat
+        [[:db/add row-id :row/bars new-bar-id]
+         {:db/id new-bar-id :coll/position pos :bar/chords new-chord-id}
+         {:db/id new-chord-id :coll/position 0 :chord/value ""}]
+        (move-next-children-right db row-id (:db/id bar) :row/bars)))))
 
-;; Adding
-;; ======
+(defmethod append* :row
+  [db _ cur-chord-id]
+  (when-let [[row section-id] (d/q '[:find [(pull ?row [*]) ?section]
+                                     :in $ % ?chord
+                                     :where [get-parents ?chord ?bar ?row ?section]]
+                                db RULES cur-chord-id)]
+    (let [pos (inc (:coll/position row))
+          new-row-id (if *string-tmp-ids* "new-row" -1)
+          new-bar-id (if *string-tmp-ids* "new-bar" -2)
+          new-chord-id (if *string-tmp-ids* "new-chord" -3)]
+      (concat
+        [[:db/add section-id :section/rows new-row-id]
+         {:db/id new-row-id :coll/position pos :row/bars new-bar-id}
+         {:db/id new-bar-id :coll/position 0 :bar/chords new-chord-id}
+         {:db/id new-chord-id :coll/position 0 :chord/value ""}]
+        (move-next-children-right db section-id (:db/id row) :section/rows)))))
 
-(defn- reset-positions [parent-loc]
-  (uzip/edit-children parent-loc #(assoc %1 :coll/position %2)))
+(defmethod append* :section
+  [db _ cur-chord-id]
+  (when-let [[section sheet-id] (d/q '[:find [(pull ?section [*]) ?sheet]
+                                       :in $ % ?chord
+                                       :where [get-parents ?chord ?bar ?row ?section ?sheet]]
+                                  db RULES cur-chord-id)]
+    (let [pos (inc (:coll/position section))
+          new-section-id (if *string-tmp-ids* "new-section" -1)
+          new-row-id (if *string-tmp-ids* "new-row" -2)
+          new-bar-id (if *string-tmp-ids* "new-bar" -3)
+          new-chord-id (if *string-tmp-ids* "new-chord" -4)]
+      (concat
+        [[:db/add sheet-id :sheet/sections new-section-id]
+         {:db/id new-section-id
+          :coll/position pos
+          :section/title "Section"
+          :section/rows new-row-id}
+         {:db/id new-row-id :coll/position 0 :row/bars new-bar-id}
+         {:db/id new-bar-id :coll/position 0 :bar/chords new-chord-id}
+         {:db/id new-chord-id :coll/position 0 :chord/value ""}]
+        (move-next-children-right db sheet-id (:db/id section) :sheet/sections)))))
 
-(defmulti append (fn [_ t _] t))
-
-(defmethod append :chord [chord-loc _ [id]]
-  (-> chord-loc (insert-right (new-chord id)) up reset-positions (navigate-to id)))
-
-(defmethod append :bar [chord-loc _ ids]
-  (-> chord-loc up (insert-right (new-bar ids)) up reset-positions (navigate-to (second ids))))
-
-(defmethod append :row [chord-loc _ ids]
-  (let [new-chord-id (first (drop 2 ids))]
-    (-> chord-loc up up (insert-right (new-row ids))
-      up reset-positions (navigate-to new-chord-id))))
-
-(defmethod append :section [chord-loc _ ids]
-  (let [new-chord-id (first (drop 3 ids))]
-    (-> chord-loc up up up (insert-right (new-section ids))
-      up reset-positions (navigate-to new-chord-id))))
 
 ;; Removing
 ;; ========
 
-(def empty-branch? #(and (zip/branch? %) (empty? (zip/children %))))
+;; TODO reset coll/pos after removal
+(defmulti remove*
+  "Takes in an entity type to remove from the sheet #{:sheet :row
+  :section :bar :chord} and removes it."
+  (fn [_ t _] t))
+(def delete remove*)
 
-(defn- nearest-chord
-  "Returns the location if chord, the previous chord if any or the next chord"
-  [loc]
-  (or (if-not (zip/branch? loc) loc)
-      (prev-leaf loc)
-      (next-leaf loc)))
+(defmethod remove* :default [db t _]
+  (.error js/console "No remove fn defined for" t)
+  db)
 
-(defn- remove-and-clear-empty-parents
-  [loc]
-  (loop [l loc]
-    (let [prev (zip/remove l)]
-      (if (empty-branch? prev)
-        (recur prev)
-        (nearest-chord prev)))))
+(defn- count-children [db eid children-key]
+  (d/q '[:find (count ?children) .
+         :in $ ?parent ?children-key
+         :where [?parent ?children-key ?children]]
+    db eid children-key))
 
-(defmulti delete (fn [_ t] t))
+(defmethod remove* :chord
+  [db _ cur-chord-id]
+  (let [chain
+        (d/q '[:find [?section ?row ?bar]
+               :in $ % ?chord
+               :where [get-parents ?chord ?bar ?row ?section]]
+          db RULES cur-chord-id)
 
-(defmethod delete :chord [loc _]
-  (remove-and-clear-empty-parents loc))
-
-(defmethod delete :bar [loc _]
-  (remove-and-clear-empty-parents (up loc)))
-
-(defmethod delete :row [loc _]
-  (remove-and-clear-empty-parents (-> loc up up)))
-
-(defmethod delete :section [loc _]
-  (let [section (-> loc up up up)]
-    (if (= 1 (-> section up children count))
-      loc
-      (remove-and-clear-empty-parents section))))
-
-;; Movement
-;; ========
-
-(def chord? (complement branch?))
-(def first-chord-of-bar? #(and (chord? %) (= 0 (count (zip/lefts %)))))
-
-(defn- different-row?
-  [loc1 loc2]
-  (and (chord? loc1)
-       (chord? loc2)
-       (not= (-> loc1 up up) (-> loc2 up up))))
-
-(defn- move-vertically
-  [loc direction]
-  (let [bar-idx (-> loc up lefts count)
-        locater (case direction :up locate-left :down locate)]
-    (if-let [last-chord-in-target-row (locater loc (partial different-row? loc))]
-      (let [row (-> last-chord-in-target-row up up)]
-        (down (or (nth-child row bar-idx) (-> row down zip/rightmost)))))))
-
-(defn move [loc direction]
-  (case direction
-    :right (next-leaf loc)
-    :left (prev-leaf loc)
-    :bar-right (locate (zip/next loc) first-chord-of-bar?)
-    :bar-left (locate-left (zip/prev loc) first-chord-of-bar?)
-    :up (move-vertically loc :up)
-    :down (move-vertically loc :down)))
+        parents-to-retract
+        (loop [[[eid key] & rest] (reverse (map vector chain
+                                             [:section/rows :row/bars :bar/chords]))
+               ret []]
+          (if (= 1 (count-children db eid key))
+            (recur rest (conj ret eid))
+            ret))]
+    (map #(vector :db.fn/retractEntity %)
+      (conj parents-to-retract cur-chord-id))))

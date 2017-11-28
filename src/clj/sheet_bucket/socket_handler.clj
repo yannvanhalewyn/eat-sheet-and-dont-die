@@ -1,6 +1,15 @@
 (ns sheet-bucket.socket-handler
   (:require [clojure.stacktrace :as st]
+            [datomic.api :as d]
+            [shared.datsync :as datsync]
             [taoensso.timbre :as timbre]))
+
+(defn- translate-tx-form
+  "Takes a transaction and conforms any negative numbers for entity or
+  values as string tempids"
+  [[op e a v added]]
+  (let [conform-id #(if (and (number? %) (neg? %)) (str %) %)]
+    [op (conform-id e) a (conform-id v) added]))
 
 (defmulti socket-handler "Multimethod for handling socket messages" :id)
 
@@ -8,6 +17,12 @@
   (timbre/debug "Unhandled event" event)
   (when-let [reply ?reply-fn]
     (reply {:unmatched-event-echo event})))
+
+(defmethod socket-handler :tx/sync
+  [{:keys [?data ring-req ?reply-fn]}]
+  (let [report @(d/transact (:db-conn ring-req) ?data)]
+    {:tempids (:tempids report)
+     :tx-data (datsync/report->datom-vecs report #{:attachment/type})}))
 
 (defn- wrap-stacktrace
   "Wrap a handler such that exceptions are caught and a helpful debugging

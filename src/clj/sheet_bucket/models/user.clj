@@ -18,8 +18,8 @@
 (defn sheets
   "Returns all the sheets (basic info) for given user."
   [db-conn user-id]
-  (flatten (d/q '[:find (pull ?sheet [:db/id :sheet/artist :sheet/title])
-                  :in $ ?user
-                  :where [?user :playlist/sheets ?sheet]]
-             (d/db db-conn)
-             user-id)))
+  (d/q '[:find [(pull ?sheet [:db/id :sheet/artist :sheet/title]) ...]
+         :in $ ?user
+         :where [?user :playlist/sheets ?sheet]]
+    (d/db db-conn)
+    user-id))

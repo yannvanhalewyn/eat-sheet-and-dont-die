@@ -1,7 +1,6 @@
 (ns frontend.models.bar-attachment
   (:require [frontend.models.sheet :as sheet]
-            [clojure.zip :as zip :refer [up]]
-            [shared.utils :as sutil]))
+            [datascript.core :as d]))
 
 ;; Constants
 ;; =========
@@ -16,47 +15,47 @@
 
 (def floor (.-floor js/Math))
 
-(defn- update-attachment [f bar-loc att-id]
-  (zip/edit bar-loc update :bar/attachments
-    (fn [attachments]
-      (map #(if (= (:db/id %) att-id) (f %) %)
-        attachments))))
-
 (defn- make [type]
   (case type
-    :attachment/coda {:db/id (sutil/gen-temp-id)
-                      :attachment/type :symbol/coda
+    :attachment/coda {:attachment/type :symbol/coda
                       :coord/x (floor (/ coda-width 2))
                       :coord/y (floor (- -4 height))}
-    :attachment/segno {:db/id (sutil/gen-temp-id)
-                       :attachment/type :symbol/segno
+    :attachment/segno {:attachment/type :symbol/segno
                        :coord/x (floor (/ (- segno-width) 2))
                        :coord/y (floor (- -4 height))}
-    :attachment/textbox {:db/id (sutil/gen-temp-id)
-                         :attachment/type :attachment/textbox
+    :attachment/textbox {:attachment/type :attachment/textbox
                          :textbox/value ""
                          :coord/x 10
                          :coord/y 45}
     nil))
 
 (defn add
-  "Adds an attachment of `type` to the bar containing the chord at `loc`"
-  [loc type]
+  "Adds an attachment of `type` to the given bar."
+  [db bar-id type]
   (case type
-    (:bar/start-repeat :bar/end-repeat) (zip/edit (up loc) update type not)
-    :bar/repeat-cycle (zip/edit (up loc) assoc :bar/repeat-cycle "1")
-    (zip/edit (up loc) update :bar/attachments #(conj % (make type)))))
+    (:bar/start-repeat :bar/end-repeat) (if (get (d/entity db bar-id) type)
+                                          [[:db/retract bar-id type true]]
+                                          [[:db/add bar-id type true]])
+    :bar/repeat-cycle [[:db/add bar-id :bar/repeat-cycle "1"]]
+    (let [tmpid (if sheet/*string-tmp-ids* "new-attachment" -1)]
+      [[:db/add bar-id :bar/attachments tmpid]
+       (assoc (make type) :db/id tmpid)])))
 
 (defn move
-  "Sets the x-y coords of the symbol with `symbol-id` in bar at `bar-loc`"
-  [bar-loc attachment-id [x y]]
-  (update-attachment
-    #(assoc % :coord/x (floor x) :coord/y (floor y))
-    bar-loc attachment-id))
+  "Sets the x-y coords of the attachment with `att-id`"
+  [db att-id [x y]]
+  [[:db/add att-id :coord/x x]
+   [:db/add att-id :coord/y y]])
 
 (defn set-value
-  "Sets the text value for symbol with `symbol-id` in `bar-loc`"
-  [bar-loc attachment-id value]
-  (update-attachment
-    #(assoc % :textbox/value value)
-    bar-loc attachment-id))
+  "Sets the text value for symbol with `att-id`"
+  [db att-id value]
+  [[:db/add att-id :textbox/value value]])
+
+(defn set-repeat-cycle
+  "Sets the repeat cycle number for bar"
+  [db bar-id value]
+  (if (empty? value)
+    [[:db/retract bar-id :bar/repeat-cycle
+      (:bar/repeat-cycle (d/entity db bar-id))]]
+    [[:db/add bar-id :bar/repeat-cycle value]]))
