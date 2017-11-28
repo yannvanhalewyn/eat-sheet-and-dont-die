@@ -26,5 +26,5 @@
     [:div.navbar__right
      [:div.navbar__item.navbar__item--icon
       [:i.material-icons "person"]]]]
-   [:div.l-app.l-content
+   [:div.l-app
     [active-panel]]])

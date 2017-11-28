@@ -1,12 +1,16 @@
 .chord {
   color: black;
   cursor: pointer;
-  font-size: 1.8em;
+  font-size: 1.6em;
   width: 100%;
   display: inline-block;
   padding-top: 13px;
   margin-right: 3px;
   min-height: 30px; // Make empty chords selectable hack
+
+  @include respond-to($tablet) {
+    font-size: 1.8em;
+  }
 }
 
 .accidental--sharp {

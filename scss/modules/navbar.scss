@@ -13,7 +13,10 @@
 
 .navbar__search {
   margin: auto 10px;
-  flex: 1;
+  flex: 15;
+  @include respond-to($tablet) {
+    flex: 1;
+  }
 }
 
 .navbar__right {

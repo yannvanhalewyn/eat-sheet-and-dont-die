@@ -5,7 +5,7 @@
 
 (defn component [{:keys [user]}]
   (let [sheets @(subscribe [:sub/sheets user])]
-    [:div
+    [:div.l-content
      [:button.btn.u-pull-right {:on-click #(dispatch [:playlist/create-sheet (:db/id user)])}
       "+ New sheet"]
      [:h1 "My Sheets"]

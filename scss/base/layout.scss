@@ -3,7 +3,10 @@
 }
 
 .l-content {
-  padding: 25px;
+  padding: 10px;
+  @include respond-to($mobile) {
+    padding: 25px;
+  }
 }
 
 .l-flex-row {

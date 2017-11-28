@@ -9,3 +9,15 @@
   mask: url($url) no-repeat $xpos $ypos;
   mask-size: contain;
 }
+
+@mixin respond-to($min, $max: null) {
+  @if $max {
+    @media only screen and (min-width: $min) and (max-width: $max - 1px) {
+      @content;
+    }
+  } @else if $min  {
+    @media only screen and (min-width: $min) {
+      @content;
+    }
+  }
+}

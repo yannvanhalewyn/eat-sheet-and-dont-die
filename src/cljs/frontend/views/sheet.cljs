@@ -26,17 +26,17 @@
      (fn []
        (let [sheet @(subscribe [:sub/sheet sheet-id])
              selection @(subscribe [:sub/selection])]
-         [:div.u-max-height {:on-click #(dispatch [:sheet/deselect])}
+         [:div.u-max-height.sheet.l-content {:on-click #(dispatch [:sheet/deselect])}
           (let [title (or (presence (:sheet/title sheet)) "(title)")
                 artist (or (presence (:sheet/artist sheet)) "(artist)")]
             [:div
              [editable/component {:on-change #(dispatch [:sheet/set-title (:db/id sheet) %])
                                   :value title}
-              [:h1 title]]
+              [:h1.sheet__title title]]
              [editable/component {:on-change #(dispatch [:sheet/set-artist (:db/id sheet) %])
                                   :value artist}
-              [:h3.u-margin-top--s artist]]])
-          [:div.u-margin-top.sections
+              [:h3.sheet__artist.u-margin-top--s artist]]])
+          [:div.u-margin-top.sheet-body
            (for [section (sort-by :coll/position (:sheet/sections sheet))]
              ^{:key (:db/id section)}
              [section/component {:section section :selection selection}])]

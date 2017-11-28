@@ -1,0 +1,5 @@
+.sheet-body {
+  @include respond-to($tablet) {
+    margin: 20px 5%;
+  }
+}

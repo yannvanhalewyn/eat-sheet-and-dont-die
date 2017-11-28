@@ -6,5 +6,13 @@
 
 .bar {
   position: relative; // For position: absolute music symbols
-  padding: 0 20px;
+  padding: 0 3px;
+
+  @include respond-to($mobile, $tablet) {
+    padding: 0 15px;
+  }
+
+  @include respond-to($tablet) {
+    padding: 0 20px;
+  }
 }

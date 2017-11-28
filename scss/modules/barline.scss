@@ -5,6 +5,7 @@
 $svg-ratio: 18 / 80;
 $height: 50px;
 $width: $height * $svg-ratio;
+
 .barline--end-repeat {
   @include background-image("/img/end-repeat.svg");
   height: $height;
