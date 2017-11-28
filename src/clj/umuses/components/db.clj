@@ -31,7 +31,10 @@
   (start [this]
     (when-let [conn (connect uri)]
       (timbre/info "Migrating schema...")
-      (conform/ensure-conforms conn (conform/read-resource "schema.edn"))
+      (try
+        (conform/ensure-conforms conn (conform/read-resource "schema.edn"))
+        (catch Exception e
+          (timbre/error e "Could not migrate schema.")))
       (assoc this :conn (connect uri))))
   (stop [this]
     (dissoc this :conn)))
