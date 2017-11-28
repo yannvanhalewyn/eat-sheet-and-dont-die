@@ -133,11 +133,12 @@
 (reg-events-remote :destroy-sheet)
 (reg-events-remote :datsync)
 
-(reg-event-fx :chsk/state (fn [_ _] {}))
+(reg-event-fx :chsk/state
+  (fn [_ [_ [_ state]]]
+    (when (:first-open? state)
+      {:socket {:get-current-user [:users/me]}})))
 
-(reg-event-fx
-  :chsk/handshake
-  (fn [_ _] {:socket {:get-current-user [:users/me]}}))
+(reg-event-fx :chsk/handshake (fn [_ _]))
 
 (reg-event-db
   :chsk/recv
