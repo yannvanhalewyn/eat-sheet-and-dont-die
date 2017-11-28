@@ -25,29 +25,27 @@ $height: 40px;
 }
 
 .sheet-tool {
-  background-color: black;
-  background-size: contain;
   height: 100%;
 }
 
 .sheet-tool--start-repeat {
-  @include background-svg("/img/start-repeat.svg");
+  @include background-image("/img/start-repeat.svg");
 }
 
 .sheet-tool--end-repeat {
-  @include background-svg("/img/end-repeat.svg");
+  @include background-image("/img/end-repeat.svg");
 }
 
 .sheet-tool--segno {
-  @include background-svg("/img/segno.svg");
+  @include background-image("/img/segno.svg");
 }
 
 .sheet-tool--coda {
-  @include background-svg("/img/coda.svg");
+  @include background-image("/img/coda.svg");
 }
 
 .sheet-tool--textbox {
-  @include background-svg("/img/insert-text.svg");
+  @include background-image("/img/insert-text.svg");
 }
 
 .sheet-tool--repeat-cycle {
