@@ -11,3 +11,11 @@
   @include background-image("/img/coda.svg");
   background-size: 80% 80%;
 }
+
+.music-symbol--fermata {
+  @include background-image("/img/fermata.svg");
+  position: absolute;
+  width: 40px;
+  top: -20px;
+  background-size: 80% 80%;
+}

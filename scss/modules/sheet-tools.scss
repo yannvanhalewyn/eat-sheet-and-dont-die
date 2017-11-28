@@ -44,6 +44,10 @@ $height: 40px;
   @include background-image("/img/coda.svg");
 }
 
+.sheet-tool--fermata {
+  @include background-image("/img/fermata.svg");
+}
+
 .sheet-tool--textbox {
   @include background-image("/img/insert-text.svg");
 }

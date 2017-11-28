@@ -135,4 +135,10 @@
  {:txes [[{:db/ident :bar/repeat-cycle
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one
-           :db/doc "The playthrough cycle this bar should be played on repeat."}]]}}
+           :db/doc "The playthrough cycle this bar should be played on repeat."}]]}
+
+ :umuses/add-chord-fermata
+ {:txes [[{:db/ident :chord/fermata
+           :db/valueType :db.type/boolean
+           :db/cardinality :db.cardinality/one
+           :db/doc "Wether or not the chord is suspended (fermata)"}]]}}

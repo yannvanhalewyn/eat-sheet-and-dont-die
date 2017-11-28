@@ -88,11 +88,17 @@
     {:datsync (attachment/set-value (:db/sheets db) textbox-id value)}))
 
 (reg-event-fx
-  :sheet/add-symbol
+  :sheet/add-bar-attachment
   (fn [{:keys [db]} [_ type]]
     (if-let [loc (selectors/current-loc db)]
       (let [bar-id (-> loc zip/up zip/node :db/id)]
         {:datsync (attachment/add (:db/sheets db) bar-id type)}))))
+
+(reg-event-fx
+  :sheet/add-chord-attachment
+  (fn [{:keys [db]} [_ type]]
+    (if-let [chord-id (:selection/id (selectors/selection db))]
+      {:datsync (attachment/add (:db/sheets db) chord-id type)})))
 
 (reg-event-fx
   :sheet/set-repeat-cycle

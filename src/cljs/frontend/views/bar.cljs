@@ -54,6 +54,8 @@
        [:div {:style {:display "inline-block"
                       :width (str width "%")
                       :margin-right "5px"}}
+        (when (:chord/fermata chord)
+          [:div.music-symbol.music-symbol--fermata])
         (if (= (:selection/id selection) (:db/id chord))
           [editable-chord {:chord chord}]
           [displayed-chord {:chord (parse (:chord/value chord))

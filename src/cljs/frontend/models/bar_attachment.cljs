@@ -33,9 +33,10 @@
   "Adds an attachment of `type` to the given bar."
   [db bar-id type]
   (case type
-    (:bar/start-repeat :bar/end-repeat) (if (get (d/entity db bar-id) type)
-                                          [[:db/retract bar-id type true]]
-                                          [[:db/add bar-id type true]])
+    (:bar/start-repeat :bar/end-repeat :chord/fermata)
+    (if (get (d/entity db bar-id) type)
+      [[:db/retract bar-id type true]]
+      [[:db/add bar-id type true]])
     :bar/repeat-cycle [[:db/add bar-id :bar/repeat-cycle "1"]]
     (let [tmpid (if sheet/*string-tmp-ids* "new-attachment" -1)]
       [[:db/add bar-id :bar/attachments tmpid]
