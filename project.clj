@@ -20,6 +20,7 @@
                  [compojure "1.6.0"]
                  [http-kit "2.2.0"]
                  [ring/ring-defaults "0.3.1"]
+                 [ring/ring-anti-forgery "1.1.0"]
                  [metosin/muuntaja "0.3.2"]
                  [com.datomic/datomic-pro "0.9.5561.62"
                   :exclusions [com.google.guava/guava]]

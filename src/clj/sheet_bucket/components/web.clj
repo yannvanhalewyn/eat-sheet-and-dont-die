@@ -3,6 +3,8 @@
             [muuntaja.core :as m]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
             [org.httpkit.server :refer [run-server]]
+            [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
+            [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.defaults :refer [api-defaults
                                               wrap-defaults]]
             [sheet-bucket.env-middleware :refer [wrap-env-middleware]]
@@ -28,7 +30,9 @@
   (-> #'routes/app-routes
     (routes/wrap-chsk-routes channel-sockets)
     (wrap-db db)
-    (wrap-params)
+    wrap-anti-forgery
+    wrap-session
+    wrap-params
     (wrap-format muuntaja-options)
     (wrap-defaults app-defaults)
     wrap-env-middleware))
