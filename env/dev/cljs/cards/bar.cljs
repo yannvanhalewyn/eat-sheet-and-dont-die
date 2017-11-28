@@ -17,6 +17,11 @@
 (defcard-props SingleChord
   [component {:bar {:bar/chords [{:db/id 1 :chord/value "a"}]}}])
 
+(defcard-props With-time-signature
+  [component {:bar {:bar/chords [{:db/id 1 :chord/value "Emaj7"} {:db/id 2 :chord/value "Bmaj9"}]
+                    :bar/time-signature {:time-signature/beat 3
+                                         :time-signature/beat-type 4}}}])
+
 (defcard-rg TwoChords
   [component {:bar {:bar/chords (take 2 chords)}}])
 

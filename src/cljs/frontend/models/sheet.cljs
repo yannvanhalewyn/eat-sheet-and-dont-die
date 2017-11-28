@@ -1,6 +1,10 @@
 (ns frontend.models.sheet
   (:require [datascript.core :as d]))
 
+(def ref-component {:db/valueType :db.type/ref
+                    :db/cardinality :db.cardinality/one
+                    :db/isComponent true})
+
 (def ref-many-component {:db/valueType :db.type/ref
                          :db/cardinality :db.cardinality/many
                          :db/isComponent true})
@@ -10,7 +14,8 @@
    :section/rows ref-many-component
    :row/bars ref-many-component
    :bar/chords ref-many-component
-   :bar/attachments ref-many-component})
+   :bar/attachments ref-many-component
+   :bar/time-signature ref-component})
 
 ;; Hack to make query chaining easier.
 (set! datascript.query/built-ins

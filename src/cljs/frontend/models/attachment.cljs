@@ -37,6 +37,13 @@
     (if (get (d/entity db parent-id) type)
       [[:db/retract parent-id type true]]
       [[:db/add parent-id type true]])
+    :bar/time-signature
+    (if-let [ts (get (d/entity db parent-id) :bar/time-signature)]
+      [[:db.fn/retractEntity (:db/id ts)]]
+      [[:db/add parent-id :bar/time-signature "time-signature"]
+       {:db/id "time-signature"
+        :time-signature/beat 4
+        :time-signature/beat-type 4}])
     :bar/repeat-cycle [[:db/add parent-id :bar/repeat-cycle "1"]]
     (let [tmpid (if sheet/*string-tmp-ids* "new-attachment" -1)]
       [[:db/add parent-id :bar/attachments tmpid]

@@ -8,9 +8,10 @@
       (dispatch [:sheet/add-symbol type]))))
 
 (defn- tool [dispatch-key]
-  (fn [{:keys [type]}]
+  (fn [{:keys [type]} children]
     [:button.sheet-tool-btn {:on-click (stop-propagation #(dispatch [dispatch-key type]))}
-     [:div.sheet-tool {:class (str "sheet-tool--" (name type))}]]))
+     [:div.sheet-tool {:class (str "sheet-tool--" (name type))}
+      children]]))
 
 (def bar-tool (tool :sheet/add-bar-attachment))
 (def chord-tool (tool :sheet/add-chord-attachment))
@@ -22,4 +23,8 @@
                  :attachment/textbox :bar/repeat-cycle]]
        ^{:key type}
        [bar-tool {:type type}])
+     [bar-tool {:type :bar/time-signature}
+      [:div
+       [:div 4]
+       [:div 4]]]
      [chord-tool {:type :chord/fermata}]]))

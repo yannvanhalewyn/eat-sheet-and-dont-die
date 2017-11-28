@@ -141,4 +141,19 @@
  {:txes [[{:db/ident :chord/fermata
            :db/valueType :db.type/boolean
            :db/cardinality :db.cardinality/one
-           :db/doc "Wether or not the chord is suspended (fermata)"}]]}}
+           :db/doc "Wether or not the chord is suspended (fermata)"}]]}
+
+ :umuses/add-time-signatures
+ {:txes [[{:db/ident :time-signature/beat
+           :db/valueType :db.type/long
+           :db/cardinality :db.cardinality/one
+           :db/doc "The beat (numerator) of a time-signature"}
+          {:db/ident :time-signature/beat-type
+           :db/valueType :db.type/long
+           :db/cardinality :db.cardinality/one
+           :db/doc "The beat type (denominator) of a time-signature"}
+          {:db/ident :bar/time-signature
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one
+           :db/isComponent true
+           :db/doc "The bar's time signature"}]]}}

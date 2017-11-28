@@ -40,6 +40,10 @@
 
 (defn component [{:keys [bar selection] :as props}]
   [:div.flex-bar.bar
+   (when-let [{:keys [time-signature/beat time-signature/beat-type]} (:bar/time-signature bar)]
+     [:div.bar__time-signature
+      [:div beat]
+      [:div beat-type]])
    ;; Attachments
    ;; =======
    (for [{:keys [db/id] :as att} (:bar/attachments bar)]
