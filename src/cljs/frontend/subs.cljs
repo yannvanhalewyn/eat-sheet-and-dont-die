@@ -19,6 +19,7 @@
 (reg-sub :sub/selection sel/selection)
 (reg-sub :sub/active-route sel/active-route)
 (reg-sub :sub/current-user sel/current-user)
+(reg-sub :sub/current-bar-id sel/current-bar-id)
 
 (reg-sub-raw
   :sub/sheets
@@ -31,3 +32,5 @@
   (fn [db [_ id]]
     (get-sheet-data id)
     (reaction (sel/sheet @db))))
+
+(reg-sub :sub/modal :db/modal)

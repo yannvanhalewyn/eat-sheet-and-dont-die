@@ -1,0 +1,23 @@
+button {
+  display: inline-block;
+  background: none;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+strong {
+  color: black;
+  font-weight: 600;
+}
+
+select {
+  appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  &:active, &:focus { outline: none }
+}

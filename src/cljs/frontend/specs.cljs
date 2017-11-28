@@ -19,6 +19,12 @@
 (s/def :selection/id :db/id)
 (s/def ::selection (s/keys :req [:selection/type :selection/id]))
 
+;; Modal
+;; =====
+(s/def :modal/key #{:modal/time-signature})
+(s/def :modal/props (s/nilable map?))
+(s/def ::modal (s/keys :req [:modal/key :modal/props]))
+
 ;; App db
 ;; ======
 
@@ -26,8 +32,10 @@
 (s/def :db/active-route ::route)
 (s/def :db/selection (s/nilable ::selection))
 (s/def :db/sheets (s/nilable (s/coll-of ::specs/sheet)))
+(s/def :db/modal (s/nilable ::modal))
 
 (s/def ::app-db (s/keys :req [:db/active-route
                               :db/current-user
+                              :db/modal
                               :db/selection
                               :db/sheets]))

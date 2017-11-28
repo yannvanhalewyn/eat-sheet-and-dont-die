@@ -16,7 +16,7 @@
   animation: fade 0.3s;
   position: fixed;
   overflow-y: auto;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,20,0.5);
   @include full-screen;
 }
 
@@ -24,10 +24,11 @@
   animation: appear 0.2s;
   position: relative;
   background: #fff;
-  border-radius: 5px;
+  border-radius: 10px;
   box-shadow: 0 3px 20px rgba(0,0,0,0.1);
   width: 900px;
   margin: 40px auto;
+  text-align: center;
 }
 
 .modal__close-btn {

@@ -1,5 +1,6 @@
 (ns frontend.views.layout.application
-  (:require [frontend.views.sheet :as sheet]
+  (:require [frontend.views.modal :as modal]
+            [frontend.views.sheet :as sheet]
             [frontend.views.sheet-list :as sheet-list]
             [re-frame.core :refer [subscribe]]))
 
@@ -11,8 +12,9 @@
         :route/sheet [sheet/component {:sheet-id (js/parseInt (get-in route [:route/params :sheet/id]))}]))
     [:h1 "Login panel"]))
 
-(defn component [props]
+(defn component []
   [:div.u-max-height
+   [modal/component]
    [:div.navbar
     [:div.navbar__home
      [:a.navbar__item--icon.u-block {:href "/#"}

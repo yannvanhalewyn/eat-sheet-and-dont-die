@@ -88,6 +88,12 @@
     {:datsync (attachment/set-value (:db/sheets db) textbox-id value)}))
 
 (reg-event-fx
+  :sheet/set-time-signature
+  (fn [{:keys [db]} [e bar-id time-signature]]
+    {:db (reducer/app db [e])
+     :datsync (attachment/set-time-signature (:db/sheets db) bar-id time-signature)}))
+
+(reg-event-fx
   :sheet/add-bar-attachment
   (fn [{:keys [db]} [_ type]]
     (if-let [loc (selectors/current-loc db)]
@@ -122,6 +128,12 @@
   :playlist/destroy-sheet
   (fn [db [_ sheet-id]]
     {:datsync [[:db.fn/retractEntity sheet-id]]}))
+
+;; App flow
+;; ========
+
+(reg-event-db :modal/show reducer/app)
+(reg-event-db :modal/close reducer/app)
 
 ;; Remote actions
 ;; ==============

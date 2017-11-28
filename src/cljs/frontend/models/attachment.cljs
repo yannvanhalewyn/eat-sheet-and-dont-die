@@ -37,17 +37,17 @@
     (if (get (d/entity db parent-id) type)
       [[:db/retract parent-id type true]]
       [[:db/add parent-id type true]])
-    :bar/time-signature
-    (if-let [ts (get (d/entity db parent-id) :bar/time-signature)]
-      [[:db.fn/retractEntity (:db/id ts)]]
-      [[:db/add parent-id :bar/time-signature "time-signature"]
-       {:db/id "time-signature"
-        :time-signature/beat 4
-        :time-signature/beat-type 4}])
     :bar/repeat-cycle [[:db/add parent-id :bar/repeat-cycle "1"]]
     (let [tmpid (if sheet/*string-tmp-ids* "new-attachment" -1)]
       [[:db/add parent-id :bar/attachments tmpid]
        (assoc (make type) :db/id tmpid)])))
+
+(defn set-time-signature [db bar-id signature]
+  :bar/time-signature
+  [[:db/add bar-id :bar/time-signature "time-signature"]
+   {:db/id "time-signature"
+    :time-signature/beat (:time-signature/beat signature)
+    :time-signature/beat-type (:time-signature/beat-type signature)}])
 
 (defn move
   "Sets the x-y coords of the attachment with `att-id`"

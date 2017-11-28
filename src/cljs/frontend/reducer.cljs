@@ -55,9 +55,16 @@
     :response/get-sheets (transact! db arg1)
     db))
 
+(defn modal [state [type key props]]
+  (case type
+    (:app/init :modal/close :sheet/set-time-signature) nil
+    :modal/show {:modal/key key :modal/props props}
+    state))
+
 (def app
   (combine-reducers
     {:db/sheets sheets
      :db/selection selection
      :db/current-user current-user
+     :db/modal modal
      :db/active-route active-route}))

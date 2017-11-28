@@ -70,8 +70,8 @@
 ;; Sheet
 ;; =====
 
-(s/def :time-signature/beat (s/and number? #(< 0 % 64)))
-(s/def :time-signature/beat-type #{1 2 4 8 16 32 64})
+(s/def :time-signature/beat (s/and number? #(< 0 % 32)))
+(s/def :time-signature/beat-type #{1 2 4 8 16 32})
 (s/def :bar/time-signature (s/keys :req [:time-signature/beat :time-signature/beat-type]))
 (s/def :bar/chords (s/coll-of ::chord :min-count 1 :gen-max 4))
 (s/def :bar/start-repeat boolean?)

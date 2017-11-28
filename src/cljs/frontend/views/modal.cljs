@@ -1,7 +1,10 @@
 (ns frontend.views.modal
-  (:require [reagent.core :as r]))
+  (:require [frontend.views.util.select :as select]
+            [frontend.util.util :refer [stop-propagation]]
+            [re-frame.core :refer [subscribe dispatch]]
+            [reagent.core :as r]))
 
-(defn component []
+(defn modal-wrapper []
   (r/create-class
     {:component-will-mount
      #(set! (-> js/document .-body .-style .-overflow) "hidden")
@@ -15,3 +18,37 @@
          [:button.icon-btn.icon-btn--grey.modal__close-btn {:on-click on-close}
           [:i.material-icons "close"]]
          children]])}))
+
+(defn ts-modal []
+  (let [time-signature (r/atom {:time-signature/beat 4
+                                :time-signature/beat-type 4})
+        bar-id @(subscribe [:sub/current-bar-id])]
+    (fn []
+      [:div.l-content
+       [:h3.t-light "Time signature"]
+       [:p.u-margin-top "Change the time signature starting on the current bar."]
+       [:div
+        [select/component
+         {:on-select #(swap! time-signature assoc :time-signature/beat (js/parseInt %))
+          :selected (:time-signature/beat @time-signature)
+          :class "time-signature-select"
+          :options (range 1 33)}]]
+       [:div
+        [select/component
+         {:on-select #(swap! time-signature assoc :time-signature/beat-type (js/parseInt %))
+          :selected (:time-signature/beat-type @time-signature)
+          :class "time-signature-select"
+          :options [1 2 4 8 16 32]}]]
+       [:button.btn.u-margin-top--s
+        {:on-click (stop-propagation
+                     #(dispatch [:sheet/set-time-signature bar-id @time-signature]))}
+        "Save"]])))
+
+(def modals
+  {:modal/time-signature ts-modal})
+
+(defn component []
+  (let [{:keys [modal/key modal/props]} @(subscribe [:sub/modal])]
+    (when-let [modal-body (get modals key)]
+      [modal-wrapper {:on-close #(dispatch [:modal/close])}
+       [modal-body props]])))
