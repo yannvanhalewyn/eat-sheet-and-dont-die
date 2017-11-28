@@ -12,6 +12,7 @@
 
 $height: 40px;
 .sheet-tool-btn {
+  float: left;
   padding: 0;
   width: 50px;
   height: 100%;
@@ -53,10 +54,18 @@ $height: 40px;
 }
 
 .sheet-tool--repeat-cycle {
+  height: $height * 0.4;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  padding: 1px 0 0 5px;
   border-left: 2px solid #666;
   border-top: 2px solid #666;
-  height: $height / 2;
-  background: none;
-  margin-bottom: 20px;
+  text-align: left;
   &::after { content: "1"; }
+}
+
+.sheet-tool--time-signature {
+  font-family: inherit;
+  font-size: 1.15em;
+  padding-left: 5px;
 }

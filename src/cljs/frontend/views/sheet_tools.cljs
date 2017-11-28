@@ -24,7 +24,7 @@
        ^{:key type}
        [bar-tool {:type type}])
      [bar-tool {:type :bar/time-signature}
-      [:div
+      [:div.bar__time-signature
        [:div 4]
        [:div 4]]]
      [chord-tool {:type :chord/fermata}]]))
