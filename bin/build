@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export TIMBRE_LEVEL=':info'
+
 sass -r sass-globbing scss/application.scss:target/application.css
 postcss target/application.css --use autoprefixer -o resources/public/css/application.css
 lein uberjar
