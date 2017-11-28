@@ -1,4 +1,4 @@
-(ns sheet-bucket.models.sheet
+(ns umuses.models.sheet
   (:require [clojure.walk :refer [postwalk]]
             [datomic.api :as d]))
 

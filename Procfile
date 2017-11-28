@@ -1,1 +1,1 @@
-web: java -Xmx1g -jar target/sheet-bucket-standalone.jar
+web: java -Xmx1g -jar target/umuses-standalone.jar

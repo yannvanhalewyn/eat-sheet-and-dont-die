@@ -11,7 +11,7 @@
 
 (defcard-doc
   "# Chords"
-  "Chords are one of the main components in Sheet Bucket. Without
+  "Chords are one of the main components in uMuses. Without
   them, the music would not be heard.")
 
 ;; Editing

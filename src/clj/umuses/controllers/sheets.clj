@@ -1,8 +1,8 @@
-(ns sheet-bucket.controllers.sheets
+(ns umuses.controllers.sheets
   (:require [datomic.api :as d]
-            [sheet-bucket.models.sheet :as sheet]
-            [sheet-bucket.models.user :as user]
-            [sheet-bucket.socket-handler :refer [socket-handler]]))
+            [umuses.models.sheet :as sheet]
+            [umuses.models.user :as user]
+            [umuses.socket-handler :refer [socket-handler]]))
 
 (defmethod socket-handler :sheets/index
   [{:keys [?data ring-req]}]

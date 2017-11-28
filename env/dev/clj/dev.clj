@@ -1,10 +1,10 @@
 (ns dev
-  (:require [sheet-bucket.config :refer [config]]
+  (:require [umuses.config :refer [config]]
             [datomic.api :as d]
             [dev.scss-watcher :as scss]
             [figwheel-sidecar.system :as ra-sys]
             [reloaded.repl :as repl :refer [go start stop reset system]]
-            [sheet-bucket.core :as app]))
+            [umuses.core :as app]))
 
 (def figwheel-config
   (assoc-in (ra-sys/fetch-config) [:data :build-ids] ["dev" "test" "cards"]))

@@ -1,4 +1,4 @@
-(defproject sheet-bucket "0.1.0-SNAPSHOT"
+(defproject umuses "0.1.0-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -47,14 +47,14 @@
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
              :uberjar {:jvm-opts ["-server"]
                        :aot :all
-                       :main sheet-bucket.main
+                       :main umuses.main
                        :omit-source true
                        :dependencies [[com.amazonaws/aws-java-sdk-dynamodb "1.11.228"]
                                       [bk/ring-gzip "0.2.1"]]
                        :prep-tasks ["compile" ["cljsbuild" "once" "prod"]]
                        :source-paths ["src/clj" "src/cljc" "env/production/clj"]}}
 
-  :uberjar-name "sheet-bucket-standalone.jar"
+  :uberjar-name "umuses-standalone.jar"
 
   :plugins [[lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 

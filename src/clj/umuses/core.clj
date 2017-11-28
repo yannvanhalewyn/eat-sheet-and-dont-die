@@ -1,9 +1,9 @@
-(ns sheet-bucket.core
+(ns umuses.core
   (:require [com.stuartsierra.component :as c]
-            [sheet-bucket.components.channel-sockets :as chsk]
-            [sheet-bucket.components.db :as db]
-            [sheet-bucket.components.tx-report-monitor :as tx-report-monitor]
-            [sheet-bucket.components.web :as web]))
+            [umuses.components.channel-sockets :as chsk]
+            [umuses.components.db :as db]
+            [umuses.components.tx-report-monitor :as tx-report-monitor]
+            [umuses.components.web :as web]))
 
 (defn new-system [config]
   (c/system-map

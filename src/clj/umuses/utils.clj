@@ -1,4 +1,4 @@
-(ns sheet-bucket.utils
+(ns umuses.utils
   (:require [clojure.string :as str]))
 
 (defn keywordize

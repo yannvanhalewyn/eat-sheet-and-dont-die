@@ -1,7 +1,7 @@
-(ns sheet-bucket.config
+(ns umuses.config
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [sheet-bucket.utils :refer [keywordize]]))
+            [umuses.utils :refer [keywordize]]))
 
 (defn read-system-env []
   (->> (System/getenv)

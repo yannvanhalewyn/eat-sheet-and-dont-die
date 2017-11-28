@@ -1,4 +1,4 @@
-(ns sheet-bucket.routes
+(ns umuses.routes
   (:require [clojure.java.io :as io]
             [compojure.core :as comp :refer [GET POST defroutes]]
             [compojure.route :as route]))

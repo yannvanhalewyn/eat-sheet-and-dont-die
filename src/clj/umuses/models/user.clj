@@ -1,6 +1,6 @@
-(ns sheet-bucket.models.user
+(ns umuses.models.user
   (:require [datomic.api :as d]
-            [sheet-bucket.components.db :as db]))
+            [umuses.components.db :as db]))
 
 (defn create! [conn {:keys [first-name last-name email password]}]
   (db/transact! conn [{:user/first-name first-name

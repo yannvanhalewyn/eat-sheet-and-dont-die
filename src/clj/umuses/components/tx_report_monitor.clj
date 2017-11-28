@@ -1,4 +1,4 @@
-(ns sheet-bucket.components.tx-report-monitor
+(ns umuses.components.tx-report-monitor
   (:require [shared.datsync :as datsync]
             [com.stuartsierra.component :as component]
             [clojure.core.async :as a]

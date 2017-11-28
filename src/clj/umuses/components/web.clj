@@ -1,4 +1,4 @@
-(ns sheet-bucket.components.web
+(ns umuses.components.web
   (:require [com.stuartsierra.component :as c]
             [muuntaja.core :as m]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
@@ -7,9 +7,9 @@
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.defaults :refer [api-defaults
                                               wrap-defaults]]
-            [sheet-bucket.env-middleware :refer [wrap-env-middleware]]
-            [sheet-bucket.routes :as routes]
-            [sheet-bucket.utils :refer [parse-int]]
+            [umuses.env-middleware :refer [wrap-env-middleware]]
+            [umuses.routes :as routes]
+            [umuses.utils :refer [parse-int]]
             [taoensso.timbre :as timbre]))
 
 (defn- wrap-db [handler db]

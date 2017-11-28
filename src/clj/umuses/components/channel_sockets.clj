@@ -1,9 +1,9 @@
-(ns sheet-bucket.components.channel-sockets
+(ns umuses.components.channel-sockets
   (:require [com.stuartsierra.component :as c]
             [clojure.core.async :as a]
-            [sheet-bucket.socket-handler :as sh]
-            [sheet-bucket.controllers.session]
-            [sheet-bucket.controllers.sheets]
+            [umuses.socket-handler :as sh]
+            [umuses.controllers.session]
+            [umuses.controllers.sheets]
             [taoensso.sente :as sente]
             [taoensso.sente.server-adapters.http-kit :refer [get-sch-adapter]]
             [taoensso.timbre :as timbre]))

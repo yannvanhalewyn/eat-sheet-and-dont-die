@@ -1,4 +1,4 @@
-(ns sheet-bucket.components.db
+(ns umuses.components.db
   (:require [com.stuartsierra.component :as c]
             [datomic.api :as d]
             [io.rkn.conformity :as conform]

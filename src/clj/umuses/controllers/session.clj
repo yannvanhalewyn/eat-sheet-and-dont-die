@@ -1,6 +1,6 @@
-(ns sheet-bucket.controllers.session
+(ns umuses.controllers.session
   (:require [datomic.api :as d]
-            [sheet-bucket.socket-handler :refer [socket-handler]]))
+            [umuses.socket-handler :refer [socket-handler]]))
 
 (defmethod socket-handler :users/me
   [{:keys [?data ring-req]}]

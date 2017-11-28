@@ -1,4 +1,4 @@
-(ns sheet-bucket.socket-handler
+(ns umuses.socket-handler
   (:require [clojure.stacktrace :as st]
             [datomic.api :as d]
             [shared.datsync :as datsync]

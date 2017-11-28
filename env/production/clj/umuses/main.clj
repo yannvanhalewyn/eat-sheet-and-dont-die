@@ -1,7 +1,7 @@
-(ns sheet-bucket.main
+(ns umuses.main
   (:gen-class)
-  (:require [sheet-bucket.core :as app]
-            [sheet-bucket.config :refer [config]]
+  (:require [umuses.core :as app]
+            [umuses.config :refer [config]]
             [com.stuartsierra.component :as c]))
 
 (def system (app/new-system config))
