@@ -23,8 +23,8 @@
   (when (= (:selection/type selection) :selection/chord)
     (:selection/id selection)))
 
-(defselector current-bar-id [current-chord-id sheets-db]
-  (d/q '[:find ?bar . :in $ ?chord :where [?bar :bar/chords ?chord]]
+(defselector current-bar [current-chord-id sheets-db]
+  (d/q '[:find (pull ?bar [*]) . :in $ ?chord :where [?bar :bar/chords ?chord]]
     sheets-db current-chord-id))
 
 (defselector sheet-loc [sheet] (sheet-zip/zipper sheet))

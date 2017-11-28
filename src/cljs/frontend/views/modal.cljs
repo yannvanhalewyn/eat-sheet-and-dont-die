@@ -20,9 +20,10 @@
          children]])}))
 
 (defn ts-modal []
-  (let [time-signature (r/atom {:time-signature/beat 4
-                                :time-signature/beat-type 4})
-        bar-id @(subscribe [:sub/current-bar-id])]
+  (let [bar @(subscribe [:sub/current-bar])
+        time-signature (r/atom (or (:bar/time-signature bar)
+                                 {:time-signature/beat 4
+                                  :time-signature/beat-type 4}))]
     (fn []
       [:div.l-content
        [:h3.t-light "Time signature"]
@@ -39,10 +40,16 @@
           :selected (:time-signature/beat-type @time-signature)
           :class "time-signature-select"
           :options [1 2 4 8 16 32]}]]
-       [:button.btn.u-margin-top--s
-        {:on-click (stop-propagation
-                     #(dispatch [:sheet/set-time-signature bar-id @time-signature]))}
-        "Save"]])))
+       [:div.u-margin-top--s
+        (when-let [{:keys [db/id]} (:bar/time-signature bar)]
+          [:button.btn.btn--red.u-margin-right
+           {:on-click (stop-propagation #(dispatch [:sheet/remove-time-signature id]))}
+           "Remove"])
+        [:button.btn.u-margin-top--s
+         {:on-click (stop-propagation
+                      #(dispatch [:sheet/create-or-update-time-signature (:db/id bar)
+                                  @time-signature]))}
+         "Save"]]])))
 
 (def modals
   {:modal/time-signature ts-modal})

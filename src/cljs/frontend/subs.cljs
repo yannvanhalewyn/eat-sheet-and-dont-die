@@ -19,7 +19,7 @@
 (reg-sub :sub/selection sel/selection)
 (reg-sub :sub/active-route sel/active-route)
 (reg-sub :sub/current-user sel/current-user)
-(reg-sub :sub/current-bar-id sel/current-bar-id)
+(reg-sub :sub/current-bar sel/current-bar)
 
 (reg-sub-raw
   :sub/sheets

@@ -88,10 +88,17 @@
     {:datsync (attachment/set-value (:db/sheets db) textbox-id value)}))
 
 (reg-event-fx
-  :sheet/set-time-signature
+  :sheet/create-or-update-time-signature
   (fn [{:keys [db]} [e bar-id time-signature]]
-    {:db (reducer/app db [e])
-     :datsync (attachment/set-time-signature (:db/sheets db) bar-id time-signature)}))
+    {:dispatch [:modal/close]
+     :datsync (attachment/create-or-update-time-signature
+                (:db/sheets db) bar-id time-signature)}))
+
+(reg-event-fx
+  :sheet/remove-time-signature
+  (fn [{:keys [db]} [e time-signature-id]]
+    {:dispatch [:modal/close]
+     :datsync [[:db.fn/retractEntity time-signature-id]]}))
 
 (reg-event-fx
   :sheet/add-bar-attachment

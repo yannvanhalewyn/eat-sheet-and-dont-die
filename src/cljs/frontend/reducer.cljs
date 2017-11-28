@@ -57,7 +57,7 @@
 
 (defn modal [state [type key props]]
   (case type
-    (:app/init :modal/close :sheet/set-time-signature) nil
+    (:app/init :modal/close) nil
     :modal/show {:modal/key key :modal/props props}
     state))
 
