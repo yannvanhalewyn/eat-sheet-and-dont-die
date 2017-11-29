@@ -1,5 +1,5 @@
 (ns frontend.models.attachment-test
-  (:require [frontend.models.bar-attachment :as sut]
+  (:require [frontend.models.attachment :as sut]
             [frontend.models.sheet-zip :as sheet-zip]
             [frontend.models.sheet :as sheet]
             [datascript.core :as d]
