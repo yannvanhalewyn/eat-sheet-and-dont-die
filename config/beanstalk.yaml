@@ -45,6 +45,10 @@ Resources:
         OptionName: EnvironmentType
         Value: LoadBalanced
 
+      - Namespace: aws:elasticbeanstalk:environment
+        OptionName: LoadBalancerType
+        Value: application
+
       - Namespace: aws:autoscaling:updatepolicy:rollingupdate
         OptionName: RollingUpdateType
         Value: Health
@@ -55,7 +59,7 @@ Resources:
   StagingEnv:
     Type: AWS::ElasticBeanstalk::Environment
     Properties:
-      EnvironmentName: umuses-staging
+      EnvironmentName: staging-env
       CNAMEPrefix: umuses-staging
       Description: Staging environment for uMuses
       ApplicationName:
