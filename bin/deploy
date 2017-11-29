@@ -1,10 +1,15 @@
 #!/bin/sh
 
-APP_NAME="umuses"
-ENV_ID="e-nmexgncjwa"
-S3_BUCKET="elasticbeanstalk-eu-central-1-179026462843"
+if [ -z $1 ]; then
+    echo "Please provide a build name, eg: bin/deploy my-deploy"
+    exit -1
+fi
 
-BUILD_ID="$(git rev-parse --short HEAD)-$(date +%Y-%m-%dT%Hh%M)"
+APP_NAME="uMuses"
+ENV_ID="e-y5fkgp2pnu"
+S3_BUCKET="umuses-deploys"
+
+BUILD_ID="$1-$(git rev-parse --short HEAD)"
 FILE_NAME="umuses-${BUILD_ID}.zip"
 FILE_PATH="target/uberjar/${FILE_NAME}"
 S3_URL="s3://${S3_BUCKET}/${FILE_NAME}"

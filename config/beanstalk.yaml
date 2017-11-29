@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: uMuses web app template
+
+Resources:
+  Application:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      ApplicationName: uMuses
+      Description: Beanstalk Application
+
+  DeployBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: umuses-deploys
+
+  Configuration:
+    Type: AWS::ElasticBeanstalk::ConfigurationTemplate
+    Properties:
+      ApplicationName:
+        Ref: Application
+      Description: uMuses web app configuration
+      SolutionStackName: 64bit Amazon Linux 2017.09 v2.6.0 running Java 8
+      OptionSettings:
+      - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: IamInstanceProfile
+        Value: aws-elasticbeanstalk-ec2-role
+
+      - Namespace: aws:elasticbeanstalk:environment
+        OptionName: ServiceRole
+        Value: aws-elasticbeanstalk-service-role
+
+      - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: InstanceType
+        Value: t2.micro
+
+      - Namespace: aws:autoscaling:asg
+        OptionName: MinSize
+        Value: 1
+
+      - Namespace: aws:autoscaling:asg
+        OptionName: MaxSize
+        Value: 4
+
+      - Namespace: aws:elasticbeanstalk:environment
+        OptionName: EnvironmentType
+        Value: LoadBalanced
+
+      - Namespace: aws:autoscaling:updatepolicy:rollingupdate
+        OptionName: RollingUpdateType
+        Value: Health
+
+      - Namespace: aws:elasticbeanstalk:healthreporting:system
+        OptionName: SystemType
+        Value: enhanced
+  StagingEnv:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      EnvironmentName: umuses-staging
+      CNAMEPrefix: umuses-staging
+      Description: Staging environment for uMuses
+      ApplicationName:
+        Ref: Application
+      TemplateName:
+        Ref: Configuration
