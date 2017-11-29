@@ -48,6 +48,11 @@
   [e]
   [(.-clientX e) (.-clientY e)])
 
+(defn- touche->pos
+  "Given a touch event, will return the client position as coordinate tuple [x y]."
+  [e]
+  (e->pos (aget (.-touches e) 0)))
+
 (defn combine-reducers
   "Returns a reducer fn that invokes every reducer inside the reducers
   map, and constructs a state object with the same shape."

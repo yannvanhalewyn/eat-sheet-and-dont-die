@@ -1,6 +1,6 @@
 (ns frontend.views.util.draggable
   (:require [goog.events :as events]
-            [goog.events.EventType :refer [MOUSEMOVE MOUSEUP]]
+            [goog.events.EventType :refer [MOUSEMOVE MOUSEUP TOUCHMOVE TOUCHEND]]
             [frontend.util.util :refer [stop-propagation] :as util]
             [reagent.core :as r]))
 
@@ -18,6 +18,14 @@
       (events/listen js/window MOUSEUP
         #(events/unlisten js/window MOUSEMOVE on-move)))))
 
+(defn- touch-start-handler [drag props]
+  (fn [e]
+    (let [drag-start-pos (util/touche->pos e)
+          on-move (mouse-move-handler drag (:pos props) drag-start-pos)]
+      (events/listen js/window TOUCHMOVE on-move)
+      (events/listen js/window TOUCHEND
+        #(events/unlisten js/window TOUCHMOVE on-move)))))
+
 (defn component [{:keys [pos]}]
   (let [drag (r/atom pos)]
     (r/create-class
@@ -30,6 +38,7 @@
          (let [[x y] @drag]
            (into
              [:div.draggable {:on-mouse-down (mouse-down-handler drag props)
+                              :on-touch-start (touch-start-handler drag props)
                               :on-mouse-up (when-let [callback on-drag-end]
                                              #(callback @drag))
                               :on-click (stop-propagation (or on-click identity))
