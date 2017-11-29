@@ -1,6 +1,7 @@
 (ns dev.user
   (:require [frontend.core :as app]
             [devtools.core :as devtools]
+            [datascript.core :as d]
             [re-frame.loggers :as rf-loggers]))
 
 (devtools/install! [:custom-formatters :sanity-hints])
@@ -14,6 +15,9 @@
   {:warn (fn [& args]
            (when-not (= "re-frame: overwriting" (first args))
              (apply warn args)))})
+
+(defn db [] @re-frame.db/app-db)
+(def sheets-db (comp :db/sheets db))
 
 (def on-js-load app/render!)
 
