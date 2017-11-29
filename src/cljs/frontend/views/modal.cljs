@@ -19,8 +19,8 @@
           [:i.material-icons "close"]]
          children]])}))
 
-(defn ts-modal []
-  (let [bar @(subscribe [:sub/current-bar])
+(defn ts-modal [{:keys [bar]}]
+  (let [bar (or bar @(subscribe [:sub/current-bar]))
         time-signature (r/atom (or (:bar/time-signature bar)
                                  {:time-signature/beat 4
                                   :time-signature/beat-type 4}))]

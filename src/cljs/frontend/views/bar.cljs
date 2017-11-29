@@ -2,6 +2,7 @@
   (:require [frontend.models.chord :refer [parse]]
             [frontend.views.chord :refer [editable-chord displayed-chord]]
             [frontend.views.util.draggable :as draggable]
+            [frontend.util.util :refer [stop-propagation]]
             [re-frame.core :refer [dispatch]]
             [frontend.views.editable :as editable]
             [shared.utils :refer [presence]]))
@@ -42,6 +43,8 @@
   [:div.flex-bar.bar
    (when-let [{:keys [time-signature/beat time-signature/beat-type]} (:bar/time-signature bar)]
      [:div.bar__time-signature
+      {:on-click
+       (stop-propagation #(dispatch [:modal/show :modal/time-signature {:bar bar}]))}
       [:div beat]
       [:div beat-type]])
    ;; Attachments
