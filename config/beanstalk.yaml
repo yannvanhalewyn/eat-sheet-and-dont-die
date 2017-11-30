@@ -56,6 +56,15 @@ Resources:
       - Namespace: aws:elasticbeanstalk:healthreporting:system
         OptionName: SystemType
         Value: enhanced
+
+      - Namespace: aws:elbv2:listener:443
+        OptionName: Protocol
+        Value: HTTPS
+
+      - Namespace: aws:elbv2:listener:443
+        OptionName: SSLCertificateArns
+        Value: arn:aws:acm:eu-central-1:179026462843:certificate/5e044025-439d-4a46-8337-009f6cf30504
+
   StagingEnv:
     Type: AWS::ElasticBeanstalk::Environment
     Properties:
