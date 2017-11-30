@@ -76,10 +76,6 @@ Resources:
         OptionName: DB_URL
         Value: !Ref DBUrl
 
-      - Namespace: aws:elasticbeanstalk:application
-        OptionName: Application Healthcheck URL
-        Value: '/health'
-
   StagingEnv:
     Type: AWS::ElasticBeanstalk::Environment
     Properties:
