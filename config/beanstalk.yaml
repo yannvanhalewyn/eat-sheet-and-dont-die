@@ -1,6 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: uMuses web app template
 
+Parameters:
+  DBUrl:
+    NoEcho: true
+    Description: The database url
+    Type: String
+    MinLength: 8
+
 Resources:
   Application:
     Type: AWS::ElasticBeanstalk::Application
@@ -64,6 +71,10 @@ Resources:
       - Namespace: aws:elbv2:listener:443
         OptionName: SSLCertificateArns
         Value: arn:aws:acm:eu-central-1:179026462843:certificate/5e044025-439d-4a46-8337-009f6cf30504
+
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: DB_URL
+        Value: !Ref DBUrl
 
   StagingEnv:
     Type: AWS::ElasticBeanstalk::Environment
