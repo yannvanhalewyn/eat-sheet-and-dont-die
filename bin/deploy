@@ -6,7 +6,7 @@ if [ -z $1 ]; then
 fi
 
 APP_NAME="uMuses"
-ENV_ID="e-y5fkgp2pnu"
+ENV_NAME="staging-env"
 S3_BUCKET="umuses-deploys"
 
 BUILD_ID="$1-$(git rev-parse --short HEAD)"
@@ -31,6 +31,6 @@ aws elasticbeanstalk create-application-version \
 echo "Switching to new version"
 aws elasticbeanstalk update-environment \
     --application-name $APP_NAME \
-    --environment-id $ENV_ID \
+    --environment-name $ENV_NAME \
     --version-label $BUILD_ID \
     --region eu-central-1
